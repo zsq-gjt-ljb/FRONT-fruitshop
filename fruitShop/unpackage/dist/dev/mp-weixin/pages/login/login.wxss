@@ -1,0 +1,138 @@
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.login-container {
+  min-height: 100vh;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.login-container .header {
+  position: relative;
+  height: 45vh;
+  overflow: hidden;
+}
+.login-container .header .blur-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(74, 144, 226, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+  -webkit-backdrop-filter: blur(20px);
+          backdrop-filter: blur(20px);
+}
+.login-container .header .logo-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.login-container .header .logo-container .logo {
+  width: 180rpx;
+  height: 180rpx;
+  filter: drop-shadow(0 8rpx 24rpx rgba(74, 144, 226, 0.2));
+}
+.login-container .header::after {
+  content: "";
+  position: absolute;
+  bottom: -60rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120rpx;
+  height: 6rpx;
+  background: linear-gradient(90deg, rgba(74, 144, 226, 0) 0%, rgba(74, 144, 226, 0.2) 50%, rgba(74, 144, 226, 0) 100%);
+  border-radius: 3rpx;
+}
+.login-container .content {
+  flex: 1;
+  padding: 80rpx 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.login-container .content .title-section {
+  text-align: center;
+  margin-bottom: 100rpx;
+}
+.login-container .content .title-section .subtitle {
+  font-size: 36rpx;
+  color: #4a90e2;
+  letter-spacing: 8rpx;
+  text-transform: uppercase;
+  font-weight: 300;
+  position: relative;
+  padding-bottom: 20rpx;
+}
+.login-container .content .title-section .subtitle::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40rpx;
+  height: 4rpx;
+  background: linear-gradient(90deg, rgba(74, 144, 226, 0) 0%, rgba(74, 144, 226, 0.5) 50%, rgba(74, 144, 226, 0) 100%);
+}
+.login-container .content .login-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 85%;
+  height: 96rpx;
+  background: #ffffff;
+  color: #4a90e2;
+  font-size: 32rpx;
+  font-weight: 500;
+  border-radius: 48rpx;
+  box-shadow: 0 4rpx 12rpx rgba(74, 144, 226, 0.1), 0 12rpx 24rpx rgba(74, 144, 226, 0.05);
+  border: 1px solid rgba(74, 144, 226, 0.1);
+  position: relative;
+}
+.login-container .content .login-button::after {
+  border: none;
+}
+.login-container .content .login-button .iconfont {
+  font-size: 40rpx;
+  margin-right: 16rpx;
+}
+.login-container .dev-buttons {
+  position: absolute;
+  bottom: 40rpx;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 0 30rpx;
+}
+.login-container .dev-buttons button {
+  margin: 0;
+  background: #f5f7fa;
+  padding: 10rpx 20rpx;
+  font-size: 24rpx;
+  border-radius: 10rpx;
+  color: #666;
+}

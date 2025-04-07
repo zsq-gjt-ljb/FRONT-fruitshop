@@ -1,0 +1,163 @@
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.user-manage .search-bar {
+  background: #ffffff;
+  padding: 20rpx;
+  border-radius: 12rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+.user-manage .search-bar .search-input {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #f5f7fa;
+  padding: 12rpx 20rpx;
+  border-radius: 8rpx;
+}
+.user-manage .search-bar .search-input input {
+  flex: 1;
+  font-size: 28rpx;
+  margin-left: 12rpx;
+}
+.user-manage .search-bar .filter-options {
+  margin-left: 20rpx;
+}
+.user-manage .user-list {
+  background: #ffffff;
+  border-radius: 12rpx;
+  padding: 20rpx;
+}
+.user-manage .user-list .list-header {
+  display: flex;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid #f5f7fa;
+  font-size: 28rpx;
+  color: #999;
+}
+.user-manage .user-list .list-header .col {
+  flex: 1;
+  text-align: center;
+}
+.user-manage .user-list .list-header .col:first-child {
+  flex: 2;
+  text-align: left;
+}
+.user-manage .user-list .loading-tip, .user-manage .user-list .empty-tip {
+  padding: 60rpx 0;
+  text-align: center;
+  color: #999;
+  font-size: 28rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.user-manage .user-list .loading-tip text, .user-manage .user-list .empty-tip text {
+  margin-top: 20rpx;
+}
+.user-manage .user-list .user-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid #f5f7fa;
+}
+.user-manage .user-list .user-item .col {
+  flex: 1;
+  text-align: center;
+}
+.user-manage .user-list .user-item .col.user-info {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  text-align: left;
+}
+.user-manage .user-list .user-item .col.user-info .avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 40rpx;
+  margin-right: 16rpx;
+}
+.user-manage .user-list .user-item .col.user-info .info .nickname {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+.user-manage .user-list .user-item .col.user-info .info .phone {
+  font-size: 24rpx;
+  color: #999;
+}
+.user-manage .user-list .user-item .action-btn {
+  font-size: 24rpx;
+  padding: 8rpx 20rpx;
+  background: #4a90e2;
+  color: #ffffff;
+  border-radius: 6rpx;
+  border: none;
+}
+.user-manage .pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40rpx;
+}
+.user-manage .pagination .page-btn {
+  padding: 12rpx 24rpx;
+  font-size: 26rpx;
+  color: #4a90e2;
+}
+.user-manage .pagination .page-btn.disabled {
+  color: #999;
+}
+.user-manage .pagination .page-number {
+  margin: 0 20rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+.level-dialog {
+  padding: 40rpx;
+}
+.level-dialog .dialog-title {
+  font-size: 32rpx;
+  color: #333;
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+.level-dialog .dialog-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 40rpx;
+}
+.level-dialog .dialog-buttons button {
+  flex: 1;
+  margin: 0 10rpx;
+}
+.level-dialog .dialog-buttons button.confirm-btn {
+  background: #4a90e2;
+  color: #ffffff;
+}

@@ -1,0 +1,212 @@
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.user-container {
+  min-height: 100vh;
+  background-color: #f8f9fc;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.user-container .user-header {
+  position: relative;
+  height: 400rpx;
+  padding: 40rpx;
+  overflow: hidden;
+}
+.user-container .user-header .blur-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #4a90e2 0%, #6eb4f7 100%);
+  opacity: 0.9;
+}
+.user-container .user-header .user-info {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 60rpx;
+}
+.user-container .user-header .user-info .avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  border: 4rpx solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.user-container .user-header .user-info .info {
+  margin-left: 24rpx;
+  display: flex;
+  flex-direction: column;
+}
+.user-container .user-header .user-info .info .nickname {
+  font-size: 36rpx;
+  color: #ffffff;
+  font-weight: 500;
+  margin-bottom: 16rpx;
+}
+.user-container .user-header .user-info .info .level-tag {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 26rpx;
+  padding: 8rpx 20rpx;
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+}
+.user-container .user-header .user-info .info .level-tag .vip-icon {
+  width: 28rpx;
+  height: 28rpx;
+  margin-right: 8rpx;
+}
+.user-container .user-header .user-info .info .level-tag text {
+  font-size: 24rpx;
+  color: #ffffff;
+  font-weight: 400;
+  letter-spacing: 1rpx;
+}
+.user-container .card-section {
+  margin: 24rpx;
+  background: #ffffff;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(74, 144, 226, 0.06);
+}
+.user-container .card-section .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32rpx;
+}
+.user-container .card-section .section-header .title {
+  font-size: 32rpx;
+  color: #333333;
+  font-weight: 600;
+}
+.user-container .card-section .section-header .more {
+  display: flex;
+  align-items: center;
+  color: #999999;
+  font-size: 28rpx;
+}
+.user-container .card-section .section-header .more .iconfont {
+  margin-left: 8rpx;
+}
+.user-container .order-section {
+  margin-top: 20rpx;
+}
+.user-container .order-section .order-types {
+  display: flex;
+  justify-content: space-around;
+  padding: 30rpx 0;
+}
+.user-container .order-section .order-types .type-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.user-container .order-section .order-types .type-item .icon-wrapper {
+  width: 80rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10rpx;
+}
+.user-container .order-section .order-types .type-item .icon-wrapper .icon {
+  width: 50rpx;
+  height: 50rpx;
+}
+.user-container .order-section .order-types .type-item .name {
+  font-size: 24rpx;
+  color: #666;
+}
+.user-container .order-section .order-types .type-item .badge {
+  position: absolute;
+  top: -6rpx;
+  right: 0;
+  min-width: 32rpx;
+  height: 32rpx;
+  padding: 0 6rpx;
+  background-color: #ff4d4f;
+  border-radius: 16rpx;
+  color: #fff;
+  font-size: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.user-container .tools-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32rpx;
+}
+.user-container .tools-grid .tool-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.user-container .tools-grid .tool-item .icon {
+  width: 48rpx;
+  height: 48rpx;
+  margin-bottom: 12rpx;
+}
+.user-container .tools-grid .tool-item .name {
+  font-size: 24rpx;
+  color: #666666;
+}
+.user-container .tools-grid .tool-item.admin-tool .icon-image {
+  filter: drop-shadow(0 2rpx 8rpx rgba(74, 144, 226, 0.3));
+}
+.user-container .tools-grid .tool-item.admin-tool .name {
+  color: #4a90e2;
+  font-weight: 500;
+}
+.user-container .customer-service-section {
+  padding: 30rpx 0;
+  display: flex;
+  justify-content: center;
+}
+.user-container .customer-service-section .official-service-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color: #4a90e2;
+  font-size: 28rpx;
+  padding: 0;
+  line-height: normal;
+}
+.user-container .customer-service-section .official-service-btn::after {
+  display: none;
+}
+.user-container .customer-service-section .official-service-btn .icon {
+  width: 36rpx;
+  height: 36rpx;
+  margin-right: 10rpx;
+}

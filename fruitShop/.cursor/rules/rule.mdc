@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+
+# Your rule content
+
+- You can @ files here
+- You can use markdown but dont have to
+
+
+这个小程序整体为淡蓝色主调,用uniapp和vue3完成
+ui可以参考苹果公司,整体样式要符合现代电商审美,简约大方

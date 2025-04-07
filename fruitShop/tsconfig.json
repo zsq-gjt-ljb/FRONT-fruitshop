@@ -1,0 +1,6 @@
+{
+  "compilerOptions": {
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "types": ["@dcloudio/types", "@dcloudio/uni-ui", "element-china-area-data"]
+  }
+} 

@@ -1,0 +1,9 @@
+{
+  "usingComponents": {
+    "product-manage": "/pages/admin/components/ProductManage",
+    "category-manage": "/pages/admin/components/CategoryManage",
+    "home-manage": "/pages/admin/components/HomeManage",
+    "order-manage": "/pages/admin/components/OrderManage",
+    "user-manage": "/pages/admin/components/UserManage"
+  }
+} 

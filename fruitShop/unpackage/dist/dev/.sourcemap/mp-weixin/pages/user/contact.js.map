@@ -1,0 +1,1 @@
+{"version":3,"file":"contact.js","sources":["D:/Download/HBuilderX/plugins/uniapp-cli-vite/uniPage:/cGFnZXMvdXNlci9jb250YWN0LnZ1ZQ"],"sourcesContent":["import MiniProgramPage from 'E:/myFrameWork/Mini Program/fruitShop/pages/user/contact.vue'\nwx.createPage(MiniProgramPage)"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AACA,GAAG,WAAW,eAAe;"}
