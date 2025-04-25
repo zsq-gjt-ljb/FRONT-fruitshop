@@ -60,7 +60,7 @@ export default {
           try {
             // 获取到微信登录code后，发送给后端
             const response = await request({
-              url: 'http://82.156.12.240:8080/api/auth/login',
+              url: 'https://bgnc.online/api/auth/login',
               method: 'POST',
               data: {
                 xcxCode: loginRes.code,
@@ -78,7 +78,7 @@ export default {
               // 登录成功后查询路由信息
               try {
                 const routeRes = await request({
-                  url: `http://82.156.12.240:8080/api/order/route?phoneNumber=5713&orderNumber=SF3165555559187`,
+                  url: `https://bgnc.online/api/order/route?phoneNumber=5713&orderNumber=SF3165555559187`,
                   method: 'GET'
                 })
                 console.log('路由查询结果:', routeRes)

@@ -293,7 +293,7 @@
       console.log('正在获取商品详情, ID:', id);
       
       const result = await request({
-        url: `http://82.156.12.240:8080/api/product/${id}`,
+        url: `https://bgnc.online/api/product/${id}`,
         method: 'GET'
       });
       
@@ -473,7 +473,7 @@
     
     try {
       const result = await request({
-        url: 'http://82.156.12.240:8080/api/cart/add',
+        url: 'https://bgnc.online/api/cart/add',
         method: 'POST',
         data: {
           skuId: selectedSkuId.value,
@@ -514,7 +514,7 @@
     let memberLevel = '';
     try {
       const result = await request({
-        url: 'http://82.156.12.240:8080/api/user/profile',
+        url: 'https://bgnc.online/api/user/profile',
         method: 'GET'
       })
       

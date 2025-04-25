@@ -107,7 +107,7 @@ const _sfc_main = {
       try {
         common_vendor.index.__f__("log", "at pages/detail/detail.vue:293", "正在获取商品详情, ID:", id);
         const result = await utils_request.request({
-          url: `http://82.156.12.240:8080/api/product/${id}`,
+          url: `https://bgnc.online/api/product/${id}`,
           method: "GET"
         });
         common_vendor.index.__f__("log", "at pages/detail/detail.vue:300", "API返回结果:", result);
@@ -242,7 +242,7 @@ const _sfc_main = {
       }
       try {
         const result = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/cart/add",
+          url: "https://bgnc.online/api/cart/add",
           method: "POST",
           data: {
             skuId: selectedSkuId.value,
@@ -279,7 +279,7 @@ const _sfc_main = {
       let memberLevel = "";
       try {
         const result = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/user/profile",
+          url: "https://bgnc.online/api/user/profile",
           method: "GET"
         });
         if (result.code === 200) {

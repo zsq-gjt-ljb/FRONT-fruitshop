@@ -19,7 +19,7 @@ const _sfc_main = {
         success: async (loginRes) => {
           try {
             const response = await utils_request.request({
-              url: "http://82.156.12.240:8080/api/auth/login",
+              url: "https://bgnc.online/api/auth/login",
               method: "POST",
               data: {
                 xcxCode: loginRes.code,
@@ -31,7 +31,7 @@ const _sfc_main = {
               common_vendor.index.setStorageSync("token", response.data.access_token);
               try {
                 const routeRes = await utils_request.request({
-                  url: `http://82.156.12.240:8080/api/order/route?phoneNumber=5713&orderNumber=SF3165555559187`,
+                  url: `https://bgnc.online/api/order/route?phoneNumber=5713&orderNumber=SF3165555559187`,
                   method: "GET"
                 });
                 common_vendor.index.__f__("log", "at pages/login/login.vue:84", "路由查询结果:", routeRes);

@@ -18,7 +18,7 @@ const _sfc_main = {
     const getCategories = async () => {
       try {
         const res = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/category/list",
+          url: "https://bgnc.online/api/category/list",
           method: "GET"
         });
         if (res.code === 200) {
@@ -48,7 +48,7 @@ const _sfc_main = {
       }
       try {
         const res = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/category",
+          url: "https://bgnc.online/api/category",
           method: "POST",
           data: {
             name: newCategory.name,
@@ -96,7 +96,7 @@ const _sfc_main = {
       }
       try {
         const res = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/category",
+          url: "https://bgnc.online/api/category",
           method: "PUT",
           data: {
             id,
@@ -133,7 +133,7 @@ const _sfc_main = {
           if (res.confirm) {
             try {
               const res2 = await utils_request.request({
-                url: `http://82.156.12.240:8080/api/category/${id}`,
+                url: `https://bgnc.online/api/category/${id}`,
                 method: "DELETE"
               });
               if (res2.code === 200) {

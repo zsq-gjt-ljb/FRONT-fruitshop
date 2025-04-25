@@ -102,7 +102,7 @@ const editingCategory = reactive({
 const getCategories = async () => {
   try {
     const res = await request({
-      url: 'http://82.156.12.240:8080/api/category/list',
+      url: 'https://bgnc.online/api/category/list',
       method: 'GET'
     })
     
@@ -136,7 +136,7 @@ const addCategory = async () => {
   
   try {
     const res = await request({
-      url: 'http://82.156.12.240:8080/api/category',
+      url: 'https://bgnc.online/api/category',
       method: 'POST',
       data: {
         name: newCategory.name,
@@ -196,7 +196,7 @@ const saveEdit = async (id) => {
   
   try {
     const res = await request({
-      url: 'http://82.156.12.240:8080/api/category',
+      url: 'https://bgnc.online/api/category',
       method: 'PUT',
       data: {
         id: id,
@@ -240,7 +240,7 @@ const deleteCategory = async (id) => {
       if (res.confirm) {
         try {
           const res = await request({
-            url: `http://82.156.12.240:8080/api/category/${id}`,
+            url: `https://bgnc.online/api/category/${id}`,
             method: 'DELETE'
           })
           

@@ -60,7 +60,7 @@ const _sfc_main = {
     const getUserInfo = async () => {
       try {
         const res = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/user/profile",
+          url: "https://bgnc.online/api/user/profile",
           method: "GET"
         });
         if (res.code === 200) {
@@ -175,9 +175,9 @@ const _sfc_main = {
         f: common_vendor.o(($event) => navigateToOrderList("")),
         g: common_assets._imports_0$3,
         h: common_vendor.o(($event) => navigateToOrderList("pending-payment")),
-        i: common_assets._imports_2,
+        i: common_assets._imports_2$1,
         j: common_vendor.o(($event) => navigateToOrderList("undelivered")),
-        k: common_assets._imports_3,
+        k: common_assets._imports_3$1,
         l: common_vendor.o(($event) => navigateToOrderList("delivered")),
         m: common_assets._imports_4,
         n: common_vendor.o(($event) => navigateToOrderList("completed")),

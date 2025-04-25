@@ -17,23 +17,59 @@ const _sfc_main = {
     const selectedProducts = common_vendor.ref([]);
     const searchKeyword = common_vendor.ref("");
     const isLoading = common_vendor.ref(false);
+    let autoCheckTimer = null;
     common_vendor.onMounted(() => {
-      common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:135", "HomeManage组件已加载");
+      common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:137", "HomeManage组件已加载");
       fetchProducts().then(() => {
-        common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:138", "产品列表加载完成，开始加载轮播图和首页商品");
-        refreshData();
+        common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:140", "产品列表加载完成，开始加载轮播图和首页商品");
+        refreshData(true);
       });
+      startAutoCheck();
     });
+    common_vendor.onShow(() => {
+      common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:150", "HomeManage页面显示");
+      refreshData(true);
+      startAutoCheck();
+    });
+    common_vendor.onHide(() => {
+      common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:160", "HomeManage页面隐藏");
+      clearAutoCheck();
+    });
+    common_vendor.onUnmounted(() => {
+      common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:167", "HomeManage组件卸载");
+      clearAutoCheck();
+    });
+    const startAutoCheck = () => {
+      clearAutoCheck();
+      autoCheckTimer = setInterval(() => {
+        common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:178", "执行自动检查...");
+        fetchProducts().then(() => {
+          if (allProducts.value.length > 0) {
+            const validProductIds = new Set(allProducts.value.map((product) => String(product.id)));
+            checkAndCleanInvalidProducts(validProductIds);
+          }
+        });
+      }, 3 * 60 * 1e3);
+    };
+    const clearAutoCheck = () => {
+      if (autoCheckTimer) {
+        clearInterval(autoCheckTimer);
+        autoCheckTimer = null;
+      }
+    };
     const fetchProducts = async () => {
       try {
         isLoading.value = true;
         const result = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/product/list",
+          url: "https://bgnc.online/api/product/list",
           method: "GET"
         });
         if (result.code === 200) {
-          common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:154", "result是", result);
+          common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:209", "result是", result);
           allProducts.value = result.data || [];
+          const validProductIds = new Set(allProducts.value.map((product) => String(product.id)));
+          common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:214", "有效商品ID列表:", validProductIds);
+          checkAndCleanInvalidProducts(validProductIds);
         } else {
           allProducts.value = [];
           common_vendor.index.showToast({
@@ -42,13 +78,40 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/HomeManage.vue:164", "获取商品列表失败:", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/HomeManage.vue:226", "获取商品列表失败:", error);
         common_vendor.index.showToast({
           title: "网络错误",
           icon: "none"
         });
       } finally {
         isLoading.value = false;
+      }
+    };
+    const checkAndCleanInvalidProducts = async (validProductIds) => {
+      const invalidBanners = banners.value.filter((banner) => !validProductIds.has(String(banner.productId)));
+      const invalidHomeProducts = selectedProducts.value.filter((product) => !validProductIds.has(String(product.productId)));
+      common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:243", "无效轮播图数量:", invalidBanners.length, "无效首页商品数量:", invalidHomeProducts.length);
+      if (invalidBanners.length > 0 || invalidHomeProducts.length > 0) {
+        try {
+          for (const banner of invalidBanners) {
+            common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:250", "清理无效轮播图:", banner.id, banner.name);
+            await deleteBanner(banner.id, true);
+          }
+          for (const product of invalidHomeProducts) {
+            common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:256", "清理无效首页商品:", product.id, product.name);
+            await deleteHomeProduct(product.id, true);
+          }
+          await refreshData();
+          if (invalidBanners.length > 0 || invalidHomeProducts.length > 0) {
+            common_vendor.index.showToast({
+              title: `已清理${invalidBanners.length + invalidHomeProducts.length}个无效商品`,
+              icon: "none",
+              duration: 2e3
+            });
+          }
+        } catch (error) {
+          common_vendor.index.__f__("error", "at pages/admin/components/HomeManage.vue:272", "清理无效商品失败:", error);
+        }
       }
     };
     const searchProducts = () => {
@@ -72,11 +135,11 @@ const _sfc_main = {
     const loadBanners = async () => {
       try {
         const result = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/productmarket/list/1",
+          url: "https://bgnc.online/api/productmarket/list/1",
           method: "GET"
         });
         if (result.code === 200) {
-          common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:211", "原始轮播数据:", result.data);
+          common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:314", "原始轮播数据:", result.data);
           banners.value = (result.data || []).map((item) => ({
             id: item.id,
             productId: item.productId,
@@ -84,23 +147,23 @@ const _sfc_main = {
             name: item.name || "",
             indexPic: item.imgUrl || ""
           }));
-          common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:218", "处理后的轮播数据:", banners.value);
+          common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:321", "处理后的轮播数据:", banners.value);
         } else {
           banners.value = [];
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/HomeManage.vue:223", "加载轮播图失败:", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/HomeManage.vue:326", "加载轮播图失败:", error);
         banners.value = [];
       }
     };
     const loadHomeProducts = async () => {
       try {
-        common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:231", "开始加载首页商品数据");
+        common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:334", "开始加载首页商品数据");
         const result = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/productmarket/list/0",
+          url: "https://bgnc.online/api/productmarket/list/0",
           method: "GET"
         });
-        common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:237", "首页商品接口返回:", result);
+        common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:340", "首页商品接口返回:", result);
         if (result.code === 200) {
           selectedProducts.value = (result.data || []).map((item) => ({
             id: item.id,
@@ -110,26 +173,31 @@ const _sfc_main = {
             indexPic: item.imgUrl || "",
             price: item.price
           }));
-          common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:248", "处理后的首页商品数据:", selectedProducts.value);
+          common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:351", "处理后的首页商品数据:", selectedProducts.value);
         } else {
-          common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:250", "首页商品接口返回异常:", result.code, result.message);
+          common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:353", "首页商品接口返回异常:", result.code, result.message);
           selectedProducts.value = [];
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/HomeManage.vue:254", "加载首页商品失败:", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/HomeManage.vue:357", "加载首页商品失败:", error);
         selectedProducts.value = [];
       }
     };
-    const refreshData = async () => {
+    const refreshData = async (isInitialLoad = false) => {
       common_vendor.index.showLoading({ title: "刷新中..." });
       try {
         await Promise.all([loadBanners(), loadHomeProducts()]);
-        common_vendor.index.showToast({
-          title: "数据已刷新",
-          icon: "success"
-        });
+        if (isInitialLoad && allProducts.value.length > 0) {
+          const validProductIds = new Set(allProducts.value.map((product) => String(product.id)));
+          await checkAndCleanInvalidProducts(validProductIds);
+        } else {
+          common_vendor.index.showToast({
+            title: "数据已刷新",
+            icon: "success"
+          });
+        }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/HomeManage.vue:269", "刷新数据失败:", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/HomeManage.vue:381", "刷新数据失败:", error);
         common_vendor.index.showToast({
           title: "刷新失败",
           icon: "none"
@@ -146,10 +214,19 @@ const _sfc_main = {
         });
         return;
       }
+      const existsInProducts = allProducts.value.some((p) => String(p.id) === String(product.id));
+      if (!existsInProducts) {
+        common_vendor.index.showToast({
+          title: "该商品已被删除，请刷新列表",
+          icon: "none"
+        });
+        await fetchProducts();
+        return;
+      }
       try {
         common_vendor.index.showLoading({ title: "添加中..." });
         const result = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/productmarket",
+          url: "https://bgnc.online/api/productmarket",
           method: "POST",
           data: {
             productId: product.id,
@@ -161,7 +238,7 @@ const _sfc_main = {
         });
         if (result.code === 200) {
           await loadBanners();
-          common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:308", "轮播图添加成功，刷新后数量:", banners.value.length);
+          common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:432", "轮播图添加成功，刷新后数量:", banners.value.length);
           common_vendor.index.showToast({
             title: "添加轮播图成功",
             icon: "success"
@@ -173,7 +250,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/HomeManage.vue:321", "添加轮播图失败:", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/HomeManage.vue:445", "添加轮播图失败:", error);
         common_vendor.index.showToast({
           title: "添加失败: " + (error.message || "未知错误"),
           icon: "none"
@@ -190,10 +267,19 @@ const _sfc_main = {
         });
         return;
       }
+      const existsInProducts = allProducts.value.some((p) => String(p.id) === String(product.id));
+      if (!existsInProducts) {
+        common_vendor.index.showToast({
+          title: "该商品已被删除，请刷新列表",
+          icon: "none"
+        });
+        await fetchProducts();
+        return;
+      }
       try {
         common_vendor.index.showLoading({ title: "添加中..." });
         const result = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/productmarket",
+          url: "https://bgnc.online/api/productmarket",
           method: "POST",
           data: {
             productId: product.id,
@@ -205,7 +291,7 @@ const _sfc_main = {
         });
         if (result.code === 200) {
           await loadHomeProducts();
-          common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:360", "首页商品添加成功，刷新后数量:", selectedProducts.value.length);
+          common_vendor.index.__f__("log", "at pages/admin/components/HomeManage.vue:496", "首页商品添加成功，刷新后数量:", selectedProducts.value.length);
           common_vendor.index.showToast({
             title: "添加首页商品成功",
             icon: "success"
@@ -217,7 +303,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/HomeManage.vue:373", "添加首页商品失败:", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/HomeManage.vue:509", "添加首页商品失败:", error);
         common_vendor.index.showToast({
           title: "添加失败: " + (error.message || "未知错误"),
           icon: "none"
@@ -226,62 +312,82 @@ const _sfc_main = {
         common_vendor.index.hideLoading();
       }
     };
-    const deleteBanner = async (id) => {
+    const deleteBanner = async (id, silent = false) => {
       try {
-        common_vendor.index.showLoading({ title: "删除中..." });
+        if (!silent) {
+          common_vendor.index.showLoading({ title: "删除中..." });
+        }
         const result = await utils_request.request({
-          url: `http://82.156.12.240:8080/api/productmarket/${id}`,
+          url: `https://bgnc.online/api/productmarket/${id}`,
           method: "DELETE"
         });
         if (result.code === 200) {
           await loadBanners();
-          common_vendor.index.showToast({
-            title: "已从轮播图移除",
-            icon: "success"
-          });
+          if (!silent) {
+            common_vendor.index.showToast({
+              title: "已从轮播图移除",
+              icon: "success"
+            });
+          }
         } else {
+          if (!silent) {
+            common_vendor.index.showToast({
+              title: result.message || "删除失败",
+              icon: "none"
+            });
+          }
+        }
+      } catch (error) {
+        common_vendor.index.__f__("error", "at pages/admin/components/HomeManage.vue:551", "删除轮播图失败:", error);
+        if (!silent) {
           common_vendor.index.showToast({
-            title: result.message || "删除失败",
+            title: "删除失败: " + (error.message || "未知错误"),
             icon: "none"
           });
         }
-      } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/HomeManage.vue:409", "删除轮播图失败:", error);
-        common_vendor.index.showToast({
-          title: "删除失败: " + (error.message || "未知错误"),
-          icon: "none"
-        });
       } finally {
-        common_vendor.index.hideLoading();
+        if (!silent) {
+          common_vendor.index.hideLoading();
+        }
       }
     };
-    const deleteHomeProduct = async (id) => {
+    const deleteHomeProduct = async (id, silent = false) => {
       try {
-        common_vendor.index.showLoading({ title: "删除中..." });
+        if (!silent) {
+          common_vendor.index.showLoading({ title: "删除中..." });
+        }
         const result = await utils_request.request({
-          url: `http://82.156.12.240:8080/api/productmarket/${id}`,
+          url: `https://bgnc.online/api/productmarket/${id}`,
           method: "DELETE"
         });
         if (result.code === 200) {
           await loadHomeProducts();
-          common_vendor.index.showToast({
-            title: "已从首页移除",
-            icon: "success"
-          });
+          if (!silent) {
+            common_vendor.index.showToast({
+              title: "已从首页移除",
+              icon: "success"
+            });
+          }
         } else {
+          if (!silent) {
+            common_vendor.index.showToast({
+              title: result.message || "删除失败",
+              icon: "none"
+            });
+          }
+        }
+      } catch (error) {
+        common_vendor.index.__f__("error", "at pages/admin/components/HomeManage.vue:597", "删除首页商品失败:", error);
+        if (!silent) {
           common_vendor.index.showToast({
-            title: result.message || "删除失败",
+            title: "删除失败: " + (error.message || "未知错误"),
             icon: "none"
           });
         }
-      } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/HomeManage.vue:445", "删除首页商品失败:", error);
-        common_vendor.index.showToast({
-          title: "删除失败: " + (error.message || "未知错误"),
-          icon: "none"
-        });
       } finally {
-        common_vendor.index.hideLoading();
+        if (!silent) {
+          common_vendor.index.hideLoading();
+        }
       }
     };
     return (_ctx, _cache) => {

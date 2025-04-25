@@ -63,7 +63,7 @@
               </view>
     
               <!-- 选择地区 -->
-              <view class="form-item" @tap="showRegionPicker">
+              <view class="form-item" @tap="openRegionPicker">
                 <text class="label">所在地区</text>
                 <view class="region-picker">
                   <text v-if="addressForm.region" class="value">{{ addressForm.region }}</text>
@@ -97,7 +97,7 @@
       <uni-popup ref="regionPopup" type="bottom">
         <view class="region-popup">
           <view class="popup-header">
-            <text class="cancel" @tap="closeRegionPicker">取消</text>
+            <text class="cancel" @tap="cancelRegion">取消</text>
             <text class="title">选择地区</text>
             <text class="confirm" @tap="confirmRegion">确定</text>
           </view>
@@ -109,17 +109,17 @@
           >
             <picker-view-column>
               <view class="picker-item" v-for="(item, index) in provinces" :key="index">
-                {{item}}
+                {{item.name}}
               </view>
             </picker-view-column>
             <picker-view-column>
               <view class="picker-item" v-for="(item, index) in cities" :key="index">
-                {{item}}
+                {{item.name}}
               </view>
             </picker-view-column>
             <picker-view-column>
               <view class="picker-item" v-for="(item, index) in districts" :key="index">
-                {{item}}
+                {{item.name}}
               </view>
             </picker-view-column>
           </picker-view>
@@ -154,6 +154,13 @@
   const editingAddress = ref(null)
   const formPopup = ref(null)
   const id = ref(null)
+  
+  // 设置选择器样式
+  const indicatorStyle = 'height: 80rpx;'
+  
+  // 保存打开选择器前的选择值
+  let previousPickerValue = []
+  
   // 选择微信收货地址
   const chooseWxAddress = () => {
     // 先检查是否授权
@@ -210,23 +217,49 @@
     })
   }
   
-  // 显示地区选择器
-  const showRegionPicker = () => {
+  // 打开地区选择器
+  const openRegionPicker = () => {
+    // 保存当前选择器值，以便取消时恢复
+    previousPickerValue = [...pickerValue.value]
+    console.log('打开地区选择器，当前值:', pickerValue.value)
     regionPopup.value.open()
   }
   
-  // 关闭地区选择器
-  const closeRegionPicker = () => {
+  // 取消地区选择
+  const cancelRegion = () => {
+    // 恢复到打开选择器前的值
+    pickerValue.value = previousPickerValue
+    console.log('取消地区选择，恢复值:', pickerValue.value)
     regionPopup.value.close()
   }
   
   // 确认地区选择
   const confirmRegion = () => {
+    if (pickerValue.value.length !== 3) {
+      uni.showToast({
+        title: '请选择完整的地区信息',
+        icon: 'none'
+      })
+      return
+    }
+    
     const province = provinces.value[pickerValue.value[0]]
     const city = cities.value[pickerValue.value[1]]
-    const district = districts.value[pickerValue[2]]
+    const district = districts.value[pickerValue.value[2]]
+    
+    // 更新地址表单的地区信息
+    addressForm.value.provinceId = province.id
+    addressForm.value.provinceName = province.name
+    addressForm.value.cityId = city.id
+    addressForm.value.cityName = city.name
+    addressForm.value.districtId = district.id
+    addressForm.value.districtName = district.name
+    
+    // 更新显示的地区文本
     addressForm.value.region = getFullRegion(province, city, district)
-    closeRegionPicker()
+    console.log('确认地区选择:', addressForm.value.region)
+    
+    regionPopup.value.close()
   }
   
   // 处理选择器变化
@@ -256,7 +289,7 @@
   const getAddressList = async () => {
     try {
       const res = await request({
-        url: 'http://82.156.12.240:8080/api/addressbook/list',
+        url: 'https://bgnc.online/api/addressbook/list',
         method: 'GET'
       })
       
@@ -302,8 +335,41 @@
       detail: address.detail,
       id: address.id.toString() // 确保ID是字符串
     }
+    
+    // 设置选择器的初始值
+    initPickerValueForEditingAddress(address)
+    
     console.log('编辑表单数据:', addressForm.value)
     formPopup.value.open()
+  }
+  
+  // 为编辑地址初始化选择器的值
+  const initPickerValueForEditingAddress = (address) => {
+    // 找到省份索引
+    const provinceIndex = provinces.value.findIndex(p => p.name === address.provinceName)
+    if (provinceIndex >= 0) {
+      // 更新城市数据
+      updateCities(provinceIndex)
+      
+      // 找到城市索引
+      const cityIndex = cities.value.findIndex(c => c.name === address.cityName)
+      if (cityIndex >= 0) {
+        // 更新区县数据
+        updateDistricts(provinceIndex, cityIndex)
+        
+        // 找到区县索引
+        const districtIndex = districts.value.findIndex(d => d.name === address.districtName)
+        
+        // 设置选择器的值
+        pickerValue.value = [
+          provinceIndex,
+          cityIndex,
+          districtIndex >= 0 ? districtIndex : 0
+        ]
+        
+        console.log('初始化选择器值:', pickerValue.value, [address.provinceName, address.cityName, address.districtName])
+      }
+    }
   }
   
   // 删除地址
@@ -317,7 +383,7 @@
         success: async (res) => {
           if (res.confirm) {
             const res = await request({
-              url: `http://82.156.12.240:8080/api/addressbook/${id.toString()}`, // 确保传递字符串ID
+              url: `https://bgnc.online/api/addressbook/${id.toString()}`, // 确保传递字符串ID
               method: 'DELETE'
             })
             
@@ -399,22 +465,49 @@
   const handleSave = async () => {
     console.log('保存按钮被点击')
     
+    // 表单验证
+    if (!validateForm()) {
+      return
+    }
+    
     try {
+      // 解析地区信息
+      let provinceName, cityName, districtName;
+      
+      if (editingAddress.value) {
+        // 编辑模式：如果地区没有更改，使用原有的值
+        if (!addressForm.value.region || addressForm.value.region === `${editingAddress.value.provinceName} ${editingAddress.value.cityName} ${editingAddress.value.districtName}`) {
+          provinceName = editingAddress.value.provinceName;
+          cityName = editingAddress.value.cityName;
+          districtName = editingAddress.value.districtName;
+        } else {
+          // 如果地区有更改，使用新选择的地区值
+          provinceName = provinces.value[pickerValue.value[0]].name;
+          cityName = cities.value[pickerValue.value[1]].name;
+          districtName = districts.value[pickerValue.value[2]].name;
+        }
+      } else {
+        // 新增模式：使用选择器的当前值
+        provinceName = provinces.value[pickerValue.value[0]].name;
+        cityName = cities.value[pickerValue.value[1]].name;
+        districtName = districts.value[pickerValue.value[2]].name;
+      }
+      
       const addressData = {
         consignee: addressForm.value.consignee,
         phone: addressForm.value.phone,
-        provinceName: provinces.value[pickerValue.value[0]],
-        cityName: cities.value[pickerValue.value[1]],
-        districtName: districts.value[pickerValue.value[2]],
+        provinceName: provinceName,
+        cityName: cityName,
+        districtName: districtName,
         detail: addressForm.value.detail,
-        sex:'男',
+        sex: '男',
         id: editingAddress.value?.id?.toString() // 确保ID是字符串
       }
       
       console.log('发送的请求数据:', addressData)
       
       const res = await request({
-        url: 'http://82.156.12.240:8080/api/addressbook/',
+        url: 'https://bgnc.online/api/addressbook/',
         method: editingAddress.value ? 'PUT' : 'POST',  // 修改使用PUT，新增使用POST
         data: addressData
       })
@@ -446,7 +539,8 @@
   
   // 获取完整地区编码
   const getFullRegion = (province, city, district) => {
-    return `${province} ${city} ${district}`
+    if (!province || !city || !district) return '';
+    return `${province.name} ${city.name} ${district.name}`
   }
   
   // 关闭表单

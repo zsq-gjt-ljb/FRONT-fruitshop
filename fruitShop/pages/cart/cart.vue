@@ -11,97 +11,98 @@
     
     <!-- 购物车列表 -->
     <view class="cart-content" v-else>
-      <!-- 店铺信息 -->
-      <view class="store-card">
-        <view class="store-header">
-          <view class="checkbox-custom" @tap="toggleSelectAll">
-            <view class="checkbox-inner" :class="{'checkbox-active': isAllSelected}">
-              <uni-icons type="checkmarkempty" size="14" color="#fff" v-if="isAllSelected"></uni-icons>
+      <!-- 标题栏 -->
+      <view class="cart-header">
+        <text class="cart-title">我的购物车</text>
+        <text class="cart-subtitle">{{ cartList.length }}件商品</text>
+      </view>
+      
+      <!-- 商品列表 -->
+      <view class="product-list">
+        <view 
+          class="product-card" 
+          v-for="(item, index) in cartList" 
+          :key="item.id"
+        >
+          <!-- 选择框 -->
+          <view class="select-area" @tap="toggleSelectItem(item)">
+            <view class="checkbox" :class="{'checked': item.selected}">
+              <uni-icons type="checkmarkempty" size="14" color="#fff" v-if="item.selected"></uni-icons>
             </view>
           </view>
-          <view class="store-info">
-            <text class="store-name">购物车</text>
-            <text class="item-count">{{ cartList.length }}件商品</text>
-          </view>
-        </view>
-        
-        <!-- 商品列表 -->
-        <view class="product-list">
-          <view 
-            class="product-item" 
-            v-for="(item, index) in cartList" 
-            :key="item.id"
-          >
-            <!-- 选择框 -->
-            <view class="checkbox-custom" @tap="toggleSelectItem(item)">
-              <view class="checkbox-inner" :class="{'checkbox-active': item.selected}">
-                <uni-icons type="checkmarkempty" size="12" color="#fff" v-if="item.selected"></uni-icons>
-              </view>
-            </view>
+          
+          <!-- 商品信息 -->
+          <view class="product-content" @tap="goToDetail(item.productId)">
+            <image class="product-image" :src="item.productImage || '/static/images/product-default.png'" mode="aspectFill"></image>
             
-            <!-- 商品信息 -->
-            <view class="product-info" @tap="goToDetail(item.productId)">
-              <view class="image-wrapper">
-                <image class="product-image" :src="item.productImage || '/static/images/product-default.png'" mode="aspectFill"></image>
-              </view>
-              <view class="product-detail">
-                <view class="product-name">{{ item.productName }}</view>
-                <view class="product-spec" v-if="item.spec">{{ item.spec }}</view>
-                <view class="product-price">
-                  <text class="price-value">￥{{ item.price }}</text>
+            <view class="product-info">
+              <view class="product-name">{{ item.productName }}</view>
+              <view class="product-spec" v-if="item.spec">{{ item.spec }}</view>
+              <view class="product-price">¥{{ item.price }}</view>
+              
+              <!-- 数量调整 -->
+              <view class="quantity-control">
+                <view 
+                  class="quantity-btn minus" 
+                  :class="{ disabled: item.quantity <= 1 }"
+                  @tap.stop="decreaseQuantity(item)"
+                >
+                  <uni-icons type="minus" size="12" :color="item.quantity <= 1 ? '#ccc' : '#333'"></uni-icons>
+                </view>
+                
+                <input 
+                  type="number" 
+                  class="quantity-input" 
+                  v-model.number="item.quantity" 
+                  @blur="updateCartItem(item)"
+                  @tap.stop
+                />
+                
+                <view 
+                  class="quantity-btn plus" 
+                  :class="{ disabled: item.quantity >= item.stock }"
+                  @tap.stop="increaseQuantity(item)"
+                >
+                  <uni-icons type="plus" size="12" :color="item.quantity >= item.stock ? '#ccc' : '#333'"></uni-icons>
                 </view>
               </view>
             </view>
-            
-            <!-- 数量调整 -->
-            <view class="quantity-control">
-              <view 
-                class="quantity-btn minus" 
-                :class="{ disabled: item.quantity <= 1 }"
-                @tap="decreaseQuantity(item)"
-              ><uni-icons type="minus" size="12" :color="item.quantity <= 1 ? '#ccc' : '#000'"></uni-icons></view>
-              <input 
-                type="number" 
-                class="quantity-input" 
-                v-model.number="item.quantity" 
-                @blur="updateCartItem(item)"
-              />
-              <view 
-                class="quantity-btn plus" 
-                :class="{ disabled: item.quantity >= item.stock }"
-                @tap="increaseQuantity(item)"
-              ><uni-icons type="plus" size="12" :color="item.quantity >= item.stock ? '#ccc' : '#000'"></uni-icons></view>
-            </view>
-            
-            <!-- 删除按钮 -->
-            <view class="action-row">
-              <view class="delete-btn" @tap="deleteCartItem(item)">
-                <uni-icons type="trash" size="16" color="#999"></uni-icons>
-              </view>
-            </view>
           </view>
+          
+          <!-- 删除按钮 -->
+          <view class="delete-btn" @tap.stop="deleteCartItem(item)">
+            <uni-icons type="trash" size="18" color="#fff"></uni-icons>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 购物车推荐 -->
+      <view class="recommendations">
+        <view class="section-title">
+          <text>猜你喜欢</text>
+        </view>
+        <view class="empty-recommends">
+          <text>更多好物，敬请期待</text>
         </view>
       </view>
     </view>
     
     <!-- 底部结算栏 -->
     <view class="cart-footer" v-if="cartList.length > 0">
-      <view class="footer-left">
-        <view class="checkbox-custom" @tap="toggleSelectAll">
-          <view class="checkbox-inner" :class="{'checkbox-active': isAllSelected}">
-            <uni-icons type="checkmarkempty" size="12" color="#fff" v-if="isAllSelected"></uni-icons>
-          </view>
+      <view class="select-all" @tap="toggleSelectAll">
+        <view class="checkbox" :class="{'checked': isAllSelected}">
+          <uni-icons type="checkmarkempty" size="14" color="#fff" v-if="isAllSelected"></uni-icons>
         </view>
-        <text class="all-text">全选 ({{ cartList.length }})</text>
+        <text>全选</text>
       </view>
-      <view class="footer-center">
-        <text class="total-label">合计：</text>
-        <text class="total-price">
-          <text class="price-integer">￥{{ totalPriceInteger }}.{{ totalPriceDecimal }}</text>
-        </text>
+      
+      <view class="price-section">
+        <text class="price-label">合计:</text>
+        <text class="price-value">¥{{ totalPrice.toFixed(2) }}</text>
       </view>
-      <view class="checkout-btn" :class="{'checkout-active': selectedCount > 0}" @tap="handleCheckout">
-        <text>结算</text><text v-if="selectedCount">({{ selectedCount }})</text>
+      
+      <view class="checkout-btn" :class="{'active': selectedCount > 0}" @tap="handleCheckout">
+        结算 <text v-if="selectedCount">({{ selectedCount }})</text>
       </view>
     </view>
   </view>
@@ -152,7 +153,7 @@ const getCartList = async () => {
     uni.showLoading({ title: '加载中' })
     
     const result = await request({
-      url: 'http://82.156.12.240:8080/api/cart/list',
+      url: 'https://bgnc.online/api/cart/list',
       method: 'GET'
     })
     
@@ -241,7 +242,7 @@ const decreaseQuantity = async (item) => {
     
     // 调用后端API更新数量
     const result = await request({
-      url: 'http://82.156.12.240:8080/api/cart/update',
+      url: 'https://bgnc.online/api/cart/update',
       method: 'PUT',
       data: {
         id: updateId,
@@ -287,7 +288,7 @@ const increaseQuantity = async (item) => {
     
     // 调用后端API更新数量
     const result = await request({
-      url: 'http://82.156.12.240:8080/api/cart/update',
+      url: 'https://bgnc.online/api/cart/update',
       method: 'PUT',
       data: {
         id: updateId,
@@ -334,7 +335,7 @@ const updateCartItem = async (item) => {
     
     // 调用后端API更新数量
     const result = await request({
-      url: 'http://82.156.12.240:8080/api/cart/update',
+      url: 'https://bgnc.online/api/cart/update',
       method: 'PUT',
       data: {
         id: updateId,
@@ -370,7 +371,7 @@ const deleteCartItem = (item) => {
           
           // 调用后端API删除商品
           const result = await request({
-            url: `http://82.156.12.240:8080/api/cart/${deleteId}`,
+            url: `https://bgnc.online/api/cart/${deleteId}`,
             method: 'DELETE'
           })
           
@@ -473,8 +474,8 @@ onLoad(() => {
 <style lang="scss">
 .cart-container {
   min-height: 100vh;
-  background-color: #f5f5f7; // 保留苹果风格背景色
-  padding-bottom: 120rpx; // 为底部结算栏留出空间
+  background-color: #f8f8fa;
+  padding-bottom: 140rpx; // 为底部结算栏留出空间
   
   // 空购物车状态
   .empty-cart {
@@ -485,14 +486,15 @@ onLoad(() => {
     padding-top: 30vh;
     
     .empty-icon {
-      width: 180rpx;
-      height: 180rpx;
+      width: 200rpx;
+      height: 200rpx;
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 50%;
       background-color: #f0f0f3;
       margin-bottom: 40rpx;
+      box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.05);
     }
     
     .empty-text {
@@ -504,290 +506,291 @@ onLoad(() => {
     
     .go-shopping {
       width: 280rpx;
-      height: 80rpx;
-      background-color: #3b78db; // 改为高级蓝色
+      height: 88rpx;
+      background: linear-gradient(135deg, #4B91F1, #6FB1FF);
       color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 40rpx;
-      font-size: 28rpx;
+      border-radius: 44rpx;
+      font-size: 30rpx;
       font-weight: 500;
-      letter-spacing: 1px;
-      box-shadow: 0 6rpx 16rpx rgba(59, 120, 219, 0.2);
+      letter-spacing: 2rpx;
+      box-shadow: 0 8rpx 20rpx rgba(75, 145, 241, 0.25);
+      transition: transform 0.2s;
+      
+      &:active {
+        transform: scale(0.96);
+      }
     }
   }
   
   // 购物车内容
   .cart-content {
     padding: 24rpx;
+    
+    .cart-header {
+      margin: 20rpx 10rpx 40rpx;
+      
+      .cart-title {
+        font-size: 40rpx;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 6rpx;
+        display: block;
+      }
+      
+      .cart-subtitle {
+        font-size: 26rpx;
+        color: #999;
+      }
+    }
   }
   
-  // 店铺卡片
-  .store-card {
-    background-color: #fff;
-    border-radius: 20rpx;
-    margin-bottom: 20rpx;
-    overflow: hidden;
-    box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.05);
+  // 商品列表
+  .product-list {
+    margin-bottom: 40rpx;
     
-    .store-header {
+    .product-card {
+      position: relative;
       display: flex;
-      align-items: center;
-      padding: 30rpx 24rpx;
-      border-bottom: 0.5px solid rgba(0, 0, 0, 0.05);
+      background-color: #fff;
+      border-radius: 24rpx;
+      margin-bottom: 24rpx;
+      padding: 24rpx;
+      box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.04);
+      overflow: hidden;
       
-      .checkbox-custom {
-        margin-right: 20rpx;
+      .select-area {
+        display: flex;
+        align-items: center;
+        padding-right: 20rpx;
         
-        .checkbox-inner {
+        .checkbox {
           width: 40rpx;
           height: 40rpx;
           border-radius: 50%;
-          border: 2rpx solid #d1d1d6;
+          border: 2rpx solid #ddd;
           display: flex;
           align-items: center;
           justify-content: center;
+          transition: all 0.2s;
           
-          &.checkbox-active {
-            background-color: #3b78db;
-            border-color: #3b78db;
+          &.checked {
+            background: linear-gradient(135deg, #4B91F1, #6FB1FF);
+            border-color: #4B91F1;
           }
         }
       }
       
-      .store-info {
+      .product-content {
+        flex: 1;
         display: flex;
-        flex-direction: column;
-        align-items: flex-start;
         
-        .store-name {
-          font-size: 32rpx;
-          color: #333;
-          font-weight: 600;
-          margin-bottom: 4rpx;
-        }
-        
-        .item-count {
-          font-size: 24rpx;
-          color: #8e8e93;
-        }
-      }
-    }
-    
-    .product-list {
-      .product-item {
-        display: flex;
-        padding: 30rpx 24rpx;
-        position: relative;
-        border-bottom: 0.5px solid rgba(0, 0, 0, 0.05);
-        
-        &:last-child {
-          border-bottom: none;
-        }
-        
-        .checkbox-custom {
-          margin-right: 20rpx;
-          align-self: center;
-          
-          .checkbox-inner {
-            width: 36rpx;
-            height: 36rpx;
-            border-radius: 50%;
-            border: 2rpx solid #d1d1d6;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            
-            &.checkbox-active {
-              background-color: #3b78db;
-              border-color: #3b78db;
-            }
-          }
+        .product-image {
+          width: 180rpx;
+          height: 180rpx;
+          border-radius: 16rpx;
+          background-color: #f5f5f7;
+          border: 1px solid rgba(0,0,0,0.03);
         }
         
         .product-info {
           flex: 1;
-          display: flex;
-          margin-right: 16rpx;
+          padding-left: 24rpx;
+          position: relative;
           
-          .image-wrapper {
-            width: 180rpx;
-            height: 180rpx;
-            border-radius: 12rpx;
+          .product-name {
+            font-size: 30rpx;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 12rpx;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
             overflow: hidden;
-            background-color: #f5f5f7;
-            
-            .product-image {
-              width: 100%;
-              height: 100%;
-            }
+            line-height: 1.4;
           }
           
-          .product-detail {
-            flex: 1;
-            padding-left: 24rpx;
+          .product-spec {
+            display: inline-block;
+            font-size: 24rpx;
+            color: #999;
+            background-color: #f8f8fa;
+            padding: 4rpx 12rpx;
+            border-radius: 8rpx;
+            margin-bottom: 16rpx;
+          }
+          
+          .product-price {
+            font-size: 34rpx;
+            color: #4B91F1;
+            font-weight: 600;
+            margin-top: 16rpx;
+          }
+          
+          .quantity-control {
+            position: absolute;
+            bottom: 0;
+            right: 0;
             display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
+            align-items: center;
+            height: 60rpx;
+            background-color: #f8f8fa;
+            border-radius: 30rpx;
+            overflow: hidden;
+            box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
             
-            .product-name {
-              font-size: 30rpx;
-              color: #333;
-              line-height: 1.4;
-              margin-bottom: 14rpx;
-              font-weight: 500;
-              display: -webkit-box;
-              -webkit-line-clamp: 2;
-              -webkit-box-orient: vertical;
-              overflow: hidden;
-            }
-            
-            .product-spec {
-              font-size: 26rpx;
-              color: #8e8e93;
-              margin-bottom: 20rpx;
-            }
-            
-            .product-price {
-              margin-top: auto;
+            .quantity-btn {
+              width: 60rpx;
+              height: 60rpx;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: background-color 0.2s;
               
-              .price-value {
-                font-size: 34rpx;
-                color: #3b78db;
-                font-weight: 600;
+              &:active {
+                background-color: #eee;
+              }
+              
+              &.disabled {
+                opacity: 0.5;
               }
             }
-          }
-        }
-        
-        .quantity-control {
-          display: flex;
-          align-items: flex-end;
-          align-self: center;
-          margin-top: 20rpx;
-          
-          .quantity-btn {
-            width: 60rpx;
-            height: 60rpx;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #f5f5f7;
-            color: #333;
-            font-size: 28rpx;
             
-            &.minus {
-              border-radius: 30rpx 0 0 30rpx;
-            }
-            
-            &.plus {
-              border-radius: 0 30rpx 30rpx 0;
-            }
-            
-            &.disabled {
-              color: #ccc;
+            .quantity-input {
+              width: 80rpx;
+              height: 60rpx;
+              text-align: center;
+              font-size: 28rpx;
+              color: #333;
+              background-color: transparent;
             }
           }
-          
-          .quantity-input {
-            width: 80rpx;
-            height: 60rpx;
-            background-color: #f5f5f7;
-            text-align: center;
-            font-size: 28rpx;
-            font-weight: 500;
-          }
         }
-        
-        .action-row {
-          position: absolute;
-          top: 30rpx;
-          right: 24rpx;
-          display: flex;
-          
-          .delete-btn {
-            width: 60rpx;
-            height: 60rpx;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 30rpx;
-            background-color: rgba(0,0,0,0.02);
-          }
-        }
+      }
+      
+      .delete-btn {
+        position: absolute;
+        top: 16rpx;
+        right: 16rpx;
+        width: 48rpx;
+        height: 48rpx;
+        border-radius: 24rpx;
+        background: linear-gradient(to right, #ff6b6b, #ff8787);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4rpx 12rpx rgba(255, 107, 107, 0.2);
       }
     }
   }
   
+  // 推荐部分
+  .recommendations {
+    background-color: #fff;
+    border-radius: 24rpx;
+    padding: 30rpx;
+    margin-bottom: 30rpx;
+    box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.04);
+    
+    .section-title {
+      font-size: 32rpx;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 30rpx;
+      position: relative;
+      
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -10rpx;
+        width: 60rpx;
+        height: 6rpx;
+        background: linear-gradient(135deg, #4B91F1, #6FB1FF);
+        border-radius: 3rpx;
+      }
+    }
+    
+    .empty-recommends {
+      height: 160rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      text {
+        font-size: 28rpx;
+        color: #999;
+      }
+    }
+  }
+  
+  // 底部结算栏
   .cart-footer {
     position: fixed;
     bottom: 0;
-    width: 100%;
-    background-color: #fff;
+    left: 0;
+    right: 0;
     height: 120rpx;
+    background-color: #fff;
     display: flex;
     align-items: center;
     padding: 0 30rpx;
-    box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.05);
+    box-shadow: 0 -4rpx 24rpx rgba(0, 0, 0, 0.06);
     z-index: 100;
     
-    .footer-left {
+    .select-all {
       display: flex;
       align-items: center;
       
-      .checkbox-custom {
-        margin-right: 20rpx;
+      .checkbox {
+        width: 40rpx;
+        height: 40rpx;
+        border-radius: 50%;
+        border: 2rpx solid #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 16rpx;
+        transition: all 0.2s;
         
-        .checkbox-inner {
-          width: 40rpx;
-          height: 40rpx;
-          border-radius: 50%;
-          border: 2rpx solid #d1d1d6;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          
-          &.checkbox-active {
-            background-color: #3b78db;
-            border-color: #3b78db;
-          }
+        &.checked {
+          background: linear-gradient(135deg, #4B91F1, #6FB1FF);
+          border-color: #4B91F1;
         }
       }
       
-      .all-text {
-        font-size: 30rpx;
+      text {
+        font-size: 28rpx;
         color: #333;
       }
     }
     
-    .footer-center {
+    .price-section {
       flex: 1;
       display: flex;
-      justify-content: flex-end;
       align-items: baseline;
-      padding-right: 30rpx;
+      justify-content: flex-end;
+      padding: 0 30rpx;
       
-      .total-label {
-        font-size: 30rpx;
+      .price-label {
+        font-size: 28rpx;
         color: #666;
-        font-weight: 500;
+        margin-right: 10rpx;
       }
       
-      .total-price {
-        color: #3b78db;
-        
-        .price-integer {
-          font-size: 40rpx;
-          font-weight: bold;
-        }
+      .price-value {
+        font-size: 38rpx;
+        font-weight: 600;
+        color: #4B91F1;
       }
     }
     
     .checkout-btn {
-      width: 220rpx;
+      min-width: 220rpx;
       height: 80rpx;
-      background: linear-gradient(to right, #3b78db, #4a90e2);
+      background: linear-gradient(to right, #E0E0E0, #CCCCCC);
       color: #fff;
       display: flex;
       align-items: center;
@@ -796,10 +799,11 @@ onLoad(() => {
       font-size: 30rpx;
       font-weight: 600;
       letter-spacing: 2rpx;
-      box-shadow: 0 6rpx 16rpx rgba(59, 120, 219, 0.25);
+      transition: all 0.3s;
       
-      &.checkout-active {
-        color: #fff;
+      &.active {
+        background: linear-gradient(135deg, #4B91F1, #6FB1FF);
+        box-shadow: 0 6rpx 16rpx rgba(75, 145, 241, 0.25);
       }
     }
   }

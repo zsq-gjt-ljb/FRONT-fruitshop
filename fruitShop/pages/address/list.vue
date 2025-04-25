@@ -70,7 +70,7 @@ const filteredAddresses = computed(() => {
 const getAddressList = async () => {
   try {
     const res = await request({
-      url: 'http://82.156.12.240:8080/api/addressbook/list',
+      url: 'https://bgnc.online/api/addressbook/list',
       method: 'GET'
     })
     
@@ -119,7 +119,7 @@ const deleteAddress = (id) => {
       if (res.confirm) {
         try {
           const result = await request({
-            url: `http://82.156.12.240:8080/api/addressbook/?id=${id}`,
+            url: `https://bgnc.online/api/addressbook/?id=${id}`,
             method: 'DELETE',
             data: { id }
           })

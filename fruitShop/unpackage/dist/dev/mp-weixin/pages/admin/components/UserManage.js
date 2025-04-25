@@ -30,7 +30,7 @@ const _sfc_main = {
       loading.value = true;
       try {
         const res = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/user/list",
+          url: "https://bgnc.online/api/user/list",
           method: "GET",
           data: {
             pageNum: currentPage.value,
@@ -83,7 +83,7 @@ const _sfc_main = {
         return;
       try {
         const res = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/user/updateLevel",
+          url: "https://bgnc.online/api/user/updateLevel",
           method: "PUT",
           data: {
             id: currentUser.value.id,

@@ -72,7 +72,7 @@ const _sfc_main = {
     const getUserInfo = async () => {
       try {
         const res = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/user/profile",
+          url: "https://bgnc.online/api/user/profile",
           method: "GET"
         });
         if (res.code === 200) {
@@ -101,7 +101,7 @@ const _sfc_main = {
             const uploadTask = () => {
               return new Promise((resolve, reject) => {
                 common_vendor.index.uploadFile({
-                  url: "http://82.156.12.240:8080/api/file/upload",
+                  url: "https://bgnc.online/api/file/upload",
                   filePath: tempFilePath,
                   name: "file",
                   header: {
@@ -130,7 +130,7 @@ const _sfc_main = {
             const imageUrl = await uploadTask();
             common_vendor.index.__f__("log", "at pages/settings/index.vue:282", "头像上传成功, URL:", imageUrl);
             const updateRes = await utils_request.request({
-              url: "http://82.156.12.240:8080/api/user/profile",
+              url: "https://bgnc.online/api/user/profile",
               method: "PUT",
               data: {
                 userAvatar: imageUrl
@@ -164,7 +164,7 @@ const _sfc_main = {
     const updateName = async (value) => {
       try {
         const res = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/user/profile",
+          url: "https://bgnc.online/api/user/profile",
           method: "PUT",
           data: {
             userName: value
@@ -197,7 +197,7 @@ const _sfc_main = {
           const gender = res.tapIndex + 1;
           try {
             const updateRes = await utils_request.request({
-              url: "http://82.156.12.240:8080/api/user/profile",
+              url: "https://bgnc.online/api/user/profile",
               method: "PUT",
               data: {
                 userSex: gender
@@ -232,7 +232,7 @@ const _sfc_main = {
       }
       try {
         const res = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/user/profile",
+          url: "https://bgnc.online/api/user/profile",
           method: "PUT",
           data: {
             phone: value
@@ -262,7 +262,7 @@ const _sfc_main = {
     const confirmDatePicker = async () => {
       try {
         const updateRes = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/user/profile",
+          url: "https://bgnc.online/api/user/profile",
           method: "PUT",
           data: {
             userBirthday: selectedDate.value

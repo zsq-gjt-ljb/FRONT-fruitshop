@@ -97,7 +97,7 @@ const getOrderDetail = async () => {
     })
     
     const result = await request({
-      url: `http://82.156.12.240:8080/api/order/${orderId.value}`,
+      url: `https://bgnc.online/api/order/${orderId.value}`,
       method: 'GET'
     })
     

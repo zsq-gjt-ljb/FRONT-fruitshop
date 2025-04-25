@@ -7259,9 +7259,9 @@ function initOnError() {
   };
 }
 function initRuntimeSocketService() {
-  const hosts = "10.90.74.168,127.0.0.1";
+  const hosts = "10.90.169.126,127.0.0.1";
   const port = "8090";
-  const id = "mp-weixin_sLffOS";
+  const id = "mp-weixin_SsxgJe";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -8204,6 +8204,7 @@ const createHook = (lifecycle) => (hook, target = getCurrentInstance()) => {
   !isInSSRComponentSetup && injectHook(lifecycle, hook, target);
 };
 const onShow = /* @__PURE__ */ createHook(ON_SHOW);
+const onHide = /* @__PURE__ */ createHook(ON_HIDE);
 const onLoad = /* @__PURE__ */ createHook(ON_LOAD);
 const onReady = /* @__PURE__ */ createHook(ON_READY);
 const onReachBottom = /* @__PURE__ */ createHook(ON_REACH_BOTTOM);
@@ -67057,12 +67058,14 @@ exports.messages = messages;
 exports.n = n$1;
 exports.nr = nr;
 exports.o = o$1;
+exports.onHide = onHide;
 exports.onLoad = onLoad;
 exports.onMounted = onMounted;
 exports.onPullDownRefresh = onPullDownRefresh;
 exports.onReachBottom = onReachBottom;
 exports.onReady = onReady;
 exports.onShow = onShow;
+exports.onUnmounted = onUnmounted;
 exports.p = p$1;
 exports.popup = popup;
 exports.rawData = rawData;

@@ -147,7 +147,7 @@ const toolsList = computed(() => {
 const getUserInfo = async () => {
   try {
     const res = await request({
-      url: 'http://82.156.12.240:8080/api/user/profile',
+      url: 'https://bgnc.online/api/user/profile',
       method: 'GET'
     })
     if (res.code === 200) {

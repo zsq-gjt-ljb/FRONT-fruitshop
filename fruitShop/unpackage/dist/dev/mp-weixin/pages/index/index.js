@@ -1,5 +1,6 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
+const common_assets = require("../../common/assets.js");
 const utils_request = require("../../utils/request.js");
 if (!Array) {
   const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
@@ -19,40 +20,40 @@ const _sfc_main = {
     const isLoading = common_vendor.ref(false);
     const loadBanners = async () => {
       try {
-        common_vendor.index.__f__("log", "at pages/index/index.vue:278", "开始加载轮播图数据");
+        common_vendor.index.__f__("log", "at pages/index/index.vue:315", "开始加载轮播图数据");
         const result = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/product/market/1",
+          url: "https://bgnc.online/api/product/market/1",
           method: "GET"
         });
-        common_vendor.index.__f__("log", "at pages/index/index.vue:284", "轮播图API返回结果:", result);
+        common_vendor.index.__f__("log", "at pages/index/index.vue:321", "轮播图API返回结果:", result);
         if (result.code === 200) {
-          common_vendor.index.__f__("log", "at pages/index/index.vue:286", "轮播图数据:", result.data);
+          common_vendor.index.__f__("log", "at pages/index/index.vue:323", "轮播图数据:", result.data);
           bannerList.value = (result.data || []).map((item) => ({
             id: item.id,
-            productId: item.productId,
+            productId: item.id,
             name: item.productName || "",
             indexPic: item.indexPic || ""
           }));
-          common_vendor.index.__f__("log", "at pages/index/index.vue:293", "处理后的轮播图数据:", bannerList.value);
+          common_vendor.index.__f__("log", "at pages/index/index.vue:330", "处理后的轮播图数据:", bannerList.value);
         } else {
-          common_vendor.index.__f__("error", "at pages/index/index.vue:295", "获取轮播图失败:", result.message);
+          common_vendor.index.__f__("error", "at pages/index/index.vue:332", "获取轮播图失败:", result.message);
           bannerList.value = [];
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/index/index.vue:299", "加载轮播图出错:", error);
+        common_vendor.index.__f__("error", "at pages/index/index.vue:336", "加载轮播图出错:", error);
         bannerList.value = [];
       }
     };
     const loadCategories = async () => {
       try {
-        common_vendor.index.__f__("log", "at pages/index/index.vue:307", "开始加载分类数据");
+        common_vendor.index.__f__("log", "at pages/index/index.vue:344", "开始加载分类数据");
         const result = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/category/list",
+          url: "https://bgnc.online/api/category/list",
           method: "GET"
         });
-        common_vendor.index.__f__("log", "at pages/index/index.vue:313", "分类API返回结果:", result);
+        common_vendor.index.__f__("log", "at pages/index/index.vue:350", "分类API返回结果:", result);
         if (result.code === 200) {
-          common_vendor.index.__f__("log", "at pages/index/index.vue:315", "分类数据:", result.data);
+          common_vendor.index.__f__("log", "at pages/index/index.vue:352", "分类数据:", result.data);
           categories.value = result.data || [];
           const categoryIcons = [
             "/static/images/category-fruit.png",
@@ -64,53 +65,53 @@ const _sfc_main = {
             ...cat,
             image: categoryIcons[index % categoryIcons.length]
           }));
-          common_vendor.index.__f__("log", "at pages/index/index.vue:331", "处理后的分类数据:", categories.value);
+          common_vendor.index.__f__("log", "at pages/index/index.vue:368", "处理后的分类数据:", categories.value);
         } else {
-          common_vendor.index.__f__("error", "at pages/index/index.vue:333", "获取分类失败:", result.message);
+          common_vendor.index.__f__("error", "at pages/index/index.vue:370", "获取分类失败:", result.message);
           categories.value = [];
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/index/index.vue:337", "加载分类出错:", error);
+        common_vendor.index.__f__("error", "at pages/index/index.vue:374", "加载分类出错:", error);
         categories.value = [];
       }
     };
     const loadHomeProducts = async () => {
       try {
-        common_vendor.index.__f__("log", "at pages/index/index.vue:345", "开始加载首页推荐商品");
+        common_vendor.index.__f__("log", "at pages/index/index.vue:382", "开始加载首页推荐商品");
         const result = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/product/market/0",
+          url: "https://bgnc.online/api/product/market/0",
           method: "GET"
         });
-        common_vendor.index.__f__("log", "at pages/index/index.vue:351", "首页商品API返回结果:", result);
+        common_vendor.index.__f__("log", "at pages/index/index.vue:388", "首页商品API返回结果:", result);
         if (result.code === 200) {
-          common_vendor.index.__f__("log", "at pages/index/index.vue:353", "首页商品数据:", result.data);
+          common_vendor.index.__f__("log", "at pages/index/index.vue:390", "首页商品数据:", result.data);
           homeProducts.value = (result.data || []).map((item) => ({
             id: item.id,
-            productId: item.productId,
+            productId: item.id,
             name: item.name || "",
             indexPic: item.indexPic || "",
             price: item.price || "暂无价格"
           }));
-          common_vendor.index.__f__("log", "at pages/index/index.vue:361", "处理后的首页商品数据:", homeProducts.value);
+          common_vendor.index.__f__("log", "at pages/index/index.vue:398", "处理后的首页商品数据:", homeProducts.value);
         } else {
-          common_vendor.index.__f__("error", "at pages/index/index.vue:363", "获取首页商品失败:", result.message);
+          common_vendor.index.__f__("error", "at pages/index/index.vue:400", "获取首页商品失败:", result.message);
           homeProducts.value = [];
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/index/index.vue:367", "加载首页商品出错:", error);
+        common_vendor.index.__f__("error", "at pages/index/index.vue:404", "加载首页商品出错:", error);
         homeProducts.value = [];
       }
     };
     const initData = async () => {
       isLoading.value = true;
       try {
-        common_vendor.index.__f__("log", "at pages/index/index.vue:376", "开始初始化首页数据");
+        common_vendor.index.__f__("log", "at pages/index/index.vue:413", "开始初始化首页数据");
         await loadBanners();
         await loadCategories();
         await loadHomeProducts();
-        common_vendor.index.__f__("log", "at pages/index/index.vue:382", "首页数据加载完成");
+        common_vendor.index.__f__("log", "at pages/index/index.vue:419", "首页数据加载完成");
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/index/index.vue:384", "初始化数据失败:", error);
+        common_vendor.index.__f__("error", "at pages/index/index.vue:421", "初始化数据失败:", error);
         common_vendor.index.showToast({
           title: "加载数据失败",
           icon: "none"
@@ -121,51 +122,59 @@ const _sfc_main = {
     };
     const goToDetail = (productId) => {
       if (!productId) {
-        common_vendor.index.__f__("error", "at pages/index/index.vue:397", "无效的商品ID");
+        common_vendor.index.__f__("error", "at pages/index/index.vue:434", "无效的商品ID");
         return;
       }
-      common_vendor.index.__f__("log", "at pages/index/index.vue:401", "首页跳转到商品详情，ID:", productId);
+      common_vendor.index.__f__("log", "at pages/index/index.vue:438", "首页跳转到商品详情，ID:", productId);
+      const id = typeof productId === "object" ? productId.id : productId;
       common_vendor.index.navigateTo({
-        url: `/pages/detail/detail?id=${productId}`
-      });
-    };
-    const navigateToCategory = (category) => {
-      try {
-        common_vendor.index.setStorageSync("selectedCategoryId", category.id);
-        common_vendor.index.__f__("log", "at pages/index/index.vue:412", "保存选中的分类ID:", category.id, category.name);
-        setTimeout(() => {
-          const savedId = common_vendor.index.getStorageSync("selectedCategoryId");
-          common_vendor.index.__f__("log", "at pages/index/index.vue:417", "存储后检查ID:", savedId);
-        }, 100);
-      } catch (e) {
-        common_vendor.index.__f__("error", "at pages/index/index.vue:420", "保存分类ID失败:", e);
-      }
-      common_vendor.index.switchTab({
-        url: "/pages/category/category",
-        success: () => {
-          common_vendor.index.__f__("log", "at pages/index/index.vue:427", "成功跳转到分类页面");
+        url: `/pages/detail/detail?id=${id}`,
+        success: (res) => {
+          common_vendor.index.__f__("log", "at pages/index/index.vue:444", "跳转成功:", res);
         },
-        fail: (error) => {
-          common_vendor.index.__f__("error", "at pages/index/index.vue:430", "跳转到分类页面失败:", error);
+        fail: (err) => {
+          common_vendor.index.__f__("error", "at pages/index/index.vue:447", "跳转失败:", err);
           common_vendor.index.navigateTo({
-            url: "/pages/category/category"
+            url: "/pages/detail/detail",
+            success: function(res) {
+              res.eventChannel.emit("acceptDataFromOpener", { id });
+            }
           });
         }
       });
     };
-    const navigateToAllCategories = () => {
-      common_vendor.index.removeStorageSync("selectedCategoryId");
-      common_vendor.index.switchTab({
-        url: "/pages/category/category"
-      });
-    };
-    const navigateToSearch = () => {
-      common_vendor.index.navigateTo({
-        url: "/pages/search/search"
-      });
+    const navigateToCategoryById = (categoryId, categoryName, forceSelect = true) => {
+      common_vendor.index.__f__("log", "at pages/index/index.vue:493", "按ID导航到分类页面:", categoryId, "分类名称:", categoryName, "强制选中:", forceSelect);
+      try {
+        common_vendor.index.setStorageSync("selectedCategoryId", categoryId);
+        if (categoryName) {
+          common_vendor.index.setStorageSync("categoryName", categoryName);
+        }
+        if (forceSelect) {
+          common_vendor.index.setStorageSync("forceSelectCategory", "true");
+        }
+        common_vendor.index.switchTab({
+          url: "/pages/category/category",
+          success: () => {
+            common_vendor.index.__f__("log", "at pages/index/index.vue:512", "成功跳转到分类页面");
+          },
+          fail: (error) => {
+            common_vendor.index.__f__("error", "at pages/index/index.vue:515", "跳转到分类页面失败:", error);
+            common_vendor.index.navigateTo({
+              url: "/pages/category/category"
+            });
+          }
+        });
+      } catch (e) {
+        common_vendor.index.__f__("error", "at pages/index/index.vue:523", "导航到分类出错:", e);
+        common_vendor.index.showToast({
+          title: "跳转失败",
+          icon: "none"
+        });
+      }
     };
     common_vendor.onMounted(() => {
-      common_vendor.index.__f__("log", "at pages/index/index.vue:464", "首页组件已挂载");
+      common_vendor.index.__f__("log", "at pages/index/index.vue:555", "首页组件已挂载");
       initData();
     });
     const showSpecs = common_vendor.ref(false);
@@ -238,9 +247,9 @@ const _sfc_main = {
           productId: quickBuyProduct.value.id,
           quantity: quantity.value
         };
-        common_vendor.index.__f__("log", "at pages/index/index.vue:573", "添加到购物车数据:", cartData);
+        common_vendor.index.__f__("log", "at pages/index/index.vue:664", "添加到购物车数据:", cartData);
         const result = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/cart/add",
+          url: "https://bgnc.online/api/cart/add",
           method: "POST",
           data: cartData
         });
@@ -257,7 +266,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/index/index.vue:598", "添加到购物车出错:", error);
+        common_vendor.index.__f__("error", "at pages/index/index.vue:689", "添加到购物车出错:", error);
         common_vendor.index.showToast({
           title: "网络错误，请重试",
           icon: "none"
@@ -289,7 +298,7 @@ const _sfc_main = {
     const productSkuList = common_vendor.ref([]);
     const selectedSkuId = common_vendor.ref("");
     const showQuickBuy = async (product) => {
-      common_vendor.index.__f__("log", "at pages/index/index.vue:642", "显示快速购买弹窗:", product);
+      common_vendor.index.__f__("log", "at pages/index/index.vue:733", "显示快速购买弹窗:", product);
       quickBuyProduct.value = {
         ...product,
         stock: 0
@@ -302,11 +311,11 @@ const _sfc_main = {
       selectedSkuId.value = "";
       try {
         const result = await utils_request.request({
-          url: `http://82.156.12.240:8080/api/product/${product.id}`,
+          url: `https://bgnc.online/api/product/${product.id}`,
           method: "GET"
         });
         if (result.code === 200 && result.data) {
-          common_vendor.index.__f__("log", "at pages/index/index.vue:666", "获取到商品详情:", result.data);
+          common_vendor.index.__f__("log", "at pages/index/index.vue:757", "获取到商品详情:", result.data);
           if (result.data.skuList && result.data.skuList.length > 0) {
             productSkuList.value = result.data.skuList;
             const specMap = /* @__PURE__ */ new Map();
@@ -356,7 +365,7 @@ const _sfc_main = {
           }
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/index/index.vue:731", "获取商品详情失败:", error);
+        common_vendor.index.__f__("error", "at pages/index/index.vue:822", "获取商品详情失败:", error);
         productSpecs.value = [{ name: "默认规格", price: product.price, stock: 100 }];
         selectedSpec.value = "默认规格";
         quickBuyProduct.value.stock = 100;
@@ -367,95 +376,105 @@ const _sfc_main = {
       showQuickBuyPopup.value = false;
     };
     const handleContactEvent = () => {
-      common_vendor.index.__f__("log", "at pages/index/index.vue:749", "联系客服事件被触发");
+      common_vendor.index.__f__("log", "at pages/index/index.vue:840", "联系客服事件被触发");
     };
     return (_ctx, _cache) => {
       return common_vendor.e({
-        a: common_vendor.p({
-          type: "search",
-          size: "16",
-          color: "#4B91F1"
-        }),
-        b: common_vendor.o(navigateToSearch),
-        c: common_vendor.f(bannerList.value, (banner, index, i0) => {
+        a: common_assets._imports_0,
+        b: common_vendor.f(bannerList.value, (banner, index, i0) => {
           return {
             a: banner.indexPic,
             b: common_vendor.t(banner.name),
-            c: "4a81274a-1-" + i0,
+            c: "4a81274a-0-" + i0,
             d: banner.id,
             e: common_vendor.o(($event) => goToDetail(banner.productId), banner.id)
           };
         }),
-        d: common_vendor.p({
+        c: common_vendor.p({
           type: "arrowright",
           size: "12",
           color: "#fff"
         }),
-        e: common_vendor.p({
-          type: "medal",
-          size: "18",
-          color: "#4B91F1"
+        d: common_vendor.p({
+          type: "star",
+          size: "16",
+          color: "#fff"
         }),
+        e: common_vendor.o(($event) => navigateToCategoryById("101", "胶东鲜果")),
         f: common_vendor.p({
-          type: "refreshempty",
-          size: "18",
-          color: "#4B91F1"
+          type: "cup",
+          size: "16",
+          color: "#fff"
         }),
-        g: common_vendor.p({
-          type: "cart",
-          size: "18",
-          color: "#4B91F1"
+        g: common_vendor.o(($event) => navigateToCategoryById("102", "闽南茶点")),
+        h: common_vendor.p({
+          type: "calendar",
+          size: "16",
+          color: "#fff"
         }),
-        h: common_vendor.o(navigateToAllCategories),
-        i: common_vendor.f(categories.value, (category, index, i0) => {
-          return {
-            a: category.image || "/static/images/category-default.png",
-            b: common_vendor.t(category.name),
-            c: category.id,
-            d: common_vendor.o(($event) => navigateToCategory(category), category.id)
-          };
+        i: common_vendor.o(($event) => navigateToCategoryById("103", "闽西特产")),
+        j: common_vendor.p({
+          type: "flag",
+          size: "16",
+          color: "#fff"
         }),
-        j: common_vendor.f(homeProducts.value, (product, index, i0) => {
+        k: common_vendor.o(($event) => navigateToCategoryById("104", "海鲜冻品")),
+        l: common_vendor.p({
+          type: "gift",
+          size: "16",
+          color: "#fff"
+        }),
+        m: common_vendor.o(($event) => navigateToCategoryById("105", "低GI食品")),
+        n: common_vendor.p({
+          type: "gift-filled",
+          size: "16",
+          color: "#fff"
+        }),
+        o: common_vendor.o(($event) => navigateToCategoryById("106", "会员好礼")),
+        p: common_assets._imports_1,
+        q: common_assets._imports_2,
+        r: common_assets._imports_3,
+        s: common_vendor.f(homeProducts.value, (product, index, i0) => {
           return common_vendor.e({
             a: product.indexPic,
             b: index < 2
           }, index < 2 ? {} : {}, {
             c: common_vendor.t(product.name),
             d: common_vendor.t(product.price || "暂无价格"),
-            e: "4a81274a-5-" + i0,
+            e: "4a81274a-7-" + i0,
             f: common_vendor.o(($event) => showQuickBuy(product), product.id),
             g: product.id,
             h: common_vendor.o(($event) => goToDetail(product.productId), product.id)
           });
         }),
-        k: common_vendor.p({
+        t: common_vendor.p({
           type: "cart",
           size: "16",
           color: "#fff"
         }),
-        l: common_vendor.o(handleContactEvent),
-        m: common_vendor.p({
+        v: common_vendor.o(handleContactEvent),
+        w: common_vendor.p({
           bottom: 150,
           right: 30
         }),
-        n: showSpecs.value
+        x: showSpecs.value
       }, showSpecs.value ? common_vendor.e({
-        o: common_vendor.o(hideSpecsPopup),
-        p: currentProduct.value.image,
-        q: common_vendor.t(currentProduct.value.price),
-        r: currentProduct.value.originalPrice
+        y: common_vendor.o(hideSpecsPopup),
+        z: currentProduct.value.image,
+        A: common_vendor.t(currentProduct.value.price),
+        B: currentProduct.value.originalPrice
       }, currentProduct.value.originalPrice ? {
-        s: common_vendor.t(currentProduct.value.originalPrice)
+        C: common_vendor.t(currentProduct.value.originalPrice)
       } : {}, {
-        t: common_vendor.t(currentProduct.value.stock || 0),
-        v: common_vendor.t(selectedSpec.value),
-        w: common_vendor.p({
+        D: common_vendor.t(currentProduct.value.stock || 0),
+        E: common_vendor.t(selectedSpec.value),
+        F: common_vendor.p({
           type: "closeempty",
           size: "20",
           color: "#999"
         }),
-        x: common_vendor.o(hideSpecsPopup),
-        y: common_vendor.f(currentProduct.value.specs, (spec, index, i0) => {
+        G: common_vendor.o(hideSpecsPopup),
+        H: common_vendor.f(currentProduct.value.specs, (spec, index, i0) => {
           return {
             a: common_vendor.t(spec.name),
             b: index,
@@ -463,32 +482,32 @@ const _sfc_main = {
             d: common_vendor.o(($event) => selectSpec(index), index)
           };
         }),
-        z: common_vendor.n(quantity.value <= 1 ? "disabled" : ""),
-        A: common_vendor.o(decreaseQuantity),
-        B: common_vendor.o(validateQuantity),
-        C: quantity.value,
-        D: common_vendor.o(common_vendor.m(($event) => quantity.value = $event.detail.value, {
+        I: common_vendor.n(quantity.value <= 1 ? "disabled" : ""),
+        J: common_vendor.o(decreaseQuantity),
+        K: common_vendor.o(validateQuantity),
+        L: quantity.value,
+        M: common_vendor.o(common_vendor.m(($event) => quantity.value = $event.detail.value, {
           number: true
         })),
-        E: common_vendor.n(quantity.value >= currentProduct.value.stock ? "disabled" : ""),
-        F: common_vendor.o(increaseQuantity),
-        G: common_vendor.o(addToCartWithSpec),
-        H: common_vendor.o(buyNow)
+        N: common_vendor.n(quantity.value >= currentProduct.value.stock ? "disabled" : ""),
+        O: common_vendor.o(increaseQuantity),
+        P: common_vendor.o(addToCartWithSpec),
+        Q: common_vendor.o(buyNow)
       }) : {}, {
-        I: showQuickBuyPopup.value
+        R: showQuickBuyPopup.value
       }, showQuickBuyPopup.value ? {
-        J: common_vendor.o(hideQuickBuyPopup),
-        K: quickBuyProduct.value.indexPic,
-        L: common_vendor.t(quickBuyProduct.value.price),
-        M: common_vendor.t(quickBuyProduct.value.stock || 1e3),
-        N: common_vendor.t(selectedSpec.value),
-        O: common_vendor.p({
+        S: common_vendor.o(hideQuickBuyPopup),
+        T: quickBuyProduct.value.indexPic,
+        U: common_vendor.t(quickBuyProduct.value.price),
+        V: common_vendor.t(quickBuyProduct.value.stock || 1e3),
+        W: common_vendor.t(selectedSpec.value),
+        X: common_vendor.p({
           type: "close",
           size: "16",
           color: "#666"
         }),
-        P: common_vendor.o(hideQuickBuyPopup),
-        Q: common_vendor.f(productSpecs.value, (spec, index, i0) => {
+        Y: common_vendor.o(hideQuickBuyPopup),
+        Z: common_vendor.f(productSpecs.value, (spec, index, i0) => {
           return common_vendor.e({
             a: common_vendor.t(spec.name),
             b: spec.price
@@ -504,15 +523,15 @@ const _sfc_main = {
             h: common_vendor.o(($event) => selectSpec(index), index)
           });
         }),
-        R: common_vendor.o(decreaseQuantity),
-        S: common_vendor.o(validateQuantity),
-        T: quantity.value,
-        U: common_vendor.o(common_vendor.m(($event) => quantity.value = $event.detail.value, {
+        aa: common_vendor.o(decreaseQuantity),
+        ab: common_vendor.o(validateQuantity),
+        ac: quantity.value,
+        ad: common_vendor.o(common_vendor.m(($event) => quantity.value = $event.detail.value, {
           number: true
         })),
-        V: common_vendor.o(increaseQuantity),
-        W: common_vendor.o(addToCartWithSpec),
-        X: common_vendor.o(buyNow)
+        ae: common_vendor.o(increaseQuantity),
+        af: common_vendor.o(addToCartWithSpec),
+        ag: common_vendor.o(buyNow)
       } : {});
     };
   }

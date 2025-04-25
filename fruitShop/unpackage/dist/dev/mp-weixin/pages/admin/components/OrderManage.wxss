@@ -325,50 +325,47 @@
 }
 .order-manage .status-popup {
   background-color: #fff;
-  width: 600rpx;
   border-radius: 16rpx;
-  padding: 40rpx;
+  width: 600rpx;
+  padding: 30rpx;
 }
 .order-manage .status-popup .popup-title {
-  text-align: center;
   font-size: 32rpx;
   font-weight: 500;
+  text-align: center;
   margin-bottom: 30rpx;
-}
-.order-manage .status-popup .status-list {
-  margin: 30rpx 0;
 }
 .order-manage .status-popup .status-list .status-item {
   display: flex;
   align-items: center;
-  padding: 20rpx 30rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
   border-radius: 8rpx;
-  margin-bottom: 16rpx;
   transition: all 0.3s;
 }
-.order-manage .status-popup .status-list .status-item:last-child {
-  margin-bottom: 0;
+.order-manage .status-popup .status-list .status-item:active {
+  opacity: 0.8;
 }
 .order-manage .status-popup .status-list .status-item.active {
-  background-color: #f0f7ff;
+  background-color: #f0f5ff;
 }
 .order-manage .status-popup .status-list .status-item .status-dot {
-  width: 16rpx;
-  height: 16rpx;
+  width: 24rpx;
+  height: 24rpx;
   border-radius: 50%;
   margin-right: 16rpx;
 }
 .order-manage .status-popup .status-list .status-item .status-dot.status-dot-0 {
-  background-color: #f5222d;
-}
-.order-manage .status-popup .status-list .status-item .status-dot.status-dot-1 {
   background-color: #fa8c16;
 }
-.order-manage .status-popup .status-list .status-item .status-dot.status-dot-2 {
+.order-manage .status-popup .status-list .status-item .status-dot.status-dot-1 {
   background-color: #52c41a;
 }
-.order-manage .status-popup .status-list .status-item .status-dot.status-dot-3 {
+.order-manage .status-popup .status-list .status-item .status-dot.status-dot-2 {
   background-color: #1890ff;
+}
+.order-manage .status-popup .status-list .status-item .status-dot.status-dot-3 {
+  background-color: #722ed1;
 }
 .order-manage .status-popup .status-list .status-item .status-dot.status-dot-4 {
   background-color: #eb2f96;
@@ -377,12 +374,49 @@
   font-size: 28rpx;
   color: #333;
 }
-.order-manage .status-popup .popup-actions {
+.order-manage .status-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+}
+.order-manage .status-tag.status-pending-payment {
+  background-color: #fff7e6;
+  color: #fa8c16;
+  border: 1rpx solid #ffd591;
+}
+.order-manage .status-tag.status-pending-delivery {
+  background-color: #f6ffed;
+  color: #52c41a;
+  border: 1rpx solid #b7eb8f;
+}
+.order-manage .status-tag.status-pending-receipt {
+  background-color: #e6f7ff;
+  color: #1890ff;
+  border: 1rpx solid #91d5ff;
+}
+.order-manage .status-tag.status-completed {
+  background-color: #f9f0ff;
+  color: #722ed1;
+  border: 1rpx solid #d3adf7;
+}
+.order-manage .status-tag.status-after-sale {
+  background-color: #fff0f6;
+  color: #eb2f96;
+  border: 1rpx solid #ffadd2;
+}
+.order-manage .status-tag.status-unknown {
+  background-color: #f5f5f5;
+  color: #999;
+  border: 1rpx solid #d9d9d9;
+}
+.order-manage .popup-actions {
   display: flex;
   justify-content: space-between;
   margin-top: 20rpx;
 }
-.order-manage .status-popup .popup-actions button {
+.order-manage .popup-actions button {
   width: 45%;
   height: 80rpx;
   border-radius: 8rpx;
@@ -391,37 +425,13 @@
   align-items: center;
   justify-content: center;
 }
-.order-manage .status-popup .popup-actions .cancel-btn {
+.order-manage .popup-actions .cancel-btn {
   background-color: #f5f7fa;
   color: #666;
   border: 1rpx solid #e8e8e8;
 }
-.order-manage .status-popup .popup-actions .confirm-btn {
+.order-manage .popup-actions .confirm-btn {
   background-color: #3b78db;
   color: #fff;
   border: 1rpx solid #3b78db;
-}
-.order-manage .status-pending-payment {
-  background-color: #ffe7ba;
-  color: #fa8c16;
-}
-.order-manage .status-pending-delivery {
-  background-color: #d9f7be;
-  color: #52c41a;
-}
-.order-manage .status-pending-receipt {
-  background-color: #bae7ff;
-  color: #1890ff;
-}
-.order-manage .status-completed {
-  background-color: #bae7ff;
-  color: #1890ff;
-}
-.order-manage .status-after-sale {
-  background-color: #ffd6e7;
-  color: #eb2f96;
-}
-.order-manage .status-unknown {
-  background-color: #ffccc7;
-  color: #f5222d;
 }

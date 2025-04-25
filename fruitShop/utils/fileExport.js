@@ -6,7 +6,7 @@ import { copyDownloadUrl, downloadFileFromApi } from './download.js';
  */
 export const exportProductData = (options = {}) => {
   // 设置商品导出接口URL
-  const exportUrl = 'http://82.156.12.240:8080/api/products/excel';
+  const exportUrl = 'https://bgnc.online/api/products/excel';
   
   // 使用downloadFileFromApi函数处理二进制数据
   downloadFileFromApi({
@@ -33,7 +33,7 @@ export const exportProductData = (options = {}) => {
  */
 export const exportUserData = (options = {}) => {
   // 设置用户导出接口URL
-  const exportUrl = 'http://82.156.12.240:8080/api/users/excel';
+  const exportUrl = 'https://bgnc.online/api/users/excel';
   
   // 使用downloadFileFromApi函数处理二进制数据
   downloadFileFromApi({
@@ -69,7 +69,7 @@ export const exportProductReport = (productId, options = {}) => {
   }
   
   // 设置产品报表导出接口URL
-  const exportUrl = `http://82.156.12.240:8080/api/products/${productId}/report`;
+  const exportUrl = `https://bgnc.online/api/products/${productId}/report`;
   
   // 使用downloadFileFromApi函数处理二进制数据
   downloadFileFromApi({

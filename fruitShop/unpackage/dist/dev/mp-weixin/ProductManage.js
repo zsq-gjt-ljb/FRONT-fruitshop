@@ -123,7 +123,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
                 path: tempFilePath,
                 success: () => {
                   common_vendor.index.uploadFile({
-                    url: "http://82.156.12.240:8080/api/file/upload",
+                    url: "https://bgnc.online/api/file/upload",
                     filePath: tempFilePath,
                     name: "file",
                     header: {
@@ -443,7 +443,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
         let result;
         if (isEditing.value) {
           result = await utils_request.request({
-            url: "http://82.156.12.240:8080/api/product",
+            url: "https://bgnc.online/api/product",
             method: "PUT",
             data: {
               ...productData,
@@ -453,7 +453,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
           });
         } else {
           result = await utils_request.request({
-            url: "http://82.156.12.240:8080/api/product",
+            url: "https://bgnc.online/api/product",
             method: "POST",
             data: productData
           });
@@ -551,7 +551,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
       categoryLoading.value = true;
       try {
         const result = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/category/list",
+          url: "https://bgnc.online/api/category/list",
           method: "GET"
         });
         common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1050", "获取的分类数据:", result);
@@ -675,7 +675,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
         }
         common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1196", "正在获取商品列表，参数:", params);
         const response = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/product/list",
+          url: "https://bgnc.online/api/product/list",
           method: "GET",
           data: params
         });
@@ -747,7 +747,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
       try {
         isLoading.value = true;
         const result = await utils_request.request({
-          url: `http://82.156.12.240:8080/api/product/${product.id}`,
+          url: `https://bgnc.online/api/product/${product.id}`,
           method: "GET"
         });
         if (result.code === 200 && result.data) {
@@ -855,7 +855,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
       try {
         isLoading.value = true;
         const result = await utils_request.request({
-          url: `http://82.156.12.240:8080/api/product/${productId}`,
+          url: `https://bgnc.online/api/product/${productId}`,
           method: "DELETE"
         });
         if (result.code === 200) {

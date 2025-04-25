@@ -40,7 +40,7 @@ const _sfc_main = {
         common_vendor.index.showLoading({
           title: "加载中"
         });
-        let url = `http://82.156.12.240:8080/api/order/all?pageNum=${pageNum.value}&pageSize=${pageSize.value}&orderByColumn=createTime&isAsc=desc`;
+        let url = `https://bgnc.online/api/order/all?pageNum=${pageNum.value}&pageSize=${pageSize.value}&orderByColumn=createTime&isAsc=desc`;
         if (statusIndex.value > 0)
           url += `&status=${statusIndex.value - 1}`;
         const res = await utils_request.request({
@@ -158,7 +158,7 @@ const _sfc_main = {
           title: "处理中"
         });
         const res = await utils_request.request({
-          url: `http://82.156.12.240:8080/api/order/ship/${currentOrderId.value}`,
+          url: `https://bgnc.online/api/order/ship/${currentOrderId.value}`,
           method: "PUT",
           data: {
             deliveryCompany: shipForm.value.company,
@@ -241,7 +241,7 @@ const _sfc_main = {
       try {
         exporting.value = true;
         utils_excelUtils.getExcelFromApi({
-          url: "http://82.156.12.240:8080/api/order/excel",
+          url: "https://bgnc.online/api/order/excel",
           method: "GET",
           header: {
             "content-type": "application/vnd.ms-excel"
@@ -306,10 +306,9 @@ const _sfc_main = {
           title: "处理中"
         });
         const res = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/order/",
+          url: `https://bgnc.online/api/order/status/${currentOrderId.value}`,
           method: "PUT",
           data: {
-            id: currentOrderId.value,
             status: currentStatus.value
           }
         });
@@ -327,7 +326,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/OrderManage.vue:543", "状态修改失败", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/OrderManage.vue:542", "状态修改失败", error);
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
           icon: "none"
@@ -361,8 +360,8 @@ const _sfc_main = {
             j: common_vendor.t(order.freightAmount),
             k: common_vendor.t(formatAddress(order)),
             l: common_vendor.o(($event) => viewOrderDetail(order.id), order.id),
-            m: order.status === 0
-          }, order.status === 0 ? {
+            m: order.status === 0 || order.status === 1
+          }, order.status === 0 || order.status === 1 ? {
             n: common_vendor.o(($event) => handleShip(order.id), order.id)
           } : {}, {
             o: order.id

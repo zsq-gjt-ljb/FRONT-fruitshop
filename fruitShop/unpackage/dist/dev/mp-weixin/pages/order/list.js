@@ -41,7 +41,7 @@ const _sfc_main = {
           params.status = activeTab.value;
         }
         const result = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/order/list",
+          url: "https://bgnc.online/api/order/list",
           method: "GET",
           data: params
         });
@@ -102,7 +102,7 @@ const _sfc_main = {
           if (res.confirm) {
             try {
               const result = await utils_request.request({
-                url: `http://82.156.12.240:8080/api/order/receive/${orderId}`,
+                url: `https://bgnc.online/api/order/receive/${orderId}`,
                 method: "PUT"
               });
               if (result.code === 200) {

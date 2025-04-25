@@ -17,7 +17,7 @@ const _sfc_main = {
     const getAddressList = async () => {
       try {
         const res = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/addressbook/list",
+          url: "https://bgnc.online/api/addressbook/list",
           method: "GET"
         });
         common_vendor.index.__f__("log", "at pages/address/list.vue:77", "获取地址列表响应:", res);
@@ -55,7 +55,7 @@ const _sfc_main = {
           if (res.confirm) {
             try {
               const result = await utils_request.request({
-                url: `http://82.156.12.240:8080/api/addressbook/?id=${id}`,
+                url: `https://bgnc.online/api/addressbook/?id=${id}`,
                 method: "DELETE",
                 data: { id }
               });

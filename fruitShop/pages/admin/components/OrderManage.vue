@@ -79,7 +79,7 @@
         
         <view class="card-footer">
           <button class="action-btn" @tap="viewOrderDetail(order.id)">查看详情</button>
-          <button class="action-btn ship-btn" v-if="order.status === 0" @tap="handleShip(order.id)">发货</button>
+          <button class="action-btn ship-btn" v-if="order.status === 0 || order.status === 1" @tap="handleShip(order.id)">发货</button>
         </view>
       </view>
       
@@ -196,7 +196,7 @@ const getOrderList = async () => {
     })
     
     // 构建URL查询参数
-    let url = `http://82.156.12.240:8080/api/order/all?pageNum=${pageNum.value}&pageSize=${pageSize.value}&orderByColumn=createTime&isAsc=desc`
+    let url = `https://bgnc.online/api/order/all?pageNum=${pageNum.value}&pageSize=${pageSize.value}&orderByColumn=createTime&isAsc=desc`
     
     // 添加筛选条件
     if (statusIndex.value > 0) url += `&status=${statusIndex.value - 1}`
@@ -342,7 +342,7 @@ const confirmShip = async () => {
     })
     
     const res = await request({
-      url: `http://82.156.12.240:8080/api/order/ship/${currentOrderId.value}`,
+      url: `https://bgnc.online/api/order/ship/${currentOrderId.value}`,
       method: 'PUT',
       data: {
         deliveryCompany: shipForm.value.company,
@@ -440,7 +440,7 @@ const handleExport = async () => {
     
     // 方式1: 先获取数据，再让用户选择保存位置
     getExcelFromApi({
-      url: 'http://82.156.12.240:8080/api/order/excel',
+      url: 'https://bgnc.online/api/order/excel',
       method: 'GET',
       header: {
         'content-type': 'application/vnd.ms-excel'
@@ -518,10 +518,9 @@ const confirmStatusChange = async () => {
     })
     
     const res = await request({
-      url: 'http://82.156.12.240:8080/api/order/',
+      url: `https://bgnc.online/api/order/status/${currentOrderId.value}`,
       method: 'PUT',
       data: {
-        id: currentOrderId.value,
         status: currentStatus.value
       }
     })
@@ -998,65 +997,48 @@ const confirmStatusChange = async () => {
     &.status-completed {
       background-color: #f9f0ff;
       color: #722ed1;
+      border: 1rpx solid #d3adf7;
+    }
     
-    .popup-actions {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20rpx;
-      
-      button {
-        width: 45%;
-        height: 80rpx;
-        border-radius: 8rpx;
-        font-size: 28rpx;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      
-      .cancel-btn {
-        background-color: #f5f7fa;
-        color: #666;
-        border: 1rpx solid #e8e8e8;
-      }
-      
-      .confirm-btn {
-        background-color: #3b78db;
-        color: #fff;
-        border: 1rpx solid #3b78db;
-      }
+    &.status-after-sale {
+      background-color: #fff0f6;
+      color: #eb2f96;
+      border: 1rpx solid #ffadd2;
+    }
+    
+    &.status-unknown {
+      background-color: #f5f5f5;
+      color: #999;
+      border: 1rpx solid #d9d9d9;
     }
   }
   
-  // 状态标签样式
-  .status-pending-payment {
-    background-color: #ffe7ba;
-    color: #fa8c16;
-  }
-  
-  .status-pending-delivery {
-    background-color: #d9f7be;
-    color: #52c41a;
-  }
-  
-  .status-pending-receipt {
-    background-color: #bae7ff;
-    color: #1890ff;
-  }
-  
-  .status-completed {
-    background-color: #bae7ff;
-    color: #1890ff;
-  }
-  
-  .status-after-sale {
-    background-color: #ffd6e7;
-    color: #eb2f96;
-  }
-  
-  .status-unknown {
-    background-color: #ffccc7;
-    color: #f5222d;
+  .popup-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20rpx;
+    
+    button {
+      width: 45%;
+      height: 80rpx;
+      border-radius: 8rpx;
+      font-size: 28rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .cancel-btn {
+      background-color: #f5f7fa;
+      color: #666;
+      border: 1rpx solid #e8e8e8;
+    }
+    
+    .confirm-btn {
+      background-color: #3b78db;
+      color: #fff;
+      border: 1rpx solid #3b78db;
+    }
   }
 }
 </style> 

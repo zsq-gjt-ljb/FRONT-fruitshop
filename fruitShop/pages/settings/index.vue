@@ -213,7 +213,7 @@ const onDatePickerChange = (e) => {
 const getUserInfo = async () => {
   try {
     const res = await request({
-      url: 'http://82.156.12.240:8080/api/user/profile',
+      url: 'https://bgnc.online/api/user/profile',
       method: 'GET'
     })
     if (res.code === 200) { 
@@ -246,7 +246,7 @@ const changeAvatar = () => {
         const uploadTask = () => {
           return new Promise((resolve, reject) => {
             uni.uploadFile({
-              url: 'http://82.156.12.240:8080/api/file/upload',
+              url: 'https://bgnc.online/api/file/upload',
               filePath: tempFilePath,
               name: 'file',
               header: {
@@ -283,7 +283,7 @@ const changeAvatar = () => {
         
         // 更新用户头像信息到服务器
         const updateRes = await request({
-          url: 'http://82.156.12.240:8080/api/user/profile',
+          url: 'https://bgnc.online/api/user/profile',
           method: 'PUT',
           data: {
             userAvatar: imageUrl
@@ -326,7 +326,7 @@ const showNameDialog = () => {
 const updateName = async (value) => {
   try {
     const res = await request({
-      url: 'http://82.156.12.240:8080/api/user/profile',
+      url: 'https://bgnc.online/api/user/profile',
       method: 'PUT',
       data: {
         userName: value
@@ -362,7 +362,7 @@ const showGenderPicker = () => {
       const gender = res.tapIndex + 1
       try {
         const updateRes = await request({
-          url: 'http://82.156.12.240:8080/api/user/profile',
+          url: 'https://bgnc.online/api/user/profile',
           method: 'PUT',
           data: {
             userSex: gender
@@ -404,7 +404,7 @@ const updatePhone = async (value) => {
   
   try {
     const res = await request({
-      url: 'http://82.156.12.240:8080/api/user/profile',
+      url: 'https://bgnc.online/api/user/profile',
       method: 'PUT',
       data: {
         phone: value
@@ -443,7 +443,7 @@ const closeDatePicker = () => {
 const confirmDatePicker = async () => {
   try {
     const updateRes = await request({
-      url: 'http://82.156.12.240:8080/api/user/profile',
+      url: 'https://bgnc.online/api/user/profile',
       method: 'PUT',
       data: {
         userBirthday: selectedDate.value

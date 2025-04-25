@@ -27,10 +27,10 @@ const _sfc_main = {
         return total + parseFloat(item.price) * item.quantity;
       }, 0);
     });
-    const totalPriceInteger = common_vendor.computed(() => {
+    common_vendor.computed(() => {
       return Math.floor(totalPrice.value);
     });
-    const totalPriceDecimal = common_vendor.computed(() => {
+    common_vendor.computed(() => {
       const decimal = Math.round((totalPrice.value - Math.floor(totalPrice.value)) * 100);
       return decimal < 10 ? `0${decimal}` : decimal;
     });
@@ -39,10 +39,10 @@ const _sfc_main = {
         isLoading.value = true;
         common_vendor.index.showLoading({ title: "加载中" });
         const result = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/cart/list",
+          url: "https://bgnc.online/api/cart/list",
           method: "GET"
         });
-        common_vendor.index.__f__("log", "at pages/cart/cart.vue:159", "购物车API返回:", result);
+        common_vendor.index.__f__("log", "at pages/cart/cart.vue:160", "购物车API返回:", result);
         if (result.code === 200) {
           const mergedCartMap = {};
           const processedData = (result.data || []).map((item) => ({
@@ -70,7 +70,7 @@ const _sfc_main = {
             }
           });
           cartList.value = Object.values(mergedCartMap);
-          common_vendor.index.__f__("log", "at pages/cart/cart.vue:198", "处理后的购物车数据:", cartList.value);
+          common_vendor.index.__f__("log", "at pages/cart/cart.vue:199", "处理后的购物车数据:", cartList.value);
         } else {
           common_vendor.index.showToast({
             title: result.message || "获取购物车失败",
@@ -78,7 +78,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/cart/cart.vue:206", "获取购物车出错:", error);
+        common_vendor.index.__f__("error", "at pages/cart/cart.vue:207", "获取购物车出错:", error);
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
           icon: "none"
@@ -105,7 +105,7 @@ const _sfc_main = {
         item.quantity--;
         const updateId = item.originalIds[0];
         const result = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/cart/update",
+          url: "https://bgnc.online/api/cart/update",
           method: "PUT",
           data: {
             id: updateId,
@@ -120,7 +120,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/cart/cart.vue:261", "减少数量失败:", error);
+        common_vendor.index.__f__("error", "at pages/cart/cart.vue:262", "减少数量失败:", error);
         item.quantity++;
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
@@ -140,7 +140,7 @@ const _sfc_main = {
         item.quantity++;
         const updateId = item.originalIds[0];
         const result = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/cart/update",
+          url: "https://bgnc.online/api/cart/update",
           method: "PUT",
           data: {
             id: updateId,
@@ -155,7 +155,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/cart/cart.vue:307", "增加数量失败:", error);
+        common_vendor.index.__f__("error", "at pages/cart/cart.vue:308", "增加数量失败:", error);
         item.quantity--;
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
@@ -175,7 +175,7 @@ const _sfc_main = {
       try {
         const updateId = item.originalIds[0];
         const result = await utils_request.request({
-          url: "http://82.156.12.240:8080/api/cart/update",
+          url: "https://bgnc.online/api/cart/update",
           method: "PUT",
           data: {
             id: updateId,
@@ -189,7 +189,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/cart/cart.vue:352", "更新数量失败:", error);
+        common_vendor.index.__f__("error", "at pages/cart/cart.vue:353", "更新数量失败:", error);
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
           icon: "none"
@@ -205,7 +205,7 @@ const _sfc_main = {
             try {
               const deleteId = item.originalIds[0];
               const result = await utils_request.request({
-                url: `http://82.156.12.240:8080/api/cart/${deleteId}`,
+                url: `https://bgnc.online/api/cart/${deleteId}`,
                 method: "DELETE"
               });
               if (result.code === 200) {
@@ -224,7 +224,7 @@ const _sfc_main = {
                 });
               }
             } catch (error) {
-              common_vendor.index.__f__("error", "at pages/cart/cart.vue:396", "删除购物车商品失败:", error);
+              common_vendor.index.__f__("error", "at pages/cart/cart.vue:397", "删除购物车商品失败:", error);
               common_vendor.index.showToast({
                 title: "网络错误，请稍后再试",
                 icon: "none"
@@ -280,7 +280,7 @@ const _sfc_main = {
       getCartList();
     });
     common_vendor.onLoad(() => {
-      common_vendor.index.__f__("log", "at pages/cart/cart.vue:469", "购物车页面加载");
+      common_vendor.index.__f__("log", "at pages/cart/cart.vue:470", "购物车页面加载");
     });
     return (_ctx, _cache) => {
       return common_vendor.e({
@@ -292,26 +292,16 @@ const _sfc_main = {
           color: "#ddd"
         }),
         c: common_vendor.o(goToHome)
-      } : common_vendor.e({
-        d: isAllSelected.value
-      }, isAllSelected.value ? {
-        e: common_vendor.p({
-          type: "checkmarkempty",
-          size: "14",
-          color: "#fff"
-        })
-      } : {}, {
-        f: isAllSelected.value ? 1 : "",
-        g: common_vendor.o(toggleSelectAll),
-        h: common_vendor.t(cartList.value.length),
-        i: common_vendor.f(cartList.value, (item, index, i0) => {
+      } : {
+        d: common_vendor.t(cartList.value.length),
+        e: common_vendor.f(cartList.value, (item, index, i0) => {
           return common_vendor.e({
             a: item.selected
           }, item.selected ? {
-            b: "70415e38-2-" + i0,
+            b: "70415e38-1-" + i0,
             c: common_vendor.p({
               type: "checkmarkempty",
-              size: "12",
+              size: "14",
               color: "#fff"
             })
           } : {}, {
@@ -324,60 +314,60 @@ const _sfc_main = {
             i: common_vendor.t(item.spec)
           } : {}, {
             j: common_vendor.t(item.price),
-            k: common_vendor.o(($event) => goToDetail(item.productId), item.id),
-            l: "70415e38-3-" + i0,
-            m: common_vendor.p({
+            k: "70415e38-2-" + i0,
+            l: common_vendor.p({
               type: "minus",
               size: "12",
-              color: item.quantity <= 1 ? "#ccc" : "#000"
+              color: item.quantity <= 1 ? "#ccc" : "#333"
             }),
-            n: item.quantity <= 1 ? 1 : "",
-            o: common_vendor.o(($event) => decreaseQuantity(item), item.id),
-            p: common_vendor.o(($event) => updateCartItem(item), item.id),
+            m: item.quantity <= 1 ? 1 : "",
+            n: common_vendor.o(($event) => decreaseQuantity(item), item.id),
+            o: common_vendor.o(($event) => updateCartItem(item), item.id),
+            p: common_vendor.o(() => {
+            }, item.id),
             q: item.quantity,
             r: common_vendor.o(common_vendor.m(($event) => item.quantity = $event.detail.value, {
               number: true
             }), item.id),
-            s: "70415e38-4-" + i0,
+            s: "70415e38-3-" + i0,
             t: common_vendor.p({
               type: "plus",
               size: "12",
-              color: item.quantity >= item.stock ? "#ccc" : "#000"
+              color: item.quantity >= item.stock ? "#ccc" : "#333"
             }),
             v: item.quantity >= item.stock ? 1 : "",
             w: common_vendor.o(($event) => increaseQuantity(item), item.id),
-            x: "70415e38-5-" + i0,
-            y: common_vendor.o(($event) => deleteCartItem(item), item.id),
-            z: item.id
+            x: common_vendor.o(($event) => goToDetail(item.productId), item.id),
+            y: "70415e38-4-" + i0,
+            z: common_vendor.o(($event) => deleteCartItem(item), item.id),
+            A: item.id
           });
         }),
-        j: common_vendor.p({
+        f: common_vendor.p({
           type: "trash",
-          size: "16",
-          color: "#999"
+          size: "18",
+          color: "#fff"
         })
-      }), {
-        k: cartList.value.length > 0
+      }, {
+        g: cartList.value.length > 0
       }, cartList.value.length > 0 ? common_vendor.e({
-        l: isAllSelected.value
+        h: isAllSelected.value
       }, isAllSelected.value ? {
-        m: common_vendor.p({
+        i: common_vendor.p({
           type: "checkmarkempty",
-          size: "12",
+          size: "14",
           color: "#fff"
         })
       } : {}, {
-        n: isAllSelected.value ? 1 : "",
-        o: common_vendor.o(toggleSelectAll),
-        p: common_vendor.t(cartList.value.length),
-        q: common_vendor.t(totalPriceInteger.value),
-        r: common_vendor.t(totalPriceDecimal.value),
-        s: selectedCount.value
+        j: isAllSelected.value ? 1 : "",
+        k: common_vendor.o(toggleSelectAll),
+        l: common_vendor.t(totalPrice.value.toFixed(2)),
+        m: selectedCount.value
       }, selectedCount.value ? {
-        t: common_vendor.t(selectedCount.value)
+        n: common_vendor.t(selectedCount.value)
       } : {}, {
-        v: selectedCount.value > 0 ? 1 : "",
-        w: common_vendor.o(handleCheckout)
+        o: selectedCount.value > 0 ? 1 : "",
+        p: common_vendor.o(handleCheckout)
       }) : {});
     };
   }

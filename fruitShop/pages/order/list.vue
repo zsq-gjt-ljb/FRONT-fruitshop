@@ -130,7 +130,7 @@ const getOrderList = async () => {
     }
     
     const result = await request({
-      url: 'http://82.156.12.240:8080/api/order/list',
+      url: 'https://bgnc.online/api/order/list',
       method: 'GET',
       data: params
     })
@@ -204,7 +204,7 @@ const confirmReceived = async (orderId) => {
       if (res.confirm) {
         try {
           const result = await request({
-            url: `http://82.156.12.240:8080/api/order/receive/${orderId}`,
+            url: `https://bgnc.online/api/order/receive/${orderId}`,
             method: 'PUT'
           })
           

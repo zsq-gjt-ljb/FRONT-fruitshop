@@ -147,7 +147,7 @@ onLoad((options) => {
 const getMemberInfo = async () => {
   try {
     const result = await request({
-      url: 'http://82.156.12.240:8080/api/user/profile',
+      url: 'https://bgnc.online/api/user/profile',
       method: 'GET'
     })
     
@@ -164,7 +164,7 @@ const getMemberInfo = async () => {
 const getAddressList = async () => {
   try {
     const result = await request({
-      url: 'http://82.156.12.240:8080/api/addressbook/list',
+      url: 'https://bgnc.online/api/addressbook/list',
       method: 'GET'
     })
     
@@ -180,7 +180,7 @@ const getAddressList = async () => {
         // 通过API获取地址详情
         try {
           const addressDetail = await request({
-            url: `http://82.156.12.240:8080/api/addressbook/${selectedAddressId}`,
+            url: `https://bgnc.online/api/addressbook/${selectedAddressId}`,
             method: 'GET'
           })
           
@@ -332,22 +332,23 @@ const submitOrder = async () => {
         addressBookId: selectedAddress.value.id,
         quantity: item.quantity,
         // 将备注添加到请求中
-        remark: remark.value
+      
       }
       
       console.log('直接购买请求数据:', buyData)
       
       // 调用直接购买API
       const result = await request({
-        url: 'http://82.156.12.240:8080/api/order/buyNow',
+        url: 'https://bgnc.online/api/order/buyNow',
         method: 'POST',
         data: buyData
       })
       
       uni.hideLoading()
       
-      if (result.code === 200) {
-        handleOrderSuccess(result)
+      if (result.code === 200) {  
+        console.log('result是', result.data)
+        handleOrderSuccess(result) 
       } else {
         handleOrderFail(result)
       }
@@ -367,21 +368,22 @@ const submitOrder = async () => {
       const settleData = {
         ids: cartIds,
         addressBookId: selectedAddress.value.id,
-        remark: remark.value
+       
       }
       
       console.log('结算请求数据:', settleData);
       
       // 发送创建订单请求
       const result = await request({
-        url: 'http://82.156.12.240:8080/api/order/settle',
+        url: 'https://bgnc.online/api/order/settle',
         method: 'POST',
         data: settleData
       })
       
       uni.hideLoading()
       
-      if (result.code === 200) {
+      if (result.code === 200) { 
+        console.log('结算成功:', result)
         handleOrderSuccess(result)
       } else {
         handleOrderFail(result)
@@ -398,35 +400,128 @@ const submitOrder = async () => {
 }
 
 // 处理订单成功
-const handleOrderSuccess = (result) => {
-  // 清除结算数据
-  uni.removeStorageSync('checkoutItems')
-  
-  // 提示成功
-  uni.showToast({
-    title: '订单提交成功',
-    icon: 'success'
-  })
-  
-  // 跳转到订单详情页或订单列表页
-  setTimeout(() => {
-    // 如果后端返回订单ID，跳转到订单详情
-    if (result.data && result.data.orderId) {
-      uni.redirectTo({
-        url: `/pages/order/detail?id=${result.data.orderId}`
-      })
-    } else {
-      // 否则跳转到订单列表
+const handleOrderSuccess = async (result) => {
+  try {
+    console.log('订单创建成功，准备支付:', result);
+    const orderId = result.data;
+    
+    if (!orderId) {
+      throw new Error('未获取到订单ID');
+    }
+    
+    // 1. 获取微信登录code
+    const loginResult = await uni.login();
+    
+    if (!loginResult.code) {
+      throw new Error('获取微信登录code失败');
+    }
+    
+    console.log('获取到微信登录code:', loginResult.code);
+    
+    // 2. 请求支付参数
+    const paymentResult = await request({
+      url: 'https://bgnc.online/api/notify/payment',
+      method: 'POST',
+      data: {
+        orderId: orderId,
+        code: loginResult.code
+      }
+    });
+    
+    console.log('获取到支付参数:', paymentResult);
+    
+    if (paymentResult.code !== 200 || !paymentResult.data) {
+      throw new Error(paymentResult.message || '获取支付参数失败');
+    }
+    
+    // 3. 调用微信支付
+    uni.showLoading({ title: '正在拉起支付...' });
+    
+    try {
+      await wxPay(paymentResult.data);
+      
+      // 支付成功处理
+      uni.showToast({
+        title: '支付成功',
+        icon: 'success'
+      });
+      
+      // 支付成功后跳转到订单页面
+      setTimeout(() => {
+        uni.redirectTo({
+          url: `/pages/order/detail?id=${orderId}`
+        });
+      }, 1500);
+      
+    } catch (payError) {
+      console.error('支付过程发生错误:', payError);
+      
+      if (payError.errMsg && payError.errMsg.includes('cancel')) {
+        uni.showToast({
+          title: '用户取消支付',
+          icon: 'none'
+        });
+      } else {
+        uni.showToast({
+          title: '支付失败',
+          icon: 'none'
+        });
+      }
+      
+      // 支付失败也跳转到订单页面
+      setTimeout(() => {
+        uni.redirectTo({
+          url: `/pages/order/detail?id=${orderId}`
+        });
+      }, 1500);
+    }
+  } catch (error) {
+    console.error('支付流程出错:', error);
+    uni.hideLoading();
+    uni.showToast({
+      title: error.message || '支付流程出错',
+      icon: 'none'
+    });
+    
+    // 清除结算数据
+    uni.removeStorageSync('checkoutItems');
+    
+    // 出错时跳转到订单列表
+    setTimeout(() => {
       uni.switchTab({
         url: '/pages/user/user'
-      })
+      });
       setTimeout(() => {
         uni.navigateTo({
           url: '/pages/order/list'
-        })
-      }, 500)
-    }
-  }, 1500)
+        });
+      }, 500);
+    }, 1500);
+  } finally {
+    uni.hideLoading();
+  }
+}
+
+// 微信支付函数
+const wxPay = (paymentData) => {
+  return new Promise((resolve, reject) => {
+    uni.requestPayment({
+      provider: 'wxpay',
+      timeStamp: paymentData.timeStamp,
+      nonceStr: paymentData.nonceStr,
+      package: paymentData.package,
+      signType: paymentData.signType,
+      paySign: paymentData.paySign,
+      success: (res) => {
+        console.log('支付成功:', res);
+        resolve(res);
+      },
+      fail: (err) => {
+        console.error('支付失败:', err);
+        reject(err);
+      }
+    });
+  });
 }
 
 // 处理订单失败

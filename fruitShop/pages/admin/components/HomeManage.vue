@@ -118,7 +118,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { onShow, onHide } from '@dcloudio/uni-app'
 import request from '@/utils/request'
 
 // 轮播图数据
@@ -129,6 +130,7 @@ const allProducts = ref([]) // 所有商品
 const selectedProducts = ref([]) // 已选择的商品
 const searchKeyword = ref('') // 搜索关键词
 const isLoading = ref(false)
+let autoCheckTimer = null // 定时器
 
 // 生命周期钩子
 onMounted(() => {
@@ -136,9 +138,62 @@ onMounted(() => {
   // 首先加载产品列表，然后加载轮播图和首页商品数据
   fetchProducts().then(() => {
     console.log('产品列表加载完成，开始加载轮播图和首页商品')
-    refreshData()
+    refreshData(true) // 传入true表示这是初始加载，需要进行验证
   })
+  
+  // 设置自动检查定时器 - 每3分钟检查一次
+  startAutoCheck()
 })
+
+// 当页面显示时触发
+onShow(() => {
+  console.log('HomeManage页面显示')
+  // 页面显示时刷新数据
+  refreshData(true)
+  
+  // 重新启动自动检查
+  startAutoCheck()
+})
+
+// 当页面隐藏时触发
+onHide(() => {
+  console.log('HomeManage页面隐藏')
+  // 清除定时器
+  clearAutoCheck()
+})
+
+// 组件卸载时清除定时器
+onUnmounted(() => {
+  console.log('HomeManage组件卸载')
+  clearAutoCheck()
+})
+
+// 启动自动检查定时器
+const startAutoCheck = () => {
+  // 先清除可能存在的定时器
+  clearAutoCheck()
+  
+  // 设置新的定时器 - 每3分钟检查一次
+  autoCheckTimer = setInterval(() => {
+    console.log('执行自动检查...')
+    fetchProducts().then(() => {
+      if (allProducts.value.length > 0) {
+        // 获取所有有效商品ID列表
+        const validProductIds = new Set(allProducts.value.map(product => String(product.id)))
+        // 静默检查并清理无效商品
+        checkAndCleanInvalidProducts(validProductIds)
+      }
+    })
+  }, 3 * 60 * 1000) // 3分钟
+}
+
+// 清除自动检查定时器
+const clearAutoCheck = () => {
+  if (autoCheckTimer) {
+    clearInterval(autoCheckTimer)
+    autoCheckTimer = null
+  }
+}
 
 // 获取所有商品列表
 const fetchProducts = async () => {
@@ -146,13 +201,20 @@ const fetchProducts = async () => {
     isLoading.value = true
     
     const result = await request({
-      url: 'http://82.156.12.240:8080/api/product/list',
+      url: 'https://bgnc.online/api/product/list',
       method: 'GET'
     })
     
     if (result.code === 200) { 
       console.log('result是', result)
       allProducts.value = result.data|| []
+      
+      // 获取所有有效商品ID列表，用于后续检查
+      const validProductIds = new Set(allProducts.value.map(product => String(product.id)))
+      console.log('有效商品ID列表:', validProductIds)
+      
+      // 检查并清理无效的轮播图和首页商品
+      checkAndCleanInvalidProducts(validProductIds)
     } else {
       allProducts.value = []
       uni.showToast({
@@ -168,6 +230,47 @@ const fetchProducts = async () => {
     })
   } finally {
     isLoading.value = false
+  }
+}
+
+// 检查并清理无效的轮播图和首页商品
+const checkAndCleanInvalidProducts = async (validProductIds) => {
+  // 检查轮播图中的商品是否存在
+  const invalidBanners = banners.value.filter(banner => !validProductIds.has(String(banner.productId)))
+  // 检查首页商品是否存在
+  const invalidHomeProducts = selectedProducts.value.filter(product => !validProductIds.has(String(product.productId)))
+  
+  console.log('无效轮播图数量:', invalidBanners.length, '无效首页商品数量:', invalidHomeProducts.length)
+  
+  // 如果存在无效商品，进行清理
+  if (invalidBanners.length > 0 || invalidHomeProducts.length > 0) {
+    try {
+      // 清理无效轮播图
+      for (const banner of invalidBanners) {
+        console.log('清理无效轮播图:', banner.id, banner.name)
+        await deleteBanner(banner.id, true) // 传入true表示静默删除，不显示提示
+      }
+      
+      // 清理无效首页商品
+      for (const product of invalidHomeProducts) {
+        console.log('清理无效首页商品:', product.id, product.name)
+        await deleteHomeProduct(product.id, true) // 传入true表示静默删除，不显示提示
+      }
+      
+      // 清理完成后，刷新数据
+      await refreshData()
+      
+      // 显示清理结果
+      if (invalidBanners.length > 0 || invalidHomeProducts.length > 0) {
+        uni.showToast({
+          title: `已清理${invalidBanners.length + invalidHomeProducts.length}个无效商品`,
+          icon: 'none',
+          duration: 2000
+        })
+      }
+    } catch (error) {
+      console.error('清理无效商品失败:', error)
+    }
   }
 }
 
@@ -202,7 +305,7 @@ const isHomeProduct = (id) => {
 const loadBanners = async () => {
   try {
     const result = await request({
-      url: 'http://82.156.12.240:8080/api/productmarket/list/1',
+      url: 'https://bgnc.online/api/productmarket/list/1',
       method: 'GET'
     })
     
@@ -230,7 +333,7 @@ const loadHomeProducts = async () => {
   try {
     console.log('开始加载首页商品数据')
     const result = await request({
-      url: 'http://82.156.12.240:8080/api/productmarket/list/0',
+      url: 'https://bgnc.online/api/productmarket/list/0',
       method: 'GET'
     })
     
@@ -257,14 +360,23 @@ const loadHomeProducts = async () => {
 }
 
 // 刷新数据
-const refreshData = async () => {
+const refreshData = async (isInitialLoad = false) => {
   uni.showLoading({ title: '刷新中...' })
   try {
     await Promise.all([loadBanners(), loadHomeProducts()])
-    uni.showToast({
-      title: '数据已刷新',
-      icon: 'success'
-    })
+    
+    // 如果是初始加载或显式要求验证，检查数据有效性
+    if (isInitialLoad && allProducts.value.length > 0) {
+      // 获取所有有效商品ID列表
+      const validProductIds = new Set(allProducts.value.map(product => String(product.id)))
+      // 检查并清理无效商品
+      await checkAndCleanInvalidProducts(validProductIds)
+    } else {
+      uni.showToast({
+        title: '数据已刷新',
+        icon: 'success'
+      })
+    }
   } catch (error) {
     console.error('刷新数据失败:', error)
     uni.showToast({
@@ -287,12 +399,24 @@ const addToBanner = async (product) => {
     return
   }
   
+  // 确认商品存在于当前有效商品列表中
+  const existsInProducts = allProducts.value.some(p => String(p.id) === String(product.id))
+  if (!existsInProducts) {
+    uni.showToast({
+      title: '该商品已被删除，请刷新列表',
+      icon: 'none'
+    })
+    // 刷新商品列表
+    await fetchProducts()
+    return
+  }
+  
   try {
     uni.showLoading({ title: '添加中...' })
     
     // 调用API添加轮播图
     const result = await request({
-      url: 'http://82.156.12.240:8080/api/productmarket',
+      url: 'https://bgnc.online/api/productmarket',
       method: 'POST',
       data: {
         productId: product.id,
@@ -339,12 +463,24 @@ const addToHome = async (product) => {
     return
   }
   
+  // 确认商品存在于当前有效商品列表中
+  const existsInProducts = allProducts.value.some(p => String(p.id) === String(product.id))
+  if (!existsInProducts) {
+    uni.showToast({
+      title: '该商品已被删除，请刷新列表',
+      icon: 'none'
+    })
+    // 刷新商品列表
+    await fetchProducts()
+    return
+  }
+  
   try {
     uni.showLoading({ title: '添加中...' })
     
     // 调用API添加首页商品
     const result = await request({
-      url: 'http://82.156.12.240:8080/api/productmarket',
+      url: 'https://bgnc.online/api/productmarket',
       method: 'POST',
       data: {
         productId: product.id,
@@ -381,13 +517,15 @@ const addToHome = async (product) => {
 }
 
 // 删除轮播图商品
-const deleteBanner = async (id) => {
+const deleteBanner = async (id, silent = false) => {
   try {
-    uni.showLoading({ title: '删除中...' })
+    if (!silent) {
+      uni.showLoading({ title: '删除中...' })
+    }
     
     // 调用API删除轮播图，使用id而不是productId
     const result = await request({
-      url: `http://82.156.12.240:8080/api/productmarket/${id}`,
+      url: `https://bgnc.online/api/productmarket/${id}`,
       method: 'DELETE',
     })
     
@@ -395,35 +533,45 @@ const deleteBanner = async (id) => {
       // 删除成功后，刷新轮播图列表
       await loadBanners()
       
-      uni.showToast({
-        title: '已从轮播图移除',
-        icon: 'success'
-      })
+      if (!silent) {
+        uni.showToast({
+          title: '已从轮播图移除',
+          icon: 'success'
+        })
+      }
     } else {
-      uni.showToast({
-        title: result.message || '删除失败',
-        icon: 'none'
-      })
+      if (!silent) {
+        uni.showToast({
+          title: result.message || '删除失败',
+          icon: 'none'
+        })
+      }
     }
   } catch (error) {
     console.error('删除轮播图失败:', error)
-    uni.showToast({
-      title: '删除失败: ' + (error.message || '未知错误'),
-      icon: 'none'
-    })
+    if (!silent) {
+      uni.showToast({
+        title: '删除失败: ' + (error.message || '未知错误'),
+        icon: 'none'
+      })
+    }
   } finally {
-    uni.hideLoading()
+    if (!silent) {
+      uni.hideLoading()
+    }
   }
 }
 
 // 删除首页商品
-const deleteHomeProduct = async (id) => {
+const deleteHomeProduct = async (id, silent = false) => {
   try {
-    uni.showLoading({ title: '删除中...' })
+    if (!silent) {
+      uni.showLoading({ title: '删除中...' })
+    }
     
     // 调用API删除首页商品，使用id而不是productId
     const result = await request({
-      url: `http://82.156.12.240:8080/api/productmarket/${id}`,
+      url: `https://bgnc.online/api/productmarket/${id}`,
       method: 'DELETE',
     })
     
@@ -431,24 +579,32 @@ const deleteHomeProduct = async (id) => {
       // 删除成功后，刷新首页商品列表
       await loadHomeProducts()
       
-      uni.showToast({
-        title: '已从首页移除',
-        icon: 'success'
-      })
+      if (!silent) {
+        uni.showToast({
+          title: '已从首页移除',
+          icon: 'success'
+        })
+      }
     } else {
-      uni.showToast({
-        title: result.message || '删除失败',
-        icon: 'none'
-      })
+      if (!silent) {
+        uni.showToast({
+          title: result.message || '删除失败',
+          icon: 'none'
+        })
+      }
     }
   } catch (error) {
     console.error('删除首页商品失败:', error)
-    uni.showToast({
-      title: '删除失败: ' + (error.message || '未知错误'),
-      icon: 'none'
-    })
+    if (!silent) {
+      uni.showToast({
+        title: '删除失败: ' + (error.message || '未知错误'),
+        icon: 'none'
+      })
+    }
   } finally {
-    uni.hideLoading()
+    if (!silent) {
+      uni.hideLoading()
+    }
   }
 }
 </script>

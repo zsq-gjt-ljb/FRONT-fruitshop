@@ -489,7 +489,7 @@ const uploadImageToServer = async (tempFilePath) => {
             success: () => {
               // 文件存在，执行上传
               uni.uploadFile({
-                url: 'http://82.156.12.240:8080/api/file/upload',
+                url: 'https://bgnc.online/api/file/upload',
                 filePath: tempFilePath,
                 name: 'file',
                 header: {
@@ -900,7 +900,7 @@ const submitProduct = async () => {
     if (isEditing.value) {
       // 更新商品 - PUT请求
       result = await request({
-        url: 'http://82.156.12.240:8080/api/product',
+        url: 'https://bgnc.online/api/product',
         method: 'PUT',
         data: {
           ...productData,
@@ -910,7 +910,7 @@ const submitProduct = async () => {
     } else {
       // 新建商品 - POST请求
       result = await request({
-        url: 'http://82.156.12.240:8080/api/product',
+        url: 'https://bgnc.online/api/product',
       method: 'POST',
         data: productData
       })
@@ -1043,7 +1043,7 @@ const fetchCategories = async () => {
   categoryLoading.value = true
   try {
     const result = await request({
-      url: 'http://82.156.12.240:8080/api/category/list',
+      url: 'https://bgnc.online/api/category/list',
       method: 'GET'
     })
     
@@ -1196,7 +1196,7 @@ const fetchProducts = async (append = false) => {
     console.log('正在获取商品列表，参数:', params)
     
     const response = await request({
-      url: 'http://82.156.12.240:8080/api/product/list',
+      url: 'https://bgnc.online/api/product/list',
       method: 'GET',
       data: params
     })
@@ -1295,7 +1295,7 @@ const editProduct = async (product) => {
     
     // 获取完整的商品信息
     const result = await request({
-      url: `http://82.156.12.240:8080/api/product/${product.id}`,
+      url: `https://bgnc.online/api/product/${product.id}`,
       method: 'GET'
     })
     
@@ -1429,7 +1429,7 @@ const deleteProduct = async (productId) => {
     isLoading.value = true
     
     const result = await request({
-      url: `http://82.156.12.240:8080/api/product/${productId}`,
+      url: `https://bgnc.online/api/product/${productId}`,
       method: 'DELETE'
     })
     

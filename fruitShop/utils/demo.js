@@ -35,7 +35,7 @@ export const copyUrlToClipboard = (url) => {
 // 假设这是一个下载Excel文件的函数
 export const downloadExcel = () => {
   // 这里是文件下载地址
-  const url = 'http://82.156.12.240:8080/api/download/excel';
+  const url = 'https://bgnc.online/api/download/excel';
   
   // 调用复制函数
   copyUrlToClipboard(url);
