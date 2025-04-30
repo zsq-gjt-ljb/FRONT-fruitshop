@@ -1,7 +1,7 @@
 <template>
   <view class="user-container">
     <!-- 用户信息区域 -->
-    <view class="user-header">
+    <view class="user-header" @tap="navigateToSettings">
       <view class="blur-background"></view>
       <view class="user-info">
         <image class="avatar" :src="userInfo.userAvatar || '/static/images/default-avatar.png'" mode="aspectFill" />
@@ -28,7 +28,7 @@
       <view class="order-types">
         <view class="type-item" @tap="navigateToOrderList('pending-payment')">
           <view class="icon-wrapper">
-            <image class="icon" src="/static/icons/alipay.png" mode="aspectFit" />
+            <image class="icon" src="/static/icons/payment.png" mode="aspectFit" />
           </view>
           <text class="name">待支付</text>
         </view>
@@ -101,7 +101,7 @@ const userInfo = ref({
                                                                                                                  
 // 订单类型
 const orderTypes = ref([
-  { type: 'pending-payment', name: '待支付', icon: '/static/icons/alipay.png', count: 0 },
+  { type: 'pending-payment', name: '待支付', icon: '/static/icons/payment.png', count: 0 },
   { type: 'undelivered', name: '待发货', icon: '/static/icons/box.png', count: 0 },
   { type: 'delivered', name: '待收货', icon: '/static/icons/truck.png', count: 0 },
   { type: 'after-sale', name: '退款/售后', icon: '/static/icons/refound.png', count: 0 }
@@ -263,6 +263,20 @@ const handleContact = (e) => {
   // 可以在这里添加统计或其他处理逻辑
 }
 
+// 跳转到个人设置页面
+const navigateToSettings = () => {
+  uni.navigateTo({
+    url: '/pages/settings/index',
+    fail: (err) => {
+      console.error('跳转到个人设置页面失败：', err)
+      uni.showToast({
+        title: '页面跳转失败',
+        icon: 'none'
+      })
+    }
+  })
+}
+
 onMounted(() => {
   getUserInfo()
 })
@@ -279,6 +293,10 @@ onMounted(() => {
     height: 400rpx;
     padding: 40rpx;
     overflow: hidden;
+    
+    &:active {
+      opacity: 0.9;
+    }
     
     .blur-background {
       position: absolute;

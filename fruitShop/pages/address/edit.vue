@@ -1,8 +1,8 @@
 <template>
     <view class="address-edit-container">
       <!-- 已保存的地址卡片列表 -->
-      <view class="saved-address" v-for="address in addressList" :key="address.id" @tap="editAddress(address)">
-        <view class="address-select" @tap.stop="selectAddress(address)">
+      <view class="saved-address" v-for="address in addressList" :key="address.id" @tap="selectAddress(address)">
+        <view class="address-select">
           <view class="select-circle" :class="{'selected': address.id === selectedAddressId}">
             <uni-icons v-if="address.id === selectedAddressId" type="checkmarkempty" size="14" color="#fff"></uni-icons>
           </view>
@@ -19,9 +19,12 @@
         <view class="address-actions">
           <view class="default-tag" v-if="address.isDefault">
             <text class="tag-icon">●</text>
-            <text>默认地址</text>
+            <text>默认</text>
           </view>
-          <text class="delete-btn" @tap.stop="deleteAddress(address.id)">删除</text>
+          <view class="action-buttons">
+            <text class="edit-btn" @tap.stop="editAddress(address)">编辑</text>
+            <text class="delete-btn" @tap.stop="deleteAddress(address.id)">删除</text>
+          </view>
         </view>
       </view>
   
@@ -59,7 +62,9 @@
                   placeholder="请输入手机号码"
                   placeholder-class="placeholder"
                   maxlength="11"
+                  @blur="validatePhone"
                 />
+                <text class="error-tip" v-if="phoneError">{{phoneError}}</text>
               </view>
     
               <!-- 选择地区 -->
@@ -80,6 +85,16 @@
                   placeholder="请输入详细地址信息，如道路、门牌号、小区、楼栋号、单元等"
                   placeholder-class="placeholder"
                   :auto-height="true"
+                />
+              </view>
+              
+              <!-- 设为默认地址 -->
+              <view class="form-item default-address">
+                <text class="label">设为默认地址</text>
+                <switch 
+                  :checked="addressForm.isDefault" 
+                  @change="(e) => addressForm.isDefault = e.detail.value"
+                  color="#3b78db"
                 />
               </view>
             </view>
@@ -129,7 +144,7 @@
   </template>
   
   <script setup>
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, nextTick } from 'vue'
   import request from '@/utils/request'
   import { getProvinces, getCities, getDistricts } from '@/utils/area-data'
   import { regionData } from 'element-china-area-data'
@@ -142,6 +157,7 @@
     phone: '',
     region: '',
     detail: '',
+    isDefault: false
   })
   
   const regionPopup = ref(null)
@@ -154,12 +170,28 @@
   const editingAddress = ref(null)
   const formPopup = ref(null)
   const id = ref(null)
+  const phoneError = ref('')
   
   // 设置选择器样式
   const indicatorStyle = 'height: 80rpx;'
   
   // 保存打开选择器前的选择值
   let previousPickerValue = []
+  
+  // 校验手机号
+  const validatePhone = () => {
+    const phoneRegex = /^1[3-9]\d{9}$/
+    if (!addressForm.value.phone) {
+      phoneError.value = '请输入手机号码'
+      return false
+    } else if (!phoneRegex.test(addressForm.value.phone)) {
+      phoneError.value = '请输入正确的手机号码'
+      return false
+    } else {
+      phoneError.value = ''
+      return true
+    }
+  }
   
   // 选择微信收货地址
   const chooseWxAddress = () => {
@@ -247,199 +279,41 @@
     const city = cities.value[pickerValue.value[1]]
     const district = districts.value[pickerValue.value[2]]
     
+    if (!province || !city || !district) {
+      uni.showToast({
+        title: '请选择完整的地区信息',
+        icon: 'none'
+      })
+      return
+    }
+    
     // 更新地址表单的地区信息
-    addressForm.value.provinceId = province.id
+    addressForm.value.region = `${province.name}${city.name}${district.name}`
+    addressForm.value.provinceCode = province.code
     addressForm.value.provinceName = province.name
-    addressForm.value.cityId = city.id
+    addressForm.value.cityCode = city.code
     addressForm.value.cityName = city.name
-    addressForm.value.districtId = district.id
+    addressForm.value.districtCode = district.code
     addressForm.value.districtName = district.name
     
-    // 更新显示的地区文本
-    addressForm.value.region = getFullRegion(province, city, district)
-    console.log('确认地区选择:', addressForm.value.region)
+    console.log('确认选择地区:', addressForm.value.region)
     
     regionPopup.value.close()
   }
   
-  // 处理选择器变化
-  const handlePickerChange = (e) => {
-    const values = e.detail.value
-    pickerValue.value = values
-    // 更新城市和区县数据
-    updateCities(values[0])
-    updateDistricts(values[0], values[1])
-  }
-  
-  // 更新城市数据
-  const updateCities = (provinceIndex) => {
-    const province = provinces.value[provinceIndex]
-    cities.value = getCities(province)
-    districts.value = getDistricts(province, cities.value[0])
-  }
-  
-  // 更新区县数据
-  const updateDistricts = (provinceIndex, cityIndex) => {
-    const province = provinces.value[provinceIndex]
-    const city = cities.value[cityIndex]
-    districts.value = getDistricts(province, city)
-  }
-  
-  // 获取地址列表
-  const getAddressList = async () => {
-    try {
-      const res = await request({
-        url: 'https://bgnc.online/api/addressbook/list',
-        method: 'GET'
-      })
-      
-      console.log('原始响应数据:', res.data)
-      
-      if (res.code === 200 && res.data) {
-        // 将ID转换为字符串
-        addressList.value = res.data.map(item => ({
-          ...item,
-          id: item.id.toString() // 将数字ID转换为字符串
-        }))
-        console.log('处理后的地址列表:', addressList.value)
-      }
-    } catch (error) {
-      console.error('获取地址列表失败:', error)
-      uni.showToast({
-        title: '获取地址失败',
-        icon: 'none'
-      })
-    }
-  }
-  
-  // 显示地址表单
-  const showAddressForm = () => {
-    editingAddress.value = null
-    addressForm.value = {
-      consignee: '',
-      phone: '',
-      region: '',
-      detail: ''
-    }
-    formPopup.value.open()
-  }
-  
-  // 编辑地址
-  const editAddress = (address) => {
-    console.log('编辑的地址信息:', address)
-    editingAddress.value = address
-    addressForm.value = {
-      consignee: address.consignee,
-      phone: address.phone,
-      region: `${address.provinceName} ${address.cityName} ${address.districtName}`,
-      detail: address.detail,
-      id: address.id.toString() // 确保ID是字符串
-    }
-    
-    // 设置选择器的初始值
-    initPickerValueForEditingAddress(address)
-    
-    console.log('编辑表单数据:', addressForm.value)
-    formPopup.value.open()
-  }
-  
-  // 为编辑地址初始化选择器的值
-  const initPickerValueForEditingAddress = (address) => {
-    // 找到省份索引
-    const provinceIndex = provinces.value.findIndex(p => p.name === address.provinceName)
-    if (provinceIndex >= 0) {
-      // 更新城市数据
-      updateCities(provinceIndex)
-      
-      // 找到城市索引
-      const cityIndex = cities.value.findIndex(c => c.name === address.cityName)
-      if (cityIndex >= 0) {
-        // 更新区县数据
-        updateDistricts(provinceIndex, cityIndex)
-        
-        // 找到区县索引
-        const districtIndex = districts.value.findIndex(d => d.name === address.districtName)
-        
-        // 设置选择器的值
-        pickerValue.value = [
-          provinceIndex,
-          cityIndex,
-          districtIndex >= 0 ? districtIndex : 0
-        ]
-        
-        console.log('初始化选择器值:', pickerValue.value, [address.provinceName, address.cityName, address.districtName])
-      }
-    }
-  }
-  
-  // 删除地址
-  const deleteAddress = async (id) => {
-    console.log('要删除的地址ID:', id)
-    try {
-      // 显示确认弹窗
-      uni.showModal({
-        title: '提示',
-        content: '确定要删除这个地址吗？',
-        success: async (res) => {
-          if (res.confirm) {
-            const res = await request({
-              url: `https://bgnc.online/api/addressbook/${id.toString()}`, // 确保传递字符串ID
-              method: 'DELETE'
-            })
-            
-            console.log('删除响应:', res)
-            
-            if (res.code === 200) {
-              uni.showToast({
-                title: '删除成功',
-                icon: 'success'
-              })
-              // 重新获取地址列表
-              getAddressList()
-            } else {
-              uni.showToast({
-                title: '删除失败',
-                icon: 'none'
-              })
-            }
-          }
-        }
-      })
-    } catch (error) {
-      console.error('删除地址失败:', error)
-      uni.showToast({
-        title: '删除失败',
-        icon: 'none'
-      })
-    }
-  }
-  
-  // 表单验证
-  const validateForm = () => {
-    console.log('验证表单:', addressForm.value)
-    
+  // 保存地址
+  const handleSave = async () => {
+    // 表单验证
     if (!addressForm.value.consignee) {
       uni.showToast({
         title: '请输入收货人姓名',
         icon: 'none'
       })
-      return false
+      return
     }
     
-    if (!addressForm.value.phone) {
-      uni.showToast({
-        title: '请输入手机号码',
-        icon: 'none'
-      })
-      return false
-    }
-    
-    if (!/^1\d{10}$/.test(addressForm.value.phone)) {
-      uni.showToast({
-        title: '请输入正确的手机号码',
-        icon: 'none'
-      })
-      return false
+    if (!validatePhone()) {
+      return
     }
     
     if (!addressForm.value.region) {
@@ -447,7 +321,7 @@
         title: '请选择所在地区',
         icon: 'none'
       })
-      return false
+      return
     }
     
     if (!addressForm.value.detail) {
@@ -455,92 +329,266 @@
         title: '请输入详细地址',
         icon: 'none'
       })
-      return false
-    }
-    
-    return true
-  }
-  
-  // 保存地址
-  const handleSave = async () => {
-    console.log('保存按钮被点击')
-    
-    // 表单验证
-    if (!validateForm()) {
       return
     }
     
+    uni.showLoading({
+      title: '保存中...'
+    })
+    
     try {
-      // 解析地区信息
-      let provinceName, cityName, districtName;
-      
-      if (editingAddress.value) {
-        // 编辑模式：如果地区没有更改，使用原有的值
-        if (!addressForm.value.region || addressForm.value.region === `${editingAddress.value.provinceName} ${editingAddress.value.cityName} ${editingAddress.value.districtName}`) {
-          provinceName = editingAddress.value.provinceName;
-          cityName = editingAddress.value.cityName;
-          districtName = editingAddress.value.districtName;
-        } else {
-          // 如果地区有更改，使用新选择的地区值
-          provinceName = provinces.value[pickerValue.value[0]].name;
-          cityName = cities.value[pickerValue.value[1]].name;
-          districtName = districts.value[pickerValue.value[2]].name;
-        }
-      } else {
-        // 新增模式：使用选择器的当前值
-        provinceName = provinces.value[pickerValue.value[0]].name;
-        cityName = cities.value[pickerValue.value[1]].name;
-        districtName = districts.value[pickerValue.value[2]].name;
-      }
-      
-      const addressData = {
+      // 构建请求数据
+      const data = {
         consignee: addressForm.value.consignee,
         phone: addressForm.value.phone,
-        provinceName: provinceName,
-        cityName: cityName,
-        districtName: districtName,
+        provinceCode: addressForm.value.provinceCode,
+        provinceName: addressForm.value.provinceName,
+        cityCode: addressForm.value.cityCode,
+        cityName: addressForm.value.cityName,
+        districtCode: addressForm.value.districtCode,
+        districtName: addressForm.value.districtName,
         detail: addressForm.value.detail,
-        sex: '男',
-        id: editingAddress.value?.id?.toString() // 确保ID是字符串
+        isDefault: addressForm.value.isDefault ? 1 : 0
       }
       
-      console.log('发送的请求数据:', addressData)
+      if (editingAddress.value) {
+        // 修改地址
+        data.id = editingAddress.value.id
+        const result = await request({
+          url: 'https://bgnc.online/api/addressbook/',
+          method: 'PUT',
+          data
+        })
+        
+        if (result.code === 200) {
+          uni.showToast({
+            title: '修改成功',
+            icon: 'success'
+          })
+          formPopup.value.close()
+          // 更新地址列表
+          getAddressList()
+        } else {
+          uni.showToast({
+            title: result.msg || '修改失败',
+            icon: 'none'
+          })
+        }
+      } else {
+        // 新增地址
+        const result = await request({
+          url: 'https://bgnc.online/api/addressbook/',
+          method: 'POST',
+          data
+        })
+        
+        if (result.code === 200) {
+          uni.showToast({
+            title: '添加成功',
+            icon: 'success'
+          })
+          formPopup.value.close()
+          // 更新地址列表
+          getAddressList()
+        } else {
+          uni.showToast({
+            title: result.msg || '添加失败',
+            icon: 'none'
+          })
+        }
+      }
+    } catch (error) {
+      console.error('保存地址失败：', error)
+      uni.showToast({
+        title: '保存失败，请稍后再试',
+        icon: 'none'
+      })
+    } finally {
+      uni.hideLoading()
+    }
+  }
+  
+  // 获取地址列表
+  const getAddressList = async () => {
+    try {
+      uni.showLoading({
+        title: '加载中...'
+      })
       
       const res = await request({
-        url: 'https://bgnc.online/api/addressbook/',
-        method: editingAddress.value ? 'PUT' : 'POST',  // 修改使用PUT，新增使用POST
-        data: addressData
+        url: 'https://bgnc.online/api/addressbook/list',
+        method: 'GET'
       })
       
       if (res.code === 200) {
-        uni.showToast({
-          title: editingAddress.value ? '修改成功' : '保存成功',
-          icon: 'success'
-        })
+        addressList.value = res.data || []
         
-        // 关闭表单
-        formPopup.value.close()
-        // 重新获取地址列表
-        getAddressList()
+        // 如果有默认地址，自动选中
+        const defaultAddress = addressList.value.find(item => item.isDefault)
+        if (defaultAddress) {
+          selectedAddressId.value = defaultAddress.id
+          // 将选中的地址ID存储到本地
+          uni.setStorageSync('selectedAddressId', defaultAddress.id)
+        } else if (addressList.value.length > 0) {
+          // 如果没有默认地址，选中第一个
+          selectedAddressId.value = addressList.value[0].id
+          // 将选中的地址ID存储到本地
+          uni.setStorageSync('selectedAddressId', addressList.value[0].id)
+        }
       } else {
         uni.showToast({
-          title: editingAddress.value ? '修改失败' : '保存失败',
+          title: res.msg || '获取地址列表失败',
           icon: 'none'
         })
       }
     } catch (error) {
-      console.error('保存地址失败:', error)
+      console.error('获取地址列表失败：', error)
       uni.showToast({
-        title: editingAddress.value ? '修改失败' : '保存失败',
+        title: '获取地址列表失败',
         icon: 'none'
       })
+    } finally {
+      uni.hideLoading()
     }
   }
   
-  // 获取完整地区编码
-  const getFullRegion = (province, city, district) => {
-    if (!province || !city || !district) return '';
-    return `${province.name} ${city.name} ${district.name}`
+  // 选择地址
+  const selectAddress = (address) => {
+    selectedAddressId.value = address.id
+    // 将选中的地址ID存储到本地
+    uni.setStorageSync('selectedAddressId', address.id)
+    uni.showToast({
+      title: '已选择该地址',
+      icon: 'success',
+      duration: 1500
+    })
+    
+    // 如果是从结算页面跳转来的，选择后返回
+    const pages = getCurrentPages()
+    const prevPage = pages[pages.length - 2]
+    if (prevPage && prevPage.route.includes('checkout')) {
+      setTimeout(() => {
+        uni.navigateBack()
+      }, 1000)
+    }
+  }
+  
+  // 删除地址
+  const deleteAddress = (id) => {
+    uni.showModal({
+      title: '提示',
+      content: '确定要删除该地址吗？',
+      success: async (res) => {
+        if (res.confirm) {
+          try {
+            uni.showLoading({
+              title: '删除中...'
+            })
+            
+            const result = await request({
+              url: `https://bgnc.online/api/addressbook/${id}`,
+              method: 'DELETE',
+              
+            })
+            
+            if (result.code === 200) {
+              uni.showToast({
+                title: '删除成功',
+                icon: 'success'
+              })
+              
+              // 如果删除的是当前选中的地址，清空选中状态
+              if (selectedAddressId.value === id) {
+                selectedAddressId.value = ''
+                uni.removeStorageSync('selectedAddressId')
+              }
+              
+              // 更新地址列表
+              getAddressList()
+            } else {
+              uni.showToast({
+                title: result.msg || '删除失败',
+                icon: 'none'
+              })
+            }
+          } catch (error) {
+            console.error('删除地址失败：', error)
+            uni.showToast({
+              title: '删除失败，请稍后再试',
+              icon: 'none'
+            })
+          } finally {
+            uni.hideLoading()
+          }
+        }
+      }
+    })
+  }
+  
+  // 编辑地址
+  const editAddress = (address) => {
+    editingAddress.value = address
+    
+    // 重置表单
+    addressForm.value = {
+      consignee: address.consignee,
+      phone: address.phone,
+      region: `${address.provinceName}${address.cityName}${address.districtName}`,
+      detail: address.detail,
+      provinceCode: address.provinceCode,
+      provinceName: address.provinceName,
+      cityCode: address.cityCode,
+      cityName: address.cityName,
+      districtCode: address.districtCode,
+      districtName: address.districtName,
+      isDefault: address.isDefault === 1
+    }
+    
+    // 找到省市区对应的索引以设置选择器的初始值
+    const findProvinceIndex = provinces.value.findIndex(p => p.code === address.provinceCode)
+    if (findProvinceIndex !== -1) {
+      // 更新城市列表
+      cities.value = getCities(address.provinceCode)
+      
+      const findCityIndex = cities.value.findIndex(c => c.code === address.cityCode)
+      if (findCityIndex !== -1) {
+        // 更新区县列表
+        districts.value = getDistricts(address.cityCode)
+        
+        const findDistrictIndex = districts.value.findIndex(d => d.code === address.districtCode)
+        
+        // 设置选择器的值
+        pickerValue.value = [
+          findProvinceIndex,
+          findCityIndex,
+          findDistrictIndex !== -1 ? findDistrictIndex : 0
+        ]
+        
+        previousPickerValue = [...pickerValue.value]
+      }
+    }
+    
+    // 打开表单弹窗
+    nextTick(() => {
+      formPopup.value.open()
+    })
+  }
+  
+  // 显示地址表单
+  const showAddressForm = () => {
+    editingAddress.value = null
+    
+    // 重置表单
+    addressForm.value = {
+      consignee: '',
+      phone: '',
+      region: '',
+      detail: '',
+      isDefault: false
+    }
+    
+    // 打开表单弹窗
+    formPopup.value.open()
   }
   
   // 关闭表单
@@ -548,45 +596,67 @@
     formPopup.value.close()
   }
   
-  // 选择地址
-  const selectAddress = (address) => {
-    selectedAddressId.value = address.id
-    // 将选中的地址保存到本地存储
-    uni.setStorageSync('selectedAddressId', address.id.toString())
-    uni.showToast({
-      title: '已选择该地址',
-      icon: 'success',
-      duration: 1500
-    })
+  // 处理选择器变化
+  const handlePickerChange = (e) => {
+    const values = e.detail.value
+    pickerValue.value = values
     
-    // 选择后返回上一页
-    setTimeout(() => {
-      uni.navigateBack()
-    }, 1500)
+    // 如果省份发生变化，重新获取城市列表
+    if (values[0] !== previousPickerValue[0]) {
+      const selectedProvince = provinces.value[values[0]]
+      if (selectedProvince) {
+        // 直接使用code属性，而不是通过对象传递
+        cities.value = getCities(selectedProvince.code)
+        // 默认选择第一个城市的区县
+        if (cities.value.length > 0) {
+          districts.value = getDistricts(cities.value[0].code)
+        } else {
+          districts.value = []
+        }
+        pickerValue.value = [values[0], 0, 0]
+      }
+    }
+    
+    // 如果城市发生变化，重新获取区县列表
+    else if (values[1] !== previousPickerValue[1]) {
+      const selectedCity = cities.value[values[1]]
+      if (selectedCity) {
+        // 直接使用code属性
+        districts.value = getDistricts(selectedCity.code)
+        pickerValue.value = [values[0], values[1], 0]
+      }
+    }
+    
+    // 更新previousPickerValue
+    previousPickerValue = [...pickerValue.value]
   }
   
-  // 初始化数据
+  // 初始化页面数据
   onMounted(() => {
     // 初始化省份数据
     provinces.value = getProvinces()
-    console.log('省份数据:', provinces.value)
+    console.log('初始化省份数据:', provinces.value)
     
-    // 初始化城市数据
-    cities.value = getCities(provinces.value[0])
-    console.log('城市数据:', cities.value)
-    
-    // 初始化区县数据
-    districts.value = getDistricts(provinces.value[0], cities.value[0])
-    console.log('区县数据:', districts.value)
-    
-    // 获取已保存的选中地址ID
-    const savedAddressId = uni.getStorageSync('selectedAddressId')
-    if (savedAddressId) {
-      selectedAddressId.value = savedAddressId
+    // 默认选择第一个省份的城市
+    if (provinces.value.length > 0) {
+      cities.value = getCities(provinces.value[0].code)
+      console.log('初始化城市数据:', cities.value)
+      
+      // 默认选择第一个城市的区县
+      if (cities.value.length > 0) {
+        districts.value = getDistricts(cities.value[0].code)
+        console.log('初始化区县数据:', districts.value)
+      }
     }
     
-    // 获取已保存的地址
+    // 获取已保存的地址列表
     getAddressList()
+    
+    // 获取本地存储的选中地址ID
+    const storedAddressId = uni.getStorageSync('selectedAddressId')
+    if (storedAddressId) {
+      selectedAddressId.value = storedAddressId
+    }
   })
   </script>
   
@@ -594,26 +664,29 @@
   .address-edit-container {
     min-height: 100vh;
     background-color: #f8f9fc;
-    padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
+    padding-bottom: 180rpx; // 为底部按钮留出空间
+    display: flex;
+    flex-direction: column;
     
     .saved-address {
-      margin: 24rpx;
       background: #ffffff;
-      border-radius: 24rpx;
-      padding: 32rpx;
+      margin: 20rpx;
+      border-radius: 16rpx;
+      padding: 30rpx;
+      box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
       display: flex;
+      align-items: flex-start;
+      position: relative;
       
       .address-select {
         margin-right: 20rpx;
-        display: flex;
-        align-items: flex-start;
-        padding-top: 8rpx;
+        padding-top: 6rpx;
         
         .select-circle {
-          width: 40rpx;
-          height: 40rpx;
+          width: 36rpx;
+          height: 36rpx;
           border-radius: 50%;
-          border: 2rpx solid #d1d1d6;
+          border: 2rpx solid #ccc;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -627,10 +700,9 @@
       
       .address-info {
         flex: 1;
-        margin-bottom: 20rpx;
         
         .user-info {
-          margin-bottom: 16rpx;
+          margin-bottom: 10rpx;
           
           .name {
             font-size: 32rpx;
@@ -655,181 +727,206 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        width: 100%;
+        margin-top: 20rpx;
         padding-top: 20rpx;
-        border-top: 1rpx solid #f5f5f5;
+        border-top: 1px solid #f0f0f0;
         
         .default-tag {
           display: flex;
           align-items: center;
+          font-size: 24rpx;
           color: #ff9500;
-          font-size: 28rpx;
           
           .tag-icon {
-            margin-right: 8rpx;
+            font-size: 24rpx;
+            margin-right: 4rpx;
           }
         }
         
-        .delete-btn {
-          color: #ff4d4f;
-          font-size: 28rpx;
+        .action-buttons {
+          display: flex;
+          align-items: center;
+          
+          .edit-btn, .delete-btn {
+            font-size: 26rpx;
+            padding: 6rpx 16rpx;
+            border-radius: 30rpx;
+            margin-left: 16rpx;
+          }
+          
+          .edit-btn {
+            color: #3b78db;
+            background-color: rgba(59, 120, 219, 0.1);
+          }
+          
+          .delete-btn {
+            color: #ff5a5f;
+            background-color: rgba(255, 90, 95, 0.1);
+          }
         }
       }
     }
     
     .add-address {
-      margin: 24rpx;
+      margin: 40rpx 20rpx;
       height: 88rpx;
-      background: #ff9500;
+      background: #3b78db;
       border-radius: 44rpx;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #ffffff;
-      font-size: 32rpx;
-      
-      &:active {
-        opacity: 0.9;
-      }
+      color: #fff;
+      font-size: 30rpx;
+      box-shadow: 0 6rpx 16rpx rgba(59, 120, 219, 0.2);
     }
     
     .form-popup {
-      background: #ffffff;
+      background-color: #fff;
       border-radius: 24rpx 24rpx 0 0;
-      max-height: 80vh;
+      overflow: hidden;
+      padding-bottom: env(safe-area-inset-bottom);
+      max-height: 85vh;
       display: flex;
       flex-direction: column;
       
       .popup-header {
-        padding: 24rpx;
+        padding: 30rpx;
         display: flex;
         justify-content: center;
         align-items: center;
         position: relative;
-        border-bottom: 1rpx solid #f5f5f5;
+        border-bottom: 1px solid #f0f0f0;
         
         .title {
           font-size: 32rpx;
           font-weight: 500;
-          color: #333;
         }
         
         .close-btn {
           position: absolute;
-          right: 24rpx;
+          right: 30rpx;
+          top: 30rpx;
           font-size: 40rpx;
           color: #999;
-          line-height: 1;
         }
       }
       
       .form-content {
+        padding: 30rpx;
         flex: 1;
-        max-height: calc(80vh - 180rpx);
-      }
-      
-      .form-group {
-        padding: 0 32rpx;
+        overflow-y: auto;
+        max-height: 65vh;
         
-        .form-item {
-          padding: 32rpx 0;
-          border-bottom: 2rpx solid #f5f5f5;
-          
-          &:last-child {
-            border-bottom: none;
-          }
-          
-          .label {
-            font-size: 28rpx;
-            color: #333333;
-            margin-bottom: 16rpx;
-            display: block;
-          }
-          
-          input {
-            font-size: 28rpx;
-            color: #333333;
-          }
-          
-          textarea {
-            width: 100%;
-            font-size: 28rpx;
-            color: #333333;
-            line-height: 1.5;
-          }
-          
-          .region-picker {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .form-group {
+          .form-item {
+            margin-bottom: 36rpx;
             
-            .value {
-              flex: 1;
+            .label {
+              display: block;
               font-size: 28rpx;
-              color: #333333;
+              color: #333;
+              margin-bottom: 16rpx;
+              font-weight: 500;
             }
             
-            .icon-right {
-              color: #999999;
+            input, textarea, .region-picker {
+              width: 100%;
+              height: 80rpx;
+              background-color: #f8f9fc;
+              border-radius: 8rpx;
+              padding: 0 20rpx;
+              font-size: 28rpx;
+              color: #333;
+              box-sizing: border-box;
+            }
+            
+            textarea {
+              height: auto;
+              min-height: 160rpx;
+              padding: 20rpx;
+              line-height: 1.5;
+            }
+            
+            .region-picker {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              position: relative;
+              
+              .value {
+                color: #333;
+              }
+              
+              .placeholder {
+                color: #999;
+              }
+              
+              .icon-right {
+                font-size: 24rpx;
+                color: #999;
+              }
+            }
+            
+            .error-tip {
+              display: block;
               font-size: 24rpx;
+              color: #ff5a5f;
+              margin-top: 8rpx;
+            }
+            
+            &.default-address {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
             }
           }
         }
       }
       
       .popup-footer {
-        padding: 24rpx;
-        border-top: 1rpx solid #f5f5f5;
+        padding: 20rpx 30rpx;
+        border-top: 1px solid #f0f0f0;
         
         .save-button {
           height: 88rpx;
-          background: #ff9500;
+          background: #3b78db;
           border-radius: 44rpx;
           display: flex;
           align-items: center;
           justify-content: center;
-          
-          text {
-            color: #ffffff;
-            font-size: 32rpx;
-            font-weight: 500;
-          }
-          
-          &:active {
-            opacity: 0.9;
-          }
+          color: #fff;
+          font-size: 30rpx;
+          font-weight: 500;
         }
       }
     }
     
-    .placeholder {
-      color: #999999;
-    }
-    
     .region-popup {
-      background: #ffffff;
+      background-color: #fff;
       border-radius: 24rpx 24rpx 0 0;
+      padding-bottom: env(safe-area-inset-bottom);
       
       .popup-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 24rpx 32rpx;
-        border-bottom: 2rpx solid #f5f5f5;
-        
-        .cancel {
-          color: #999999;
-          font-size: 28rpx;
-        }
+        padding: 30rpx;
+        border-bottom: 1px solid #f0f0f0;
         
         .title {
           font-size: 32rpx;
           font-weight: 500;
-          color: #333333;
+        }
+        
+        .cancel, .confirm {
+          font-size: 28rpx;
+          color: #999;
         }
         
         .confirm {
-          color: #4a90e2;
-          font-size: 28rpx;
+          color: #3b78db;
+          font-weight: 500;
         }
       }
       
@@ -839,11 +936,15 @@
         
         .picker-item {
           line-height: 80rpx;
-          text-align: center;
           font-size: 28rpx;
-          color: #333333;
+          text-align: center;
+          color: #333;
         }
       }
+    }
+    
+    .placeholder {
+      color: #999;
     }
   }
 </style>

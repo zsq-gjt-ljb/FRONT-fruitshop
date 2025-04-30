@@ -20,7 +20,7 @@ const _sfc_main = {
     const memberLevel = common_vendor.ref("");
     const orderType = common_vendor.ref("cart");
     common_vendor.onLoad((options) => {
-      common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:140", "结算页面参数:", options);
+      common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:143", "结算页面参数:", options);
       if (options.type === "buyNow") {
         orderType.value = "buyNow";
       }
@@ -33,10 +33,10 @@ const _sfc_main = {
         });
         if (result.code === 200) {
           memberLevel.value = result.data.memberLevel || "";
-          common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:156", "获取到的会员等级:", memberLevel.value, "类型:", typeof memberLevel.value);
+          common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:159", "获取到的会员等级:", memberLevel.value, "类型:", typeof memberLevel.value);
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:159", "获取会员信息失败:", error);
+        common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:162", "获取会员信息失败:", error);
       }
     };
     const getAddressList = async () => {
@@ -47,9 +47,9 @@ const _sfc_main = {
         });
         if (result.code === 200) {
           addressList.value = result.data || [];
-          common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:173", "获取到的地址列表:", JSON.stringify(addressList.value));
+          common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:176", "获取到的地址列表:", JSON.stringify(addressList.value));
           const selectedAddressId = common_vendor.index.getStorageSync("selectedAddressId");
-          common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:177", "已保存的选择地址ID:", selectedAddressId);
+          common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:180", "已保存的选择地址ID:", selectedAddressId);
           if (selectedAddressId) {
             try {
               const addressDetail = await utils_request.request({
@@ -57,14 +57,14 @@ const _sfc_main = {
                 method: "GET"
               });
               if (addressDetail.code === 200 && addressDetail.data) {
-                common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:188", "通过API获取的地址详情:", addressDetail.data);
+                common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:191", "通过API获取的地址详情:", addressDetail.data);
                 selectedAddress.value = addressDetail.data;
                 return;
               } else {
-                common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:192", "获取地址详情失败:", addressDetail.message);
+                common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:195", "获取地址详情失败:", addressDetail.message);
               }
             } catch (error) {
-              common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:195", "获取地址详情API错误:", error);
+              common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:198", "获取地址详情API错误:", error);
             }
           }
           const defaultAddress = addressList.value.find((address) => address.isDefault);
@@ -73,10 +73,10 @@ const _sfc_main = {
           } else if (addressList.value.length > 0) {
             selectedAddress.value = addressList.value[0];
           }
-          common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:209", "最终选择的地址:", selectedAddress.value);
+          common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:212", "最终选择的地址:", selectedAddress.value);
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:212", "获取地址列表失败:", error);
+        common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:215", "获取地址列表失败:", error);
       }
     };
     const loadCheckoutData = () => {
@@ -86,7 +86,7 @@ const _sfc_main = {
           checkoutItems.value = JSON.parse(items);
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:224", "读取结算数据失败:", error);
+        common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:227", "读取结算数据失败:", error);
       }
     };
     const originalPrice = common_vendor.computed(() => {
@@ -96,7 +96,7 @@ const _sfc_main = {
     });
     const discountAmount = common_vendor.computed(() => {
       let discount = 0;
-      common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:238", "计算折扣时的会员等级:", memberLevel.value, "类型:", typeof memberLevel.value);
+      common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:241", "计算折扣时的会员等级:", memberLevel.value, "类型:", typeof memberLevel.value);
       switch (memberLevel.value) {
         case "1":
         case 1:
@@ -113,14 +113,18 @@ const _sfc_main = {
         default:
           discount = 0;
       }
-      common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:254", "原始价格:", originalPrice.value, "折扣金额:", discount);
+      common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:257", "原始价格:", originalPrice.value, "折扣金额:", discount);
       if (discount > 0 && discount < 0.01) {
         discount = 0.01;
       }
       return discount;
     });
     const finalPrice = common_vendor.computed(() => {
-      shippingFee.value = 8;
+      if (originalPrice.value >= 88) {
+        shippingFee.value = 0;
+      } else {
+        shippingFee.value = 8;
+      }
       return originalPrice.value - discountAmount.value + shippingFee.value;
     });
     const memberLevelText = common_vendor.computed(() => {
@@ -171,10 +175,12 @@ const _sfc_main = {
             productId: item.productId,
             skuId: item.skuId || null,
             addressBookId: selectedAddress.value.id,
-            quantity: item.quantity
+            quantity: item.quantity,
             // 将备注添加到请求中
+            phoneNumber: selectedAddress.value.phone
+            // 添加收货人电话号码
           };
-          common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:338", "直接购买请求数据:", buyData);
+          common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:346", "直接购买请求数据:", buyData);
           const result = await utils_request.request({
             url: "https://bgnc.online/api/order/buyNow",
             method: "POST",
@@ -182,7 +188,7 @@ const _sfc_main = {
           });
           common_vendor.index.hideLoading();
           if (result.code === 200) {
-            common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:350", "result是", result.data);
+            common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:358", "result是", result.data);
             handleOrderSuccess(result);
           } else {
             handleOrderFail(result);
@@ -196,9 +202,11 @@ const _sfc_main = {
           });
           const settleData = {
             ids: cartIds,
-            addressBookId: selectedAddress.value.id
+            addressBookId: selectedAddress.value.id,
+            phoneNumber: selectedAddress.value.phone
+            // 添加收货人电话号码
           };
-          common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:374", "结算请求数据:", settleData);
+          common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:382", "结算请求数据:", settleData);
           const result = await utils_request.request({
             url: "https://bgnc.online/api/order/settle",
             method: "POST",
@@ -206,7 +214,7 @@ const _sfc_main = {
           });
           common_vendor.index.hideLoading();
           if (result.code === 200) {
-            common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:386", "结算成功:", result);
+            common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:394", "结算成功:", result);
             handleOrderSuccess(result);
           } else {
             handleOrderFail(result);
@@ -214,7 +222,7 @@ const _sfc_main = {
         }
       } catch (error) {
         common_vendor.index.hideLoading();
-        common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:394", "提交订单失败:", error);
+        common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:402", "提交订单失败:", error);
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
           icon: "none"
@@ -223,7 +231,7 @@ const _sfc_main = {
     };
     const handleOrderSuccess = async (result) => {
       try {
-        common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:405", "订单创建成功，准备支付:", result);
+        common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:413", "订单创建成功，准备支付:", result);
         const orderId = result.data;
         if (!orderId) {
           throw new Error("未获取到订单ID");
@@ -232,7 +240,7 @@ const _sfc_main = {
         if (!loginResult.code) {
           throw new Error("获取微信登录code失败");
         }
-        common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:419", "获取到微信登录code:", loginResult.code);
+        common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:427", "获取到微信登录code:", loginResult.code);
         const paymentResult = await utils_request.request({
           url: "https://bgnc.online/api/notify/payment",
           method: "POST",
@@ -241,7 +249,7 @@ const _sfc_main = {
             code: loginResult.code
           }
         });
-        common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:431", "获取到支付参数:", paymentResult);
+        common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:439", "获取到支付参数:", paymentResult);
         if (paymentResult.code !== 200 || !paymentResult.data) {
           throw new Error(paymentResult.message || "获取支付参数失败");
         }
@@ -252,13 +260,27 @@ const _sfc_main = {
             title: "支付成功",
             icon: "success"
           });
+          try {
+            await utils_request.request({
+              url: `https://bgnc.online/api/order/`,
+              method: "PUT",
+              data: {
+                id: orderId,
+                status: 1
+                // 待发货状态
+              }
+            });
+            common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:467", "订单状态已更新为待发货");
+          } catch (updateError) {
+            common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:469", "更新订单状态失败:", updateError);
+          }
           setTimeout(() => {
             common_vendor.index.redirectTo({
               url: `/pages/order/detail?id=${orderId}`
             });
           }, 1500);
         } catch (payError) {
-          common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:457", "支付过程发生错误:", payError);
+          common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:480", "支付过程发生错误:", payError);
           if (payError.errMsg && payError.errMsg.includes("cancel")) {
             common_vendor.index.showToast({
               title: "用户取消支付",
@@ -277,7 +299,7 @@ const _sfc_main = {
           }, 1500);
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:479", "支付流程出错:", error);
+        common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:502", "支付流程出错:", error);
         common_vendor.index.hideLoading();
         common_vendor.index.showToast({
           title: error.message || "支付流程出错",
@@ -298,21 +320,21 @@ const _sfc_main = {
         common_vendor.index.hideLoading();
       }
     };
-    const wxPay = (paymentData) => {
+    const wxPay = (payParams) => {
       return new Promise((resolve, reject) => {
         common_vendor.index.requestPayment({
           provider: "wxpay",
-          timeStamp: paymentData.timeStamp,
-          nonceStr: paymentData.nonceStr,
-          package: paymentData.package,
-          signType: paymentData.signType,
-          paySign: paymentData.paySign,
+          timeStamp: payParams.timeStamp,
+          nonceStr: payParams.nonceStr,
+          package: payParams.packageVal,
+          signType: payParams.signType,
+          paySign: payParams.paySign,
           success: (res) => {
-            common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:516", "支付成功:", res);
+            common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:540", "支付成功", res);
             resolve(res);
           },
           fail: (err) => {
-            common_vendor.index.__f__("error", "at pages/checkout/checkout.vue:520", "支付失败:", err);
+            common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:544", "支付失败", err);
             reject(err);
           }
         });
@@ -330,7 +352,7 @@ const _sfc_main = {
       getMemberInfo();
     });
     common_vendor.onMounted(() => {
-      common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:545", "结算页面已加载");
+      common_vendor.index.__f__("log", "at pages/checkout/checkout.vue:569", "结算页面已加载");
       getAddressList();
     });
     return (_ctx, _cache) => {
@@ -379,20 +401,24 @@ const _sfc_main = {
             g: index
           });
         }),
-        n: common_vendor.t(originalPrice.value.toFixed(2)),
-        o: shippingFee.value > 0
+        n: originalPrice.value < 88
+      }, originalPrice.value < 88 ? {
+        o: common_vendor.t((88 - originalPrice.value).toFixed(2))
+      } : {}, {
+        p: common_vendor.t(originalPrice.value.toFixed(2)),
+        q: shippingFee.value > 0
       }, shippingFee.value > 0 ? {
-        p: common_vendor.t(shippingFee.value.toFixed(2))
+        r: common_vendor.t(shippingFee.value.toFixed(2))
       } : {}, {
-        q: discountAmount.value > 0
+        s: discountAmount.value > 0
       }, discountAmount.value > 0 ? {
-        r: common_vendor.t(memberLevelText.value),
-        s: common_vendor.t(discountAmount.value.toFixed(2))
+        t: common_vendor.t(memberLevelText.value),
+        v: common_vendor.t(discountAmount.value.toFixed(2))
       } : {}, {
-        t: remark.value,
-        v: common_vendor.o(($event) => remark.value = $event.detail.value),
-        w: common_vendor.t(finalPrice.value.toFixed(2)),
-        x: common_vendor.o(submitOrder)
+        w: remark.value,
+        x: common_vendor.o(($event) => remark.value = $event.detail.value),
+        y: common_vendor.t(finalPrice.value.toFixed(2)),
+        z: common_vendor.o(submitOrder)
       });
     };
   }

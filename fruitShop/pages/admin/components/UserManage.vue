@@ -72,12 +72,16 @@
           <text>{{ user.loginDate || '未登录' }}</text>
         </view>
 
-        <!-- 操作按钮 -->
+        <!-- 操作按钮 - 改为下拉框操作 -->
         <view class="col actions">
-          <button 
-            class="action-btn"
-            @tap="handleEditLevel(user)"
-          >修改等级</button>
+          <picker 
+            mode="selector" 
+            :range="vipLevels.slice(1)" 
+            :value="(user.memberLevel || 1) - 1"
+            @change="(e) => handleEditLevelChange(e, user)"
+          >
+            <view class="action-btn">修改等级</view>
+          </picker>
         </view>
       </view>
     </view>
@@ -97,20 +101,13 @@
       >下一页</text>
     </view>
 
-    <!-- 修改等级弹窗 -->
-    <uni-popup ref="levelPopup" type="dialog">
-      <view class="level-dialog">
+    <!-- 修改等级确认弹窗 -->
+    <uni-popup ref="confirmPopup" type="dialog">
+      <view class="confirm-dialog">
         <text class="dialog-title">修改会员等级</text>
-        <picker 
-          mode="selector" 
-          :range="vipLevels.slice(1)" 
-          :value="editingLevel - 1"
-          @change="onEditLevelChange"
-        >
-          <text>{{ vipLevels[editingLevel] }}</text>
-        </picker>
+        <text class="dialog-content">确认将该用户等级修改为 VIP{{ editingLevel }}?</text>
         <view class="dialog-buttons">
-          <button @tap="cancelEdit">取消</button>
+          <button @tap="cancelEdit" class="cancel-btn">取消</button>
           <button @tap="confirmEdit" class="confirm-btn">确认</button>
         </view>
       </view>
@@ -146,7 +143,7 @@ const currentUser = ref(null)
 const userList = ref([])
 
 // 弹窗引用
-const levelPopup = ref(null)
+const confirmPopup = ref(null)
 
 // 获取用户列表
 const getUserList = async () => {
@@ -197,21 +194,17 @@ const onLevelChange = (e) => {
   getUserList()
 }
 
-// 修改用户等级
-const handleEditLevel = (user) => {
+// 直接从下拉框修改用户等级
+const handleEditLevelChange = (e, user) => {
+  const newLevel = parseInt(e.detail.value) + 1
   currentUser.value = user
-  editingLevel.value = user.memberLevel || 1
-  levelPopup.value.open()
-}
-
-// 修改编辑中的等级
-const onEditLevelChange = (e) => {
-  editingLevel.value = parseInt(e.detail.value) + 1
+  editingLevel.value = newLevel
+  confirmPopup.value.open()
 }
 
 // 取消编辑
 const cancelEdit = () => {
-  levelPopup.value.close()
+  confirmPopup.value.close()
 }
 
 // 确认修改等级
@@ -220,10 +213,10 @@ const confirmEdit = async () => {
   
   try {
     const res = await request({
-      url: 'https://bgnc.online/api/user/updateLevel',
+      url: 'https://bgnc.online/api/usermember/level',
       method: 'PUT',
       data: {
-        id: currentUser.value.id,
+        userId: currentUser.value.id,
         memberLevel: editingLevel.value
       }
     })
@@ -240,7 +233,7 @@ const confirmEdit = async () => {
         userList.value[index].memberLevel = editingLevel.value
       }
       
-      levelPopup.value.close()
+      confirmPopup.value.close()
     } else {
       uni.showToast({
         title: res.message || '修改失败',
@@ -281,43 +274,53 @@ onMounted(() => {
 .user-manage {
   .search-bar {
     background: #ffffff;
-    padding: 20rpx;
-    border-radius: 12rpx;
+    padding: 16rpx;
+    border-radius: 8rpx;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20rpx;
+    margin-bottom: 16rpx;
+    box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
     
     .search-input {
       flex: 1;
       display: flex;
       align-items: center;
       background: #f5f7fa;
-      padding: 12rpx 20rpx;
-      border-radius: 8rpx;
+      padding: 10rpx 16rpx;
+      border-radius: 6rpx;
       
       input {
         flex: 1;
-        font-size: 28rpx;
-        margin-left: 12rpx;
+        font-size: 24rpx;
+        margin-left: 10rpx;
       }
     }
     
     .filter-options {
-      margin-left: 20rpx;
+      margin-left: 16rpx;
+      
+      text {
+        font-size: 24rpx;
+        color: #666;
+        background-color: #f5f7fa;
+        padding: 8rpx 16rpx;
+        border-radius: 6rpx;
+      }
     }
   }
 
   .user-list {
     background: #ffffff;
-    border-radius: 12rpx;
-    padding: 20rpx;
+    border-radius: 8rpx;
+    padding: 12rpx;
+    box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
     
     .list-header {
       display: flex;
-      padding: 20rpx 0;
-      border-bottom: 2rpx solid #f5f7fa;
-      font-size: 28rpx;
+      padding: 16rpx 0;
+      border-bottom: 1rpx solid #f0f2f5;
+      font-size: 22rpx;
       color: #999;
       
       .col {
@@ -327,70 +330,92 @@ onMounted(() => {
         &:first-child {
           flex: 2;
           text-align: left;
+          padding-left: 16rpx;
         }
       }
     }
     
     .loading-tip, .empty-tip {
-      padding: 60rpx 0;
+      padding: 40rpx 0;
       text-align: center;
       color: #999;
-      font-size: 28rpx;
+      font-size: 24rpx;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       
       text {
-        margin-top: 20rpx;
+        margin-top: 16rpx;
       }
     }
     
     .user-item {
       display: flex;
       align-items: center;
-      padding: 20rpx 0;
-      border-bottom: 2rpx solid #f5f7fa;
+      padding: 16rpx 0;
+      border-bottom: 1rpx solid #f0f2f5;
       
       .col {
         flex: 1;
         text-align: center;
+        font-size: 24rpx;
+        color: #333;
         
         &.user-info {
           flex: 2;
           display: flex;
           align-items: center;
           text-align: left;
+          padding-left: 16rpx;
           
           .avatar {
-            width: 80rpx;
-            height: 80rpx;
-            border-radius: 40rpx;
-            margin-right: 16rpx;
+            width: 70rpx;
+            height: 70rpx;
+            border-radius: 35rpx;
+            margin-right: 12rpx;
           }
           
           .info {
             .nickname {
-              font-size: 28rpx;
+              font-size: 24rpx;
               color: #333;
-              margin-bottom: 8rpx;
+              margin-bottom: 6rpx;
+              display: block;
             }
             
             .phone {
-              font-size: 24rpx;
+              font-size: 22rpx;
               color: #999;
+              display: block;
             }
           }
+        }
+        
+        &.vip-level {
+          text {
+            background-color: rgba(74, 144, 226, 0.1);
+            color: #4a90e2;
+            padding: 4rpx 12rpx;
+            border-radius: 4rpx;
+            font-size: 22rpx;
+          }
+        }
+        
+        &.user-sex, &.login-date {
+          font-size: 22rpx;
+          color: #666;
         }
       }
       
       .action-btn {
-        font-size: 24rpx;
-        padding: 8rpx 20rpx;
+        font-size: 22rpx;
+        padding: 6rpx 16rpx;
         background: #4a90e2;
         color: #ffffff;
-        border-radius: 6rpx;
-        border: none;
+        border-radius: 4rpx;
+        display: inline-block;
+        text-align: center;
       }
     }
   }
@@ -399,44 +424,65 @@ onMounted(() => {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 40rpx;
+    margin-top: 24rpx;
     
     .page-btn {
-      padding: 12rpx 24rpx;
-      font-size: 26rpx;
+      padding: 8rpx 20rpx;
+      font-size: 24rpx;
       color: #4a90e2;
       
       &.disabled {
-        color: #999;
+        color: #ccc;
       }
     }
     
     .page-number {
-      margin: 0 20rpx;
-      font-size: 26rpx;
+      margin: 0 16rpx;
+      font-size: 24rpx;
       color: #666;
     }
   }
 }
 
-.level-dialog {
+.confirm-dialog {
   padding: 40rpx;
+  width: 80%;
+  background-color: #ffffff;
+  border-radius: 12rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
   
   .dialog-title {
     font-size: 32rpx;
     color: #333;
     margin-bottom: 30rpx;
     text-align: center;
+    font-weight: 500;
+  }
+  
+  .dialog-content {
+    font-size: 28rpx;
+    color: #666;
+    margin-bottom: 40rpx;
+    text-align: center;
+    line-height: 1.5;
   }
   
   .dialog-buttons {
     display: flex;
     justify-content: space-between;
-    margin-top: 40rpx;
     
     button {
       flex: 1;
-      margin: 0 10rpx;
+      margin: 0 15rpx;
+      font-size: 28rpx;
+      padding: 16rpx 0;
+      border-radius: 8rpx;
+      border: none;
+      
+      &.cancel-btn {
+        background: #f5f7fa;
+        color: #666;
+      }
       
       &.confirm-btn {
         background: #4a90e2;

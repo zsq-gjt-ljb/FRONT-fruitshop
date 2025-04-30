@@ -83,10 +83,24 @@
   font-size: 26rpx;
   color: #666;
 }
-.order-list-container .order-list .order-item .order-header .order-status {
+.order-list-container .order-list .order-item .order-header .status-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.order-list-container .order-list .order-item .order-header .status-section .order-status {
   font-size: 26rpx;
   color: #3b78db;
   font-weight: 500;
+}
+.order-list-container .order-list .order-item .order-header .status-section .timeout-info {
+  font-size: 22rpx;
+  color: #ff4d4f;
+  margin-top: 6rpx;
+  background-color: #fff1f0;
+  padding: 2rpx 12rpx;
+  border-radius: 20rpx;
+  border: 1rpx solid #ffccc7;
 }
 .order-list-container .order-list .order-item .order-info {
   padding: 0 24rpx;

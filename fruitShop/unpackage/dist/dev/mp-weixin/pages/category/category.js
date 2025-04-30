@@ -92,58 +92,32 @@ const _sfc_main = {
       try {
         const selectedId = common_vendor.index.getStorageSync("selectedCategoryId");
         common_vendor.index.__f__("log", "at pages/category/category.vue:215", "读取到的分类ID:", selectedId);
-        const forceSelect = common_vendor.index.getStorageSync("forceSelectCategory");
-        common_vendor.index.__f__("log", "at pages/category/category.vue:219", "是否强制选中分类:", forceSelect);
         if (selectedId) {
           currentCategoryId.value = String(selectedId);
-          common_vendor.index.__f__("log", "at pages/category/category.vue:224", "设置当前分类ID:", currentCategoryId.value);
-          if (categories.value && categories.value.length > 0) {
-            common_vendor.index.__f__("log", "at pages/category/category.vue:228", "查找匹配分类...");
-            const category = categories.value.find((item) => String(item.id) === String(selectedId));
-            if (category) {
-              common_vendor.index.__f__("log", "at pages/category/category.vue:232", "找到匹配分类:", category.name);
-              selectCategory(category);
-              if (forceSelect) {
-                common_vendor.index.removeStorageSync("forceSelectCategory");
-              }
-            } else {
-              common_vendor.index.__f__("log", "at pages/category/category.vue:241", "未找到匹配分类");
-              getCategories();
-            }
+          common_vendor.index.__f__("log", "at pages/category/category.vue:220", "设置当前分类ID:", currentCategoryId.value);
+          if (!categories.value || categories.value.length === 0) {
+            common_vendor.index.__f__("log", "at pages/category/category.vue:224", "分类列表为空，加载分类列表");
+            getCategories();
+            return;
+          }
+          const category = categories.value.find((item) => String(item.id) === String(selectedId));
+          if (category) {
+            common_vendor.index.__f__("log", "at pages/category/category.vue:232", "找到匹配分类:", category.name);
+            selectCategory(category);
           } else {
-            common_vendor.index.__f__("log", "at pages/category/category.vue:246", "分类列表为空，开始加载分类");
+            common_vendor.index.__f__("log", "at pages/category/category.vue:236", "未找到匹配分类，重新加载分类列表");
             getCategories();
           }
+        } else if (categories.value && categories.value.length > 0) {
+          selectCategory(categories.value[0]);
+        } else {
+          getCategories();
         }
       } catch (e) {
-        common_vendor.index.__f__("error", "at pages/category/category.vue:252", "读取选中分类ID失败:", e);
+        common_vendor.index.__f__("error", "at pages/category/category.vue:248", "读取选中分类ID失败:", e);
+        getCategories();
       }
     });
-    const searchCategoryByName = (categoryName) => {
-      if (!categoryName || !categories.value || categories.value.length === 0) {
-        return null;
-      }
-      common_vendor.index.__f__("log", "at pages/category/category.vue:262", "尝试通过名称匹配分类:", categoryName);
-      const nameMap = {
-        "胶东鲜果": ["水果", "新鲜水果", "水果类", "鲜果"],
-        "闽南茶点": ["茶点", "茶叶", "点心", "零食", "茶品"],
-        "闽西特产": ["特产", "特色", "地方特产", "零食"],
-        "海鲜冻品": ["海鲜", "冻品", "水产", "水产品", "海产"],
-        "低GI食品": ["低糖", "健康食品", "低热量", "保健食品"],
-        "会员好礼": ["礼品", "礼盒", "会员", "套装", "礼物"]
-      };
-      let possibleNames = nameMap[categoryName] || [categoryName];
-      for (const name of possibleNames) {
-        for (const category of categories.value) {
-          if (category.name.includes(name) || name.includes(category.name)) {
-            common_vendor.index.__f__("log", "at pages/category/category.vue:281", "找到名称匹配的分类:", category.name);
-            return category;
-          }
-        }
-      }
-      common_vendor.index.__f__("log", "at pages/category/category.vue:287", "未找到匹配的分类");
-      return null;
-    };
     const getCategories = async () => {
       try {
         isLoading.value = true;
@@ -151,60 +125,54 @@ const _sfc_main = {
           url: "https://bgnc.online/api/category/list",
           method: "GET"
         });
-        common_vendor.index.__f__("log", "at pages/category/category.vue:300", "分类数据返回:", res);
+        common_vendor.index.__f__("log", "at pages/category/category.vue:263", "分类数据返回:", res);
         if (res.code === 200) {
           const allCategory = {
             id: "all",
             name: "全部商品"
           };
           categories.value = [allCategory, ...res.data];
-          common_vendor.index.__f__("log", "at pages/category/category.vue:308", "categories.value", categories.value);
+          common_vendor.index.__f__("log", "at pages/category/category.vue:271", "分类列表加载完成，共", categories.value.length, "项");
           if (currentCategoryId.value) {
-            common_vendor.index.__f__("log", "at pages/category/category.vue:312", "处理预选分类ID:", currentCategoryId.value);
+            common_vendor.index.__f__("log", "at pages/category/category.vue:275", "处理预选分类ID:", currentCategoryId.value);
             const category = categories.value.find((item) => String(item.id) === String(currentCategoryId.value));
             if (category) {
-              common_vendor.index.__f__("log", "at pages/category/category.vue:317", "找到匹配的分类:", category.name);
+              common_vendor.index.__f__("log", "at pages/category/category.vue:281", "找到ID匹配的分类:", category.name);
               selectCategory(category);
-              const forceSelect = common_vendor.index.getStorageSync("forceSelectCategory");
-              if (forceSelect) {
-                common_vendor.index.removeStorageSync("forceSelectCategory");
-              } else {
-                setTimeout(() => {
-                  common_vendor.index.removeStorageSync("selectedCategoryId");
-                  common_vendor.index.__f__("log", "at pages/category/category.vue:329", "已清除预选分类ID");
-                }, 500);
-              }
+              setTimeout(() => {
+                common_vendor.index.removeStorageSync("selectedCategoryId");
+                common_vendor.index.__f__("log", "at pages/category/category.vue:287", "已清除预选分类ID");
+              }, 500);
               return;
-            } else {
-              common_vendor.index.__f__("log", "at pages/category/category.vue:334", "未找到匹配的分类ID, 尝试通过名称匹配");
-              const categoryName = common_vendor.index.getStorageSync("categoryName");
-              if (categoryName) {
-                const matchedCategory = searchCategoryByName(categoryName);
-                if (matchedCategory) {
-                  selectCategory(matchedCategory);
-                  common_vendor.index.removeStorageSync("categoryName");
-                  common_vendor.index.removeStorageSync("selectedCategoryId");
-                  if (common_vendor.index.getStorageSync("forceSelectCategory")) {
-                    common_vendor.index.removeStorageSync("forceSelectCategory");
-                  }
-                  return;
-                }
-              }
-              common_vendor.index.__f__("log", "at pages/category/category.vue:354", "未找到匹配的分类");
             }
+            if (currentCategoryId.value === "105") {
+              common_vendor.index.__f__("log", "at pages/category/category.vue:294", "尝试匹配低GI食品相关分类");
+              const matchedCategory = categories.value.find(
+                (cat) => cat.name.includes("健康") || cat.name.includes("糖") || cat.name.includes("低") || cat.name.includes("保健")
+              );
+              if (matchedCategory) {
+                common_vendor.index.__f__("log", "at pages/category/category.vue:304", "找到低GI食品相关分类:", matchedCategory.name);
+                selectCategory(matchedCategory);
+                return;
+              }
+            }
+            common_vendor.index.__f__("log", "at pages/category/category.vue:311", "未找到匹配分类，使用默认分类");
           }
-          if (categories.value.length > 0) {
-            selectCategory(categories.value[0]);
-          }
+          common_vendor.index.__f__("log", "at pages/category/category.vue:315", "选择默认分类");
+          selectCategory(categories.value[0]);
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/category/category.vue:364", "获取分类列表失败:", error);
+        common_vendor.index.__f__("error", "at pages/category/category.vue:319", "获取分类列表失败:", error);
+        common_vendor.index.showToast({
+          title: "加载分类失败",
+          icon: "none"
+        });
       } finally {
         isLoading.value = false;
       }
     };
     const selectCategory = (category) => {
-      common_vendor.index.__f__("log", "at pages/category/category.vue:372", "选择分类:", category.name, category.id);
+      common_vendor.index.__f__("log", "at pages/category/category.vue:331", "选择分类:", category.name, category.id);
       currentCategory.value = category;
       currentCategoryId.value = category.id;
       searchKeyword.value = "";
@@ -223,7 +191,7 @@ const _sfc_main = {
           url: "https://bgnc.online/api/product/list",
           method: "GET"
         });
-        common_vendor.index.__f__("log", "at pages/category/category.vue:397", "所有商品返回:", res);
+        common_vendor.index.__f__("log", "at pages/category/category.vue:356", "所有商品返回:", res);
         if (res.code === 200) {
           productList.value = res.data;
           productList.value = productList.value.map((product) => {
@@ -235,7 +203,7 @@ const _sfc_main = {
           applySorting();
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/category/category.vue:413", "获取所有商品失败：", error);
+        common_vendor.index.__f__("error", "at pages/category/category.vue:372", "获取所有商品失败：", error);
         common_vendor.index.showToast({
           title: "获取商品失败",
           icon: "none"
@@ -252,7 +220,7 @@ const _sfc_main = {
           url: `https://bgnc.online/api/product/list?categoryId=${categoryId}`,
           method: "GET"
         });
-        common_vendor.index.__f__("log", "at pages/category/category.vue:433", "分类商品返回:", res);
+        common_vendor.index.__f__("log", "at pages/category/category.vue:392", "分类商品返回:", res);
         if (res.code === 200) {
           productList.value = res.data;
           productList.value = productList.value.map((product) => {
@@ -264,7 +232,7 @@ const _sfc_main = {
           applySorting();
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/category/category.vue:449", "获取分类商品失败：", error);
+        common_vendor.index.__f__("error", "at pages/category/category.vue:408", "获取分类商品失败：", error);
         common_vendor.index.showToast({
           title: "获取商品失败",
           icon: "none"
@@ -277,10 +245,10 @@ const _sfc_main = {
       common_vendor.index.navigateTo({
         url: `/pages/detail/detail?id=${productId}`
       });
-      common_vendor.index.__f__("log", "at pages/category/category.vue:464", "跳转到商品详情:", productId);
+      common_vendor.index.__f__("log", "at pages/category/category.vue:423", "跳转到商品详情:", productId);
     };
     common_vendor.onMounted(() => {
-      common_vendor.index.__f__("log", "at pages/category/category.vue:469", "分类页面已挂载");
+      common_vendor.index.__f__("log", "at pages/category/category.vue:428", "分类页面已挂载");
       getCategories();
     });
     const setSortType = (type) => {
@@ -366,7 +334,7 @@ const _sfc_main = {
         }),
         t: productList.value.length === 0
       }, productList.value.length === 0 ? {
-        v: common_assets._imports_0$1,
+        v: common_assets._imports_0$2,
         w: common_vendor.t(isSearchMode.value ? "未找到相关商品" : "该分类暂无商品，敬请期待")
       } : {}));
     };

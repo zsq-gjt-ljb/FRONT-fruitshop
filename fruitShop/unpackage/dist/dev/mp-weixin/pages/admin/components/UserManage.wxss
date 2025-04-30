@@ -25,39 +25,48 @@
 /* 文章场景相关 */
 .user-manage .search-bar {
   background: #ffffff;
-  padding: 20rpx;
-  border-radius: 12rpx;
+  padding: 16rpx;
+  border-radius: 8rpx;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
 }
 .user-manage .search-bar .search-input {
   flex: 1;
   display: flex;
   align-items: center;
   background: #f5f7fa;
-  padding: 12rpx 20rpx;
-  border-radius: 8rpx;
+  padding: 10rpx 16rpx;
+  border-radius: 6rpx;
 }
 .user-manage .search-bar .search-input input {
   flex: 1;
-  font-size: 28rpx;
-  margin-left: 12rpx;
+  font-size: 24rpx;
+  margin-left: 10rpx;
 }
 .user-manage .search-bar .filter-options {
-  margin-left: 20rpx;
+  margin-left: 16rpx;
+}
+.user-manage .search-bar .filter-options text {
+  font-size: 24rpx;
+  color: #666;
+  background-color: #f5f7fa;
+  padding: 8rpx 16rpx;
+  border-radius: 6rpx;
 }
 .user-manage .user-list {
   background: #ffffff;
-  border-radius: 12rpx;
-  padding: 20rpx;
+  border-radius: 8rpx;
+  padding: 12rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
 }
 .user-manage .user-list .list-header {
   display: flex;
-  padding: 20rpx 0;
-  border-bottom: 2rpx solid #f5f7fa;
-  font-size: 28rpx;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f0f2f5;
+  font-size: 22rpx;
   color: #999;
 }
 .user-manage .user-list .list-header .col {
@@ -67,97 +76,134 @@
 .user-manage .user-list .list-header .col:first-child {
   flex: 2;
   text-align: left;
+  padding-left: 16rpx;
 }
 .user-manage .user-list .loading-tip, .user-manage .user-list .empty-tip {
-  padding: 60rpx 0;
+  padding: 40rpx 0;
   text-align: center;
   color: #999;
-  font-size: 28rpx;
+  font-size: 24rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 .user-manage .user-list .loading-tip text, .user-manage .user-list .empty-tip text {
-  margin-top: 20rpx;
+  margin-top: 16rpx;
 }
 .user-manage .user-list .user-item {
   display: flex;
   align-items: center;
-  padding: 20rpx 0;
-  border-bottom: 2rpx solid #f5f7fa;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f0f2f5;
 }
 .user-manage .user-list .user-item .col {
   flex: 1;
   text-align: center;
+  font-size: 24rpx;
+  color: #333;
 }
 .user-manage .user-list .user-item .col.user-info {
   flex: 2;
   display: flex;
   align-items: center;
   text-align: left;
+  padding-left: 16rpx;
 }
 .user-manage .user-list .user-item .col.user-info .avatar {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 40rpx;
-  margin-right: 16rpx;
+  width: 70rpx;
+  height: 70rpx;
+  border-radius: 35rpx;
+  margin-right: 12rpx;
 }
 .user-manage .user-list .user-item .col.user-info .info .nickname {
-  font-size: 28rpx;
+  font-size: 24rpx;
   color: #333;
-  margin-bottom: 8rpx;
+  margin-bottom: 6rpx;
+  display: block;
 }
 .user-manage .user-list .user-item .col.user-info .info .phone {
-  font-size: 24rpx;
+  font-size: 22rpx;
   color: #999;
+  display: block;
+}
+.user-manage .user-list .user-item .col.vip-level text {
+  background-color: rgba(74, 144, 226, 0.1);
+  color: #4a90e2;
+  padding: 4rpx 12rpx;
+  border-radius: 4rpx;
+  font-size: 22rpx;
+}
+.user-manage .user-list .user-item .col.user-sex, .user-manage .user-list .user-item .col.login-date {
+  font-size: 22rpx;
+  color: #666;
 }
 .user-manage .user-list .user-item .action-btn {
-  font-size: 24rpx;
-  padding: 8rpx 20rpx;
+  font-size: 22rpx;
+  padding: 6rpx 16rpx;
   background: #4a90e2;
   color: #ffffff;
-  border-radius: 6rpx;
-  border: none;
+  border-radius: 4rpx;
+  display: inline-block;
+  text-align: center;
 }
 .user-manage .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 40rpx;
+  margin-top: 24rpx;
 }
 .user-manage .pagination .page-btn {
-  padding: 12rpx 24rpx;
-  font-size: 26rpx;
+  padding: 8rpx 20rpx;
+  font-size: 24rpx;
   color: #4a90e2;
 }
 .user-manage .pagination .page-btn.disabled {
-  color: #999;
+  color: #ccc;
 }
 .user-manage .pagination .page-number {
-  margin: 0 20rpx;
-  font-size: 26rpx;
+  margin: 0 16rpx;
+  font-size: 24rpx;
   color: #666;
 }
-.level-dialog {
+.confirm-dialog {
   padding: 40rpx;
+  width: 80%;
+  background-color: #ffffff;
+  border-radius: 12rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
 }
-.level-dialog .dialog-title {
+.confirm-dialog .dialog-title {
   font-size: 32rpx;
   color: #333;
   margin-bottom: 30rpx;
   text-align: center;
+  font-weight: 500;
 }
-.level-dialog .dialog-buttons {
+.confirm-dialog .dialog-content {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 40rpx;
+  text-align: center;
+  line-height: 1.5;
+}
+.confirm-dialog .dialog-buttons {
   display: flex;
   justify-content: space-between;
-  margin-top: 40rpx;
 }
-.level-dialog .dialog-buttons button {
+.confirm-dialog .dialog-buttons button {
   flex: 1;
-  margin: 0 10rpx;
+  margin: 0 15rpx;
+  font-size: 28rpx;
+  padding: 16rpx 0;
+  border-radius: 8rpx;
+  border: none;
 }
-.level-dialog .dialog-buttons button.confirm-btn {
+.confirm-dialog .dialog-buttons button.cancel-btn {
+  background: #f5f7fa;
+  color: #666;
+}
+.confirm-dialog .dialog-buttons button.confirm-btn {
   background: #4a90e2;
   color: #ffffff;
 }

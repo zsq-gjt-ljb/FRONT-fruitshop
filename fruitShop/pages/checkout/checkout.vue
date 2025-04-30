@@ -1,4 +1,4 @@
-<template>
+<strong></strong><template>
   <view class="checkout-container">
     <!-- 地址信息 -->
     <view class="address-section" @tap="goToAddressList">
@@ -33,7 +33,7 @@
         <view class="store-icon">
           <uni-icons type="shop" size="18" color="#3b78db"></uni-icons>
         </view>
-        <text class="store-name">南茶北果</text>
+        <text class="store-name">北果南茶</text>
       </view>
       
       <!-- 商品列表 -->
@@ -63,6 +63,9 @@
         <view class="item-value">
           <text>快递发货</text>
         </view>
+      </view>
+      <view class="free-shipping-notice" v-if="originalPrice < 88">
+        <text>满88元免运费，还差{{ (88 - originalPrice).toFixed(2) }}元</text>
       </view>
     </view>
     
@@ -262,8 +265,13 @@ const discountAmount = computed(() => {
 
 // 计算最终价格
 const finalPrice = computed(() => {
-  // 设置固定运费8元
-  shippingFee.value = 8.00;
+  // 判断是否满88元免运费
+  if (originalPrice.value >= 88) {
+    shippingFee.value = 0;
+  } else {
+    shippingFee.value = 8.00;
+  }
+  
   return originalPrice.value - discountAmount.value + shippingFee.value;
 })
 
@@ -332,7 +340,7 @@ const submitOrder = async () => {
         addressBookId: selectedAddress.value.id,
         quantity: item.quantity,
         // 将备注添加到请求中
-      
+        phoneNumber: selectedAddress.value.phone // 添加收货人电话号码
       }
       
       console.log('直接购买请求数据:', buyData)
@@ -368,7 +376,7 @@ const submitOrder = async () => {
       const settleData = {
         ids: cartIds,
         addressBookId: selectedAddress.value.id,
-       
+        phoneNumber: selectedAddress.value.phone // 添加收货人电话号码
       }
       
       console.log('结算请求数据:', settleData);
@@ -446,6 +454,21 @@ const handleOrderSuccess = async (result) => {
         icon: 'success'
       });
       
+      // 支付成功后更新订单状态为待发货(状态码1)
+      try {
+        await request({
+          url: `https://bgnc.online/api/order/`,
+          method: 'PUT',
+          data: {
+            id: orderId,
+            status: 1  // 待发货状态
+          }
+        });
+        console.log('订单状态已更新为待发货');
+      } catch (updateError) {
+        console.error('更新订单状态失败:', updateError);
+      }
+      
       // 支付成功后跳转到订单页面
       setTimeout(() => {
         uni.redirectTo({
@@ -502,22 +525,23 @@ const handleOrderSuccess = async (result) => {
   }
 }
 
-// 微信支付函数
-const wxPay = (paymentData) => {
+// 封装微信支付
+const wxPay = (payParams) => {
   return new Promise((resolve, reject) => {
     uni.requestPayment({
       provider: 'wxpay',
-      timeStamp: paymentData.timeStamp,
-      nonceStr: paymentData.nonceStr,
-      package: paymentData.package,
-      signType: paymentData.signType,
-      paySign: paymentData.paySign,
+      timeStamp: payParams.timeStamp,
+      nonceStr: payParams.nonceStr,
+      package: payParams.packageVal,
+      signType: payParams.signType,
+      paySign: payParams.paySign,
+      
       success: (res) => {
-        console.log('支付成功:', res);
+        console.log('支付成功', res);
         resolve(res);
       },
       fail: (err) => {
-        console.error('支付失败:', err);
+        console.log('支付失败', err);
         reject(err);
       }
     });
@@ -690,6 +714,16 @@ onMounted(() => {
   .price-section {
     background-color: #fff;
     margin-bottom: 20rpx;
+    
+    .free-shipping-notice {
+      padding: 10rpx 30rpx 20rpx;
+      text-align: right;
+      
+      text {
+        font-size: 24rpx;
+        color: #ff5500;
+      }
+    }
     
     .section-item {
       display: flex;

@@ -34,6 +34,9 @@
   padding: 40rpx;
   overflow: hidden;
 }
+.user-container .user-header:active {
+  opacity: 0.9;
+}
 .user-container .user-header .blur-background {
   position: absolute;
   top: 0;

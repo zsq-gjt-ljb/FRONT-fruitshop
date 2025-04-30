@@ -21,7 +21,8 @@ const _sfc_main = {
       consignee: "",
       phone: "",
       region: "",
-      detail: ""
+      detail: "",
+      isDefault: false
     });
     const regionPopup = common_vendor.ref(null);
     const pickerValue = common_vendor.ref([0, 0, 0]);
@@ -33,15 +34,29 @@ const _sfc_main = {
     const editingAddress = common_vendor.ref(null);
     const formPopup = common_vendor.ref(null);
     common_vendor.ref(null);
+    const phoneError = common_vendor.ref("");
     let previousPickerValue = [];
+    const validatePhone = () => {
+      const phoneRegex = /^1[3-9]\d{9}$/;
+      if (!addressForm.value.phone) {
+        phoneError.value = "请输入手机号码";
+        return false;
+      } else if (!phoneRegex.test(addressForm.value.phone)) {
+        phoneError.value = "请输入正确的手机号码";
+        return false;
+      } else {
+        phoneError.value = "";
+        return true;
+      }
+    };
     const openRegionPicker = () => {
       previousPickerValue = [...pickerValue.value];
-      common_vendor.index.__f__("log", "at pages/address/edit.vue:224", "打开地区选择器，当前值:", pickerValue.value);
+      common_vendor.index.__f__("log", "at pages/address/edit.vue:256", "打开地区选择器，当前值:", pickerValue.value);
       regionPopup.value.open();
     };
     const cancelRegion = () => {
       pickerValue.value = previousPickerValue;
-      common_vendor.index.__f__("log", "at pages/address/edit.vue:232", "取消地区选择，恢复值:", pickerValue.value);
+      common_vendor.index.__f__("log", "at pages/address/edit.vue:264", "取消地区选择，恢复值:", pickerValue.value);
       regionPopup.value.close();
     };
     const confirmRegion = () => {
@@ -55,54 +70,241 @@ const _sfc_main = {
       const province = provinces.value[pickerValue.value[0]];
       const city = cities.value[pickerValue.value[1]];
       const district = districts.value[pickerValue.value[2]];
-      addressForm.value.provinceId = province.id;
+      if (!province || !city || !district) {
+        common_vendor.index.showToast({
+          title: "请选择完整的地区信息",
+          icon: "none"
+        });
+        return;
+      }
+      addressForm.value.region = `${province.name}${city.name}${district.name}`;
+      addressForm.value.provinceCode = province.code;
       addressForm.value.provinceName = province.name;
-      addressForm.value.cityId = city.id;
+      addressForm.value.cityCode = city.code;
       addressForm.value.cityName = city.name;
-      addressForm.value.districtId = district.id;
+      addressForm.value.districtCode = district.code;
       addressForm.value.districtName = district.name;
-      addressForm.value.region = getFullRegion(province, city, district);
-      common_vendor.index.__f__("log", "at pages/address/edit.vue:260", "确认地区选择:", addressForm.value.region);
+      common_vendor.index.__f__("log", "at pages/address/edit.vue:299", "确认选择地区:", addressForm.value.region);
       regionPopup.value.close();
     };
-    const handlePickerChange = (e) => {
-      const values = e.detail.value;
-      pickerValue.value = values;
-      updateCities(values[0]);
-      updateDistricts(values[0], values[1]);
-    };
-    const updateCities = (provinceIndex) => {
-      const province = provinces.value[provinceIndex];
-      cities.value = utils_areaData.getCities(province);
-      districts.value = utils_areaData.getDistricts(province, cities.value[0]);
-    };
-    const updateDistricts = (provinceIndex, cityIndex) => {
-      const province = provinces.value[provinceIndex];
-      const city = cities.value[cityIndex];
-      districts.value = utils_areaData.getDistricts(province, city);
+    const handleSave = async () => {
+      if (!addressForm.value.consignee) {
+        common_vendor.index.showToast({
+          title: "请输入收货人姓名",
+          icon: "none"
+        });
+        return;
+      }
+      if (!validatePhone()) {
+        return;
+      }
+      if (!addressForm.value.region) {
+        common_vendor.index.showToast({
+          title: "请选择所在地区",
+          icon: "none"
+        });
+        return;
+      }
+      if (!addressForm.value.detail) {
+        common_vendor.index.showToast({
+          title: "请输入详细地址",
+          icon: "none"
+        });
+        return;
+      }
+      common_vendor.index.showLoading({
+        title: "保存中..."
+      });
+      try {
+        const data = {
+          consignee: addressForm.value.consignee,
+          phone: addressForm.value.phone,
+          provinceCode: addressForm.value.provinceCode,
+          provinceName: addressForm.value.provinceName,
+          cityCode: addressForm.value.cityCode,
+          cityName: addressForm.value.cityName,
+          districtCode: addressForm.value.districtCode,
+          districtName: addressForm.value.districtName,
+          detail: addressForm.value.detail,
+          isDefault: addressForm.value.isDefault ? 1 : 0
+        };
+        if (editingAddress.value) {
+          data.id = editingAddress.value.id;
+          const result = await utils_request.request({
+            url: "https://bgnc.online/api/addressbook/",
+            method: "PUT",
+            data
+          });
+          if (result.code === 200) {
+            common_vendor.index.showToast({
+              title: "修改成功",
+              icon: "success"
+            });
+            formPopup.value.close();
+            getAddressList();
+          } else {
+            common_vendor.index.showToast({
+              title: result.msg || "修改失败",
+              icon: "none"
+            });
+          }
+        } else {
+          const result = await utils_request.request({
+            url: "https://bgnc.online/api/addressbook/",
+            method: "POST",
+            data
+          });
+          if (result.code === 200) {
+            common_vendor.index.showToast({
+              title: "添加成功",
+              icon: "success"
+            });
+            formPopup.value.close();
+            getAddressList();
+          } else {
+            common_vendor.index.showToast({
+              title: result.msg || "添加失败",
+              icon: "none"
+            });
+          }
+        }
+      } catch (error) {
+        common_vendor.index.__f__("error", "at pages/address/edit.vue:401", "保存地址失败：", error);
+        common_vendor.index.showToast({
+          title: "保存失败，请稍后再试",
+          icon: "none"
+        });
+      } finally {
+        common_vendor.index.hideLoading();
+      }
     };
     const getAddressList = async () => {
       try {
+        common_vendor.index.showLoading({
+          title: "加载中..."
+        });
         const res = await utils_request.request({
           url: "https://bgnc.online/api/addressbook/list",
           method: "GET"
         });
-        common_vendor.index.__f__("log", "at pages/address/edit.vue:296", "原始响应数据:", res.data);
-        if (res.code === 200 && res.data) {
-          addressList.value = res.data.map((item) => ({
-            ...item,
-            id: item.id.toString()
-            // 将数字ID转换为字符串
-          }));
-          common_vendor.index.__f__("log", "at pages/address/edit.vue:304", "处理后的地址列表:", addressList.value);
+        if (res.code === 200) {
+          addressList.value = res.data || [];
+          const defaultAddress = addressList.value.find((item) => item.isDefault);
+          if (defaultAddress) {
+            selectedAddressId.value = defaultAddress.id;
+            common_vendor.index.setStorageSync("selectedAddressId", defaultAddress.id);
+          } else if (addressList.value.length > 0) {
+            selectedAddressId.value = addressList.value[0].id;
+            common_vendor.index.setStorageSync("selectedAddressId", addressList.value[0].id);
+          }
+        } else {
+          common_vendor.index.showToast({
+            title: res.msg || "获取地址列表失败",
+            icon: "none"
+          });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/address/edit.vue:307", "获取地址列表失败:", error);
+        common_vendor.index.__f__("error", "at pages/address/edit.vue:445", "获取地址列表失败：", error);
         common_vendor.index.showToast({
-          title: "获取地址失败",
+          title: "获取地址列表失败",
           icon: "none"
         });
+      } finally {
+        common_vendor.index.hideLoading();
       }
+    };
+    const selectAddress = (address) => {
+      selectedAddressId.value = address.id;
+      common_vendor.index.setStorageSync("selectedAddressId", address.id);
+      common_vendor.index.showToast({
+        title: "已选择该地址",
+        icon: "success",
+        duration: 1500
+      });
+      const pages = getCurrentPages();
+      const prevPage = pages[pages.length - 2];
+      if (prevPage && prevPage.route.includes("checkout")) {
+        setTimeout(() => {
+          common_vendor.index.navigateBack();
+        }, 1e3);
+      }
+    };
+    const deleteAddress = (id) => {
+      common_vendor.index.showModal({
+        title: "提示",
+        content: "确定要删除该地址吗？",
+        success: async (res) => {
+          if (res.confirm) {
+            try {
+              common_vendor.index.showLoading({
+                title: "删除中..."
+              });
+              const result = await utils_request.request({
+                url: `https://bgnc.online/api/addressbook/${id}`,
+                method: "DELETE"
+              });
+              if (result.code === 200) {
+                common_vendor.index.showToast({
+                  title: "删除成功",
+                  icon: "success"
+                });
+                if (selectedAddressId.value === id) {
+                  selectedAddressId.value = "";
+                  common_vendor.index.removeStorageSync("selectedAddressId");
+                }
+                getAddressList();
+              } else {
+                common_vendor.index.showToast({
+                  title: result.msg || "删除失败",
+                  icon: "none"
+                });
+              }
+            } catch (error) {
+              common_vendor.index.__f__("error", "at pages/address/edit.vue:515", "删除地址失败：", error);
+              common_vendor.index.showToast({
+                title: "删除失败，请稍后再试",
+                icon: "none"
+              });
+            } finally {
+              common_vendor.index.hideLoading();
+            }
+          }
+        }
+      });
+    };
+    const editAddress = (address) => {
+      editingAddress.value = address;
+      addressForm.value = {
+        consignee: address.consignee,
+        phone: address.phone,
+        region: `${address.provinceName}${address.cityName}${address.districtName}`,
+        detail: address.detail,
+        provinceCode: address.provinceCode,
+        provinceName: address.provinceName,
+        cityCode: address.cityCode,
+        cityName: address.cityName,
+        districtCode: address.districtCode,
+        districtName: address.districtName,
+        isDefault: address.isDefault === 1
+      };
+      const findProvinceIndex = provinces.value.findIndex((p) => p.code === address.provinceCode);
+      if (findProvinceIndex !== -1) {
+        cities.value = utils_areaData.getCities(address.provinceCode);
+        const findCityIndex = cities.value.findIndex((c) => c.code === address.cityCode);
+        if (findCityIndex !== -1) {
+          districts.value = utils_areaData.getDistricts(address.cityCode);
+          const findDistrictIndex = districts.value.findIndex((d) => d.code === address.districtCode);
+          pickerValue.value = [
+            findProvinceIndex,
+            findCityIndex,
+            findDistrictIndex !== -1 ? findDistrictIndex : 0
+          ];
+          previousPickerValue = [...pickerValue.value];
+        }
+      }
+      common_vendor.nextTick$1(() => {
+        formPopup.value.open();
+      });
     };
     const showAddressForm = () => {
       editingAddress.value = null;
@@ -110,212 +312,53 @@ const _sfc_main = {
         consignee: "",
         phone: "",
         region: "",
-        detail: ""
+        detail: "",
+        isDefault: false
       };
       formPopup.value.open();
-    };
-    const editAddress = (address) => {
-      common_vendor.index.__f__("log", "at pages/address/edit.vue:329", "编辑的地址信息:", address);
-      editingAddress.value = address;
-      addressForm.value = {
-        consignee: address.consignee,
-        phone: address.phone,
-        region: `${address.provinceName} ${address.cityName} ${address.districtName}`,
-        detail: address.detail,
-        id: address.id.toString()
-        // 确保ID是字符串
-      };
-      initPickerValueForEditingAddress(address);
-      common_vendor.index.__f__("log", "at pages/address/edit.vue:342", "编辑表单数据:", addressForm.value);
-      formPopup.value.open();
-    };
-    const initPickerValueForEditingAddress = (address) => {
-      const provinceIndex = provinces.value.findIndex((p) => p.name === address.provinceName);
-      if (provinceIndex >= 0) {
-        updateCities(provinceIndex);
-        const cityIndex = cities.value.findIndex((c) => c.name === address.cityName);
-        if (cityIndex >= 0) {
-          updateDistricts(provinceIndex, cityIndex);
-          const districtIndex = districts.value.findIndex((d) => d.name === address.districtName);
-          pickerValue.value = [
-            provinceIndex,
-            cityIndex,
-            districtIndex >= 0 ? districtIndex : 0
-          ];
-          common_vendor.index.__f__("log", "at pages/address/edit.vue:370", "初始化选择器值:", pickerValue.value, [address.provinceName, address.cityName, address.districtName]);
-        }
-      }
-    };
-    const deleteAddress = async (id) => {
-      common_vendor.index.__f__("log", "at pages/address/edit.vue:377", "要删除的地址ID:", id);
-      try {
-        common_vendor.index.showModal({
-          title: "提示",
-          content: "确定要删除这个地址吗？",
-          success: async (res) => {
-            if (res.confirm) {
-              const res2 = await utils_request.request({
-                url: `https://bgnc.online/api/addressbook/${id.toString()}`,
-                // 确保传递字符串ID
-                method: "DELETE"
-              });
-              common_vendor.index.__f__("log", "at pages/address/edit.vue:390", "删除响应:", res2);
-              if (res2.code === 200) {
-                common_vendor.index.showToast({
-                  title: "删除成功",
-                  icon: "success"
-                });
-                getAddressList();
-              } else {
-                common_vendor.index.showToast({
-                  title: "删除失败",
-                  icon: "none"
-                });
-              }
-            }
-          }
-        });
-      } catch (error) {
-        common_vendor.index.__f__("error", "at pages/address/edit.vue:409", "删除地址失败:", error);
-        common_vendor.index.showToast({
-          title: "删除失败",
-          icon: "none"
-        });
-      }
-    };
-    const validateForm = () => {
-      common_vendor.index.__f__("log", "at pages/address/edit.vue:419", "验证表单:", addressForm.value);
-      if (!addressForm.value.consignee) {
-        common_vendor.index.showToast({
-          title: "请输入收货人姓名",
-          icon: "none"
-        });
-        return false;
-      }
-      if (!addressForm.value.phone) {
-        common_vendor.index.showToast({
-          title: "请输入手机号码",
-          icon: "none"
-        });
-        return false;
-      }
-      if (!/^1\d{10}$/.test(addressForm.value.phone)) {
-        common_vendor.index.showToast({
-          title: "请输入正确的手机号码",
-          icon: "none"
-        });
-        return false;
-      }
-      if (!addressForm.value.region) {
-        common_vendor.index.showToast({
-          title: "请选择所在地区",
-          icon: "none"
-        });
-        return false;
-      }
-      if (!addressForm.value.detail) {
-        common_vendor.index.showToast({
-          title: "请输入详细地址",
-          icon: "none"
-        });
-        return false;
-      }
-      return true;
-    };
-    const handleSave = async () => {
-      var _a, _b;
-      common_vendor.index.__f__("log", "at pages/address/edit.vue:466", "保存按钮被点击");
-      if (!validateForm()) {
-        return;
-      }
-      try {
-        let provinceName, cityName, districtName;
-        if (editingAddress.value) {
-          if (!addressForm.value.region || addressForm.value.region === `${editingAddress.value.provinceName} ${editingAddress.value.cityName} ${editingAddress.value.districtName}`) {
-            provinceName = editingAddress.value.provinceName;
-            cityName = editingAddress.value.cityName;
-            districtName = editingAddress.value.districtName;
-          } else {
-            provinceName = provinces.value[pickerValue.value[0]].name;
-            cityName = cities.value[pickerValue.value[1]].name;
-            districtName = districts.value[pickerValue.value[2]].name;
-          }
-        } else {
-          provinceName = provinces.value[pickerValue.value[0]].name;
-          cityName = cities.value[pickerValue.value[1]].name;
-          districtName = districts.value[pickerValue.value[2]].name;
-        }
-        const addressData = {
-          consignee: addressForm.value.consignee,
-          phone: addressForm.value.phone,
-          provinceName,
-          cityName,
-          districtName,
-          detail: addressForm.value.detail,
-          sex: "男",
-          id: (_b = (_a = editingAddress.value) == null ? void 0 : _a.id) == null ? void 0 : _b.toString()
-          // 确保ID是字符串
-        };
-        common_vendor.index.__f__("log", "at pages/address/edit.vue:507", "发送的请求数据:", addressData);
-        const res = await utils_request.request({
-          url: "https://bgnc.online/api/addressbook/",
-          method: editingAddress.value ? "PUT" : "POST",
-          // 修改使用PUT，新增使用POST
-          data: addressData
-        });
-        if (res.code === 200) {
-          common_vendor.index.showToast({
-            title: editingAddress.value ? "修改成功" : "保存成功",
-            icon: "success"
-          });
-          formPopup.value.close();
-          getAddressList();
-        } else {
-          common_vendor.index.showToast({
-            title: editingAddress.value ? "修改失败" : "保存失败",
-            icon: "none"
-          });
-        }
-      } catch (error) {
-        common_vendor.index.__f__("error", "at pages/address/edit.vue:532", "保存地址失败:", error);
-        common_vendor.index.showToast({
-          title: editingAddress.value ? "修改失败" : "保存失败",
-          icon: "none"
-        });
-      }
-    };
-    const getFullRegion = (province, city, district) => {
-      if (!province || !city || !district)
-        return "";
-      return `${province.name} ${city.name} ${district.name}`;
     };
     const closeForm = () => {
       formPopup.value.close();
     };
-    const selectAddress = (address) => {
-      selectedAddressId.value = address.id;
-      common_vendor.index.setStorageSync("selectedAddressId", address.id.toString());
-      common_vendor.index.showToast({
-        title: "已选择该地址",
-        icon: "success",
-        duration: 1500
-      });
-      setTimeout(() => {
-        common_vendor.index.navigateBack();
-      }, 1500);
+    const handlePickerChange = (e) => {
+      const values = e.detail.value;
+      pickerValue.value = values;
+      if (values[0] !== previousPickerValue[0]) {
+        const selectedProvince = provinces.value[values[0]];
+        if (selectedProvince) {
+          cities.value = utils_areaData.getCities(selectedProvince.code);
+          if (cities.value.length > 0) {
+            districts.value = utils_areaData.getDistricts(cities.value[0].code);
+          } else {
+            districts.value = [];
+          }
+          pickerValue.value = [values[0], 0, 0];
+        }
+      } else if (values[1] !== previousPickerValue[1]) {
+        const selectedCity = cities.value[values[1]];
+        if (selectedCity) {
+          districts.value = utils_areaData.getDistricts(selectedCity.code);
+          pickerValue.value = [values[0], values[1], 0];
+        }
+      }
+      previousPickerValue = [...pickerValue.value];
     };
     common_vendor.onMounted(() => {
       provinces.value = utils_areaData.getProvinces();
-      common_vendor.index.__f__("log", "at pages/address/edit.vue:572", "省份数据:", provinces.value);
-      cities.value = utils_areaData.getCities(provinces.value[0]);
-      common_vendor.index.__f__("log", "at pages/address/edit.vue:576", "城市数据:", cities.value);
-      districts.value = utils_areaData.getDistricts(provinces.value[0], cities.value[0]);
-      common_vendor.index.__f__("log", "at pages/address/edit.vue:580", "区县数据:", districts.value);
-      const savedAddressId = common_vendor.index.getStorageSync("selectedAddressId");
-      if (savedAddressId) {
-        selectedAddressId.value = savedAddressId;
+      common_vendor.index.__f__("log", "at pages/address/edit.vue:638", "初始化省份数据:", provinces.value);
+      if (provinces.value.length > 0) {
+        cities.value = utils_areaData.getCities(provinces.value[0].code);
+        common_vendor.index.__f__("log", "at pages/address/edit.vue:643", "初始化城市数据:", cities.value);
+        if (cities.value.length > 0) {
+          districts.value = utils_areaData.getDistricts(cities.value[0].code);
+          common_vendor.index.__f__("log", "at pages/address/edit.vue:648", "初始化区县数据:", districts.value);
+        }
       }
       getAddressList();
+      const storedAddressId = common_vendor.index.getStorageSync("selectedAddressId");
+      if (storedAddressId) {
+        selectedAddressId.value = storedAddressId;
+      }
     });
     return (_ctx, _cache) => {
       return common_vendor.e({
@@ -331,18 +374,18 @@ const _sfc_main = {
             })
           } : {}, {
             d: address.id === selectedAddressId.value ? 1 : "",
-            e: common_vendor.o(($event) => selectAddress(address), address.id),
-            f: common_vendor.t(address.consignee),
-            g: common_vendor.t(address.phone),
-            h: common_vendor.t(address.provinceName),
-            i: common_vendor.t(address.cityName),
-            j: common_vendor.t(address.districtName),
-            k: common_vendor.t(address.detail),
-            l: address.isDefault
+            e: common_vendor.t(address.consignee),
+            f: common_vendor.t(address.phone),
+            g: common_vendor.t(address.provinceName),
+            h: common_vendor.t(address.cityName),
+            i: common_vendor.t(address.districtName),
+            j: common_vendor.t(address.detail),
+            k: address.isDefault
           }, address.isDefault ? {} : {}, {
+            l: common_vendor.o(($event) => editAddress(address), address.id),
             m: common_vendor.o(($event) => deleteAddress(address.id), address.id),
             n: address.id,
-            o: common_vendor.o(($event) => editAddress(address), address.id)
+            o: common_vendor.o(($event) => selectAddress(address), address.id)
           });
         }),
         b: common_vendor.o(showAddressForm),
@@ -350,50 +393,57 @@ const _sfc_main = {
         d: common_vendor.o(closeForm),
         e: addressForm.value.consignee,
         f: common_vendor.o(($event) => addressForm.value.consignee = $event.detail.value),
-        g: addressForm.value.phone,
-        h: common_vendor.o(($event) => addressForm.value.phone = $event.detail.value),
-        i: addressForm.value.region
-      }, addressForm.value.region ? {
-        j: common_vendor.t(addressForm.value.region)
+        g: common_vendor.o(validatePhone),
+        h: addressForm.value.phone,
+        i: common_vendor.o(($event) => addressForm.value.phone = $event.detail.value),
+        j: phoneError.value
+      }, phoneError.value ? {
+        k: common_vendor.t(phoneError.value)
       } : {}, {
-        k: common_vendor.o(openRegionPicker),
-        l: addressForm.value.detail,
-        m: common_vendor.o(($event) => addressForm.value.detail = $event.detail.value),
-        n: common_vendor.t(editingAddress.value ? "修改" : "保存"),
-        o: common_vendor.o(handleSave),
-        p: common_vendor.sr(formPopup, "8e456dc0-1", {
+        l: addressForm.value.region
+      }, addressForm.value.region ? {
+        m: common_vendor.t(addressForm.value.region)
+      } : {}, {
+        n: common_vendor.o(openRegionPicker),
+        o: addressForm.value.detail,
+        p: common_vendor.o(($event) => addressForm.value.detail = $event.detail.value),
+        q: addressForm.value.isDefault,
+        r: common_vendor.o((e) => addressForm.value.isDefault = e.detail.value),
+        s: common_vendor.t(editingAddress.value ? "修改" : "保存"),
+        t: common_vendor.o(handleSave),
+        v: common_vendor.sr(formPopup, "8e456dc0-1", {
           "k": "formPopup"
         }),
-        q: common_vendor.p({
+        w: common_vendor.p({
           type: "bottom"
         }),
-        r: common_vendor.o(cancelRegion),
-        s: common_vendor.o(confirmRegion),
-        t: common_vendor.f(provinces.value, (item, index, i0) => {
+        x: common_vendor.o(cancelRegion),
+        y: common_vendor.o(confirmRegion),
+        z: common_vendor.f(provinces.value, (item, index, i0) => {
           return {
             a: common_vendor.t(item.name),
             b: index
           };
         }),
-        v: common_vendor.f(cities.value, (item, index, i0) => {
+        A: common_vendor.f(cities.value, (item, index, i0) => {
           return {
             a: common_vendor.t(item.name),
             b: index
           };
         }),
-        w: common_vendor.f(districts.value, (item, index, i0) => {
+        B: common_vendor.f(districts.value, (item, index, i0) => {
           return {
             a: common_vendor.t(item.name),
             b: index
           };
         }),
-        x: indicatorStyle,
-        y: pickerValue.value,
-        z: common_vendor.o(handlePickerChange),
-        A: common_vendor.sr(regionPopup, "8e456dc0-2", {
+        C: indicatorStyle,
+        D: pickerValue.value,
+        E: common_vendor.o(handlePickerChange),
+        F: common_vendor.sr(regionPopup, "8e456dc0-2", {
           "k": "regionPopup"
         }),
-        B: common_vendor.p({
+        G: common_vendor.p({
           type: "bottom"
         })
       });

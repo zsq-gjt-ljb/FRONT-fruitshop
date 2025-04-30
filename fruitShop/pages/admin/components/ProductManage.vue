@@ -278,31 +278,48 @@
       <view v-if="currentStep === 3">
         <view class="specs-container">
           <view v-for="(spec, index) in formData.specs" :key="index" class="spec-item">
-            <input 
-              v-model="spec.name" 
-              placeholder="名称（如：重量）"
-              class="spec-input"
-            />
-            <input
-              v-model="spec.value"
-              placeholder="值（如：1kg）"
-              class="spec-input"
-            />
-            <input
-              v-model="spec.price"
-              type="number"
-              placeholder="价格"
-              class="spec-input price"
-            />
-            <input
-              v-model="spec.stock"
-              type="number"
-              placeholder="库存"
-              class="spec-input stock"
-            />
-            <view class="remove-btn" @click="removeSpec(index)">
-              <uni-icons type="close" size="18" color="#ff4d4f"></uni-icons>
-        </view>
+            <view class="spec-header">
+              <text class="spec-title">规格 {{index+1}}</text>
+              <view class="remove-btn" @click="removeSpec(index)">
+                <uni-icons type="close" size="18" color="#fff"></uni-icons>
+              </view>
+            </view>
+            <view class="spec-form">
+              <view class="form-group">
+                <text class="label">名称</text>
+                <input 
+                  v-model="spec.name" 
+                  placeholder="名称（如：重量）"
+                  class="spec-input"
+                />
+              </view>
+              <view class="form-group">
+                <text class="label">值</text>
+                <input
+                  v-model="spec.value"
+                  placeholder="值（如：1kg）"
+                  class="spec-input"
+                />
+              </view>
+              <view class="form-group">
+                <text class="label">价格</text>
+                <input
+                  v-model="spec.price"
+                  type="number"
+                  placeholder="价格"
+                  class="spec-input price"
+                />
+              </view>
+              <view class="form-group">
+                <text class="label">库存</text>
+                <input
+                  v-model="spec.stock"
+                  type="number"
+                  placeholder="库存"
+                  class="spec-input stock"
+                />
+              </view>
+            </view>
           </view>
           <button class="add-spec-btn" @click="addSpec">
             <uni-icons type="plus" size="16"></uni-icons>
@@ -1075,7 +1092,7 @@ const fetchCategories = async () => {
     categoryList.value = [
       { id: '1', name: '新鲜水果' },
       { id: '2', name: '时令蔬菜' },
-      { id: '3', name: '南茶北果' },
+      { id: '3', name: '北果南茶' },
       { id: '4', name: '坚果零食' },
       { id: '5', name: '冲饮茶品' }
     ]
@@ -1685,41 +1702,76 @@ const getIconColor = (type) => {
     margin-top: 20rpx;
     
     .spec-item {
-      display: flex;
-      margin-bottom: 20rpx;
-      align-items: center;
+      margin-bottom: 30rpx;
+      background-color: #fff;
+      border-radius: 12rpx;
+      overflow: hidden;
+      box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
       
-      .spec-input {
-        width: 22%;
-        height: 70rpx;
-        background-color: #f5f7fa;
-        border-radius: 8rpx;
-        padding: 0 20rpx;
-        margin-right: 10rpx;
-        font-size: 26rpx;
+      .spec-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f0f7ff;
+        padding: 20rpx;
+        border-bottom: 1rpx solid #eee;
         
-        &.price {
-          color: #ff6b00;
+        .spec-title {
+          font-size: 28rpx;
+          font-weight: 500;
+          color: #333;
         }
         
-        &.stock {
-          color: #4a90e2;
+        .remove-btn {
+          width: 40rpx;
+          height: 40rpx;
+          background-color: #ff4d4f;
+          color: #fff;
+          border-radius: 20rpx;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          &:active {
+            background-color: #ff7875;
+          }
         }
       }
       
-      .remove-btn {
-        min-width: 70rpx;
-        height: 70rpx;
-        background-color: #ff4d4f;
-        color: #fff;
-        border-radius: 8rpx;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24rpx;
+      .spec-form {
+        padding: 20rpx;
         
-        &:active {
-          background-color: #ff7875;
+        .form-group {
+          margin-bottom: 20rpx;
+          
+          &:last-child {
+            margin-bottom: 0;
+          }
+          
+          .label {
+            display: block;
+            font-size: 26rpx;
+            color: #666;
+            margin-bottom: 10rpx;
+          }
+          
+          .spec-input {
+            width: 100%;
+            height: 70rpx;
+            background-color: #f5f7fa;
+            border-radius: 8rpx;
+            padding: 0 20rpx;
+            font-size: 26rpx;
+            box-sizing: border-box;
+            
+            &.price {
+              color: #ff6b00;
+            }
+            
+            &.stock {
+              color: #4a90e2;
+            }
+          }
         }
       }
     }
@@ -1751,7 +1803,7 @@ const getIconColor = (type) => {
       flex: 1;
       height: 80rpx;
       border-radius: 8rpx;
-      font-size: 26rpx;
+      font-size: 20rpx;
       background: #4a90e2;
       color: white;
       display: flex;

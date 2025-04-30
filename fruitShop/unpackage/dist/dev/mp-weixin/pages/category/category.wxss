@@ -166,8 +166,8 @@
   height: 30rpx;
 }
 .category-container .category-content .sort-bar .price-sort .price-arrows .arrow {
-  width: 0;
-  height: 0;
+  width: 5px;
+  height: 15px;
   border-left: 6rpx solid transparent;
   border-right: 6rpx solid transparent;
 }

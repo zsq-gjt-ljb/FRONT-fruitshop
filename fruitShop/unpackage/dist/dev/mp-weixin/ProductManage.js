@@ -26,18 +26,18 @@ const __default__ = {
 const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
   setup(__props) {
     common_vendor.onLoad(() => {
-      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:342", "小程序页面加载");
+      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:359", "小程序页面加载");
       restoreDataFromStorage();
       fetchCategories();
     });
     const initEditor = () => {
-      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:355", "编辑器初始化");
+      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:372", "编辑器初始化");
     };
     common_vendor.onShow(() => {
-      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:361", "小程序页面显示");
+      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:378", "小程序页面显示");
     });
     common_vendor.onReady(() => {
-      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:365", "页面渲染完成");
+      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:382", "页面渲染完成");
       setTimeout(() => {
         initEditor();
       }, 500);
@@ -58,7 +58,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
     });
     const previewKey = common_vendor.ref(0);
     common_vendor.watch(() => formData.details, (newVal) => {
-      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:392", "内容已更新，长度:", newVal == null ? void 0 : newVal.length);
+      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:409", "内容已更新，长度:", newVal == null ? void 0 : newVal.length);
       previewKey.value = Date.now();
     });
     const insertHtmlTag = (htmlTag) => {
@@ -91,14 +91,14 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
                 icon: "success"
               });
             } catch (fsError) {
-              common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:443", "文件访问错误:", fsError);
+              common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:460", "文件访问错误:", fsError);
               common_vendor.index.showToast({
                 title: "无法访问选中的图片",
                 icon: "none"
               });
             }
           } catch (error) {
-            common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:450", "上传图片失败:", error);
+            common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:467", "上传图片失败:", error);
             common_vendor.index.showToast({
               title: "图片上传失败",
               icon: "none"
@@ -111,7 +111,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
     };
     const uploadImageToServer = async (tempFilePath) => {
       try {
-        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:473", "开始上传图片:", tempFilePath);
+        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:490", "开始上传图片:", tempFilePath);
         if (!tempFilePath) {
           throw new Error("临时文件路径不存在");
         }
@@ -130,7 +130,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
                       "Authorization": `Bearer ${common_vendor.index.getStorageSync("token")}`
                     },
                     success: (uploadRes) => {
-                      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:499", "上传成功, 原始响应:", uploadRes);
+                      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:516", "上传成功, 原始响应:", uploadRes);
                       try {
                         const response = typeof uploadRes.data === "string" ? JSON.parse(uploadRes.data) : uploadRes.data;
                         if (response.code === 200) {
@@ -143,27 +143,27 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
                       }
                     },
                     fail: (err) => {
-                      common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:516", "上传失败:", err);
+                      common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:533", "上传失败:", err);
                       reject(new Error("网络错误"));
                     }
                   });
                 },
                 fail: (err) => {
-                  common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:522", "文件不存在:", tempFilePath, err);
+                  common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:539", "文件不存在:", tempFilePath, err);
                   reject(new Error("临时文件不存在或已被删除"));
                 }
               });
             } catch (fsError) {
-              common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:527", "文件系统错误:", fsError);
+              common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:544", "文件系统错误:", fsError);
               reject(new Error("文件系统错误"));
             }
           });
         };
         const imageUrl = await uploadTask();
-        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:534", "上传成功, 图片URL:", imageUrl);
+        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:551", "上传成功, 图片URL:", imageUrl);
         return imageUrl;
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:537", "上传图片错误:", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:554", "上传图片错误:", error);
         common_vendor.index.showToast({
           title: "图片上传失败: " + (error.message || "未知错误"),
           icon: "none"
@@ -173,7 +173,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
     };
     const handleImageSelect = async (e) => {
       try {
-        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:549", "选择商品图片", e);
+        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:566", "选择商品图片", e);
         const { tempFilePaths, tempFiles } = e;
         if (!tempFilePaths || tempFilePaths.length === 0) {
           common_vendor.index.showToast({
@@ -194,7 +194,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
                 path,
                 success: resolve,
                 fail: (err) => {
-                  common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:577", "文件不存在:", path, err);
+                  common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:594", "文件不存在:", path, err);
                   reject(new Error("临时文件不存在或已被删除"));
                 }
               });
@@ -205,7 +205,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
               url: imageUrl
             };
           } catch (err) {
-            common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:590", "文件访问失败:", path, err);
+            common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:607", "文件访问失败:", path, err);
             return null;
           }
         });
@@ -228,13 +228,13 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
       }
     };
     const handleImageDelete = (e) => {
-      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:621", "删除商品图片", e);
+      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:638", "删除商品图片", e);
       const { index } = e;
       formData.basic.images.splice(index, 1);
     };
     const handleDetailImageSelect = async (e) => {
       try {
-        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:630", "选择详情图片", e);
+        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:647", "选择详情图片", e);
         const { tempFilePaths, tempFiles } = e;
         if (!tempFilePaths || tempFilePaths.length === 0) {
           common_vendor.index.showToast({
@@ -255,7 +255,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
                 path,
                 success: resolve,
                 fail: (err) => {
-                  common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:657", "文件不存在:", path, err);
+                  common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:674", "文件不存在:", path, err);
                   reject(new Error("临时文件不存在或已被删除"));
                 }
               });
@@ -266,7 +266,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
               url: imageUrl
             };
           } catch (err) {
-            common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:670", "文件访问失败:", path, err);
+            common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:687", "文件访问失败:", path, err);
             return null;
           }
         });
@@ -289,7 +289,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
       }
     };
     const handleDetailImageDelete = (e) => {
-      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:701", "删除详情图片", e);
+      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:718", "删除详情图片", e);
       const { index } = e;
       formData.detailImages.splice(index, 1);
     };
@@ -305,7 +305,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
       });
     };
     const removeSpec = (index) => {
-      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:721", "删除规格", index);
+      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:738", "删除规格", index);
       formData.specs.splice(index, 1);
     };
     const prevStep = () => {
@@ -351,9 +351,9 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
       try {
         const data = JSON.stringify(formData);
         common_vendor.index.setStorageSync("product_draft", data);
-        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:782", "数据已保存到本地存储");
+        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:799", "数据已保存到本地存储");
       } catch (e) {
-        common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:784", "保存到本地存储失败", e);
+        common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:801", "保存到本地存储失败", e);
       }
     };
     const restoreDataFromStorage = () => {
@@ -362,15 +362,15 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
         if (data) {
           const parsed = JSON.parse(data);
           Object.assign(formData, parsed);
-          common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:795", "从本地存储恢复数据成功");
+          common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:812", "从本地存储恢复数据成功");
         }
       } catch (e) {
-        common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:798", "从本地存储恢复数据失败", e);
+        common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:815", "从本地存储恢复数据失败", e);
       }
     };
     const handleSwitchChange = (e) => {
       formData.basic.status = e.detail.value ? 1 : 0;
-      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:805", "商品上架状态:", formData.basic.status);
+      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:822", "商品上架状态:", formData.basic.status);
     };
     const resetForm = () => {
       formData.basic = {
@@ -438,8 +438,8 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
           indexPic,
           skus
         };
-        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:896", "提交的商品数据:", JSON.stringify(productData, null, 2));
-        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:897", "编辑模式:", isEditing.value, "商品ID:", editingProductId.value);
+        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:913", "提交的商品数据:", JSON.stringify(productData, null, 2));
+        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:914", "编辑模式:", isEditing.value, "商品ID:", editingProductId.value);
         let result;
         if (isEditing.value) {
           result = await utils_request.request({
@@ -473,7 +473,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:940", "提交商品出错:", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:957", "提交商品出错:", error);
         common_vendor.index.showToast({
           title: "提交失败: " + (error.message || "未知错误"),
           icon: "none"
@@ -554,7 +554,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
           url: "https://bgnc.online/api/category/list",
           method: "GET"
         });
-        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1050", "获取的分类数据:", result);
+        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1067", "获取的分类数据:", result);
         if (result && result.data) {
           categoryList.value = result.data.map((item) => {
             return {
@@ -562,7 +562,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
               name: item.name || item.categoryName
             };
           });
-          common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1059", "处理后的分类列表:", categoryList.value);
+          common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1076", "处理后的分类列表:", categoryList.value);
         } else {
           categoryList.value = [];
           common_vendor.index.showToast({
@@ -571,7 +571,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:1068", "获取分类出错:", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:1085", "获取分类出错:", error);
         common_vendor.index.showToast({
           title: "获取分类失败: " + (error.message || "未知错误"),
           icon: "none"
@@ -579,7 +579,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
         categoryList.value = [
           { id: "1", name: "新鲜水果" },
           { id: "2", name: "时令蔬菜" },
-          { id: "3", name: "南茶北果" },
+          { id: "3", name: "北果南茶" },
           { id: "4", name: "坚果零食" },
           { id: "5", name: "冲饮茶品" }
         ];
@@ -602,9 +602,9 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
     };
     const selectCategory = (category) => {
       formData.basic.category = category.name;
-      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1109", "选择的分类:", category);
+      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1126", "选择的分类:", category);
       formData.basic.categoryId = category.id;
-      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1111", "设置的categoryId:", formData.basic.categoryId);
+      common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1128", "设置的categoryId:", formData.basic.categoryId);
       hideCategoryPicker();
     };
     const validateForm = () => {
@@ -673,13 +673,13 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
         if (categoryFilter.value) {
           params.categoryId = categoryFilter.value;
         }
-        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1196", "正在获取商品列表，参数:", params);
+        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1213", "正在获取商品列表，参数:", params);
         const response = await utils_request.request({
           url: "https://bgnc.online/api/product/list",
           method: "GET",
           data: params
         });
-        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1204", "获取到的商品列表响应:", response);
+        common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1221", "获取到的商品列表响应:", response);
         if (response.code === 200) {
           let productData = response.data;
           if (Array.isArray(productData)) {
@@ -703,7 +703,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
             }
           }
           displayProducts.value = [...products.value];
-          common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1236", "处理后的商品列表:", displayProducts.value);
+          common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1253", "处理后的商品列表:", displayProducts.value);
           hasMoreProducts.value = append ? products.value.length < totalProducts.value : Array.isArray(productData) ? productData.length >= pageSize.value : false;
         } else {
           common_vendor.index.showToast({
@@ -712,7 +712,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:1249", "获取商品列表失败:", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:1266", "获取商品列表失败:", error);
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
           icon: "none"
@@ -751,10 +751,10 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
           method: "GET"
         });
         if (result.code === 200 && result.data) {
-          common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1303", "111获取的商品数据:", result.data);
+          common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1320", "111获取的商品数据:", result.data);
           const productData = result.data;
-          common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1305", "productData是", productData);
-          common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1306", "productData.skuList", productData.skuList);
+          common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1322", "productData是", productData);
+          common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1323", "productData.skuList", productData.skuList);
           formData.basic.name = productData.name;
           formData.basic.title = productData.description;
           formData.basic.category = productData.categoryName;
@@ -768,9 +768,9 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
           }
           formData.details = productData.detailHtml || "";
           formData.specs = [];
-          common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1330", "productData.skuList", productData.skuList);
+          common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1347", "productData.skuList", productData.skuList);
           if (productData.skuList && productData.skuList.length > 0) {
-            common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1334", "使用skuList数据:", productData.skuList);
+            common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1351", "使用skuList数据:", productData.skuList);
             productData.skuList.forEach((sku) => {
               if (sku.spData) {
                 const parts = sku.spData.split(":");
@@ -788,7 +788,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
               }
             });
           } else if (productData.skus && productData.skus.length > 0) {
-            common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1353", "使用skus数据:", productData.skus);
+            common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1370", "使用skus数据:", productData.skus);
             productData.skus.forEach((sku) => {
               if (sku.spData) {
                 const parts = sku.spData.split(":");
@@ -814,7 +814,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
               stock: ""
             });
           }
-          common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1383", "解析后的规格数据:", formData.specs);
+          common_vendor.index.__f__("log", "at pages/admin/components/ProductManage.vue:1400", "解析后的规格数据:", formData.specs);
           isEditing.value = true;
           editingProductId.value = product.id;
           currentStep.value = 1;
@@ -830,7 +830,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:1402", "获取商品详情失败:", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:1419", "获取商品详情失败:", error);
         common_vendor.index.showToast({
           title: "获取商品详情失败: " + (error.message || "未知错误"),
           icon: "none"
@@ -872,7 +872,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:1453", "删除商品失败:", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/ProductManage.vue:1470", "删除商品失败:", error);
         common_vendor.index.showToast({
           title: "删除失败: " + (error.message || "未知错误"),
           icon: "none"
@@ -1124,23 +1124,24 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
       }, currentStep.value === 3 ? {
         aC: common_vendor.f(formData.specs, (spec, index, i0) => {
           return {
-            a: spec.name,
-            b: common_vendor.o(($event) => spec.name = $event.detail.value, index),
-            c: spec.value,
-            d: common_vendor.o(($event) => spec.value = $event.detail.value, index),
-            e: spec.price,
-            f: common_vendor.o(($event) => spec.price = $event.detail.value, index),
-            g: spec.stock,
-            h: common_vendor.o(($event) => spec.stock = $event.detail.value, index),
-            i: "7c24ceb6-19-" + i0,
-            j: common_vendor.o(($event) => removeSpec(index), index),
-            k: index
+            a: common_vendor.t(index + 1),
+            b: "7c24ceb6-19-" + i0,
+            c: common_vendor.o(($event) => removeSpec(index), index),
+            d: spec.name,
+            e: common_vendor.o(($event) => spec.name = $event.detail.value, index),
+            f: spec.value,
+            g: common_vendor.o(($event) => spec.value = $event.detail.value, index),
+            h: spec.price,
+            i: common_vendor.o(($event) => spec.price = $event.detail.value, index),
+            j: spec.stock,
+            k: common_vendor.o(($event) => spec.stock = $event.detail.value, index),
+            l: index
           };
         }),
         aD: common_vendor.p({
           type: "close",
           size: "18",
-          color: "#ff4d4f"
+          color: "#fff"
         }),
         aE: common_vendor.p({
           type: "plus",

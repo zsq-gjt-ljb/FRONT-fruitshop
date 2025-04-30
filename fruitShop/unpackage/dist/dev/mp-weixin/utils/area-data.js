@@ -21,33 +21,37 @@ const formatData = () => {
   });
   return provinces;
 };
-const areaData = formatData();
+formatData();
 const getProvinces = () => {
-  return Object.keys(areaData).map((name) => ({
-    id: areaData[name].id,
-    name
+  return common_vendor.s.map((province) => ({
+    code: province.value,
+    name: province.label
   }));
 };
-const getCities = (province) => {
-  if (!province || !province.name)
+const getCities = (provinceCode) => {
+  if (!provinceCode)
     return [];
-  const provinceName = province.name;
-  const provinceData = areaData[provinceName];
-  if (!provinceData || !provinceData.cities)
+  const province = common_vendor.s.find((p) => p.value === provinceCode);
+  if (!province || !province.children)
     return [];
-  return Object.keys(provinceData.cities).map((name) => ({
-    id: provinceData.cities[name].id,
-    name
+  return province.children.map((city) => ({
+    code: city.value,
+    name: city.label
   }));
 };
-const getDistricts = (province, city) => {
-  if (!province || !province.name || !city || !city.name)
+const getDistricts = (cityCode) => {
+  if (!cityCode)
     return [];
-  const provinceName = province.name;
-  const cityName = city.name;
-  if (!areaData[provinceName] || !areaData[provinceName].cities[cityName])
-    return [];
-  return areaData[provinceName].cities[cityName].districts || [];
+  for (const province of common_vendor.s) {
+    const city = province.children.find((c) => c.value === cityCode);
+    if (city && city.children) {
+      return city.children.map((district) => ({
+        code: district.value,
+        name: district.label
+      }));
+    }
+  }
+  return [];
 };
 exports.getCities = getCities;
 exports.getDistricts = getDistricts;

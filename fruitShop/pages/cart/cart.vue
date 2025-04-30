@@ -76,15 +76,7 @@
         </view>
       </view>
       
-      <!-- 购物车推荐 -->
-      <view class="recommendations">
-        <view class="section-title">
-          <text>猜你喜欢</text>
-        </view>
-        <view class="empty-recommends">
-          <text>更多好物，敬请期待</text>
-        </view>
-      </view>
+  
     </view>
     
     <!-- 底部结算栏 -->
@@ -473,7 +465,7 @@ onLoad(() => {
 
 <style lang="scss">
 .cart-container {
-  min-height: 100vh;
+  min-height: 80vh;
   background-color: #f8f8fa;
   padding-bottom: 140rpx; // 为底部结算栏留出空间
   

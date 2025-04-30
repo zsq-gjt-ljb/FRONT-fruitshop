@@ -25,114 +25,72 @@
 /* 文章场景相关 */
 .login-container {
   min-height: 100vh;
-  background-color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-.login-container .header {
-  position: relative;
-  height: 45vh;
-  overflow: hidden;
-}
-.login-container .header .blur-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(74, 144, 226, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
-  -webkit-backdrop-filter: blur(20px);
-          backdrop-filter: blur(20px);
-}
-.login-container .header .logo-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-.login-container .header .logo-container .logo {
-  width: 180rpx;
-  height: 180rpx;
-  filter: drop-shadow(0 8rpx 24rpx rgba(74, 144, 226, 0.2));
-}
-.login-container .header::after {
-  content: "";
-  position: absolute;
-  bottom: -60rpx;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120rpx;
-  height: 6rpx;
-  background: linear-gradient(90deg, rgba(74, 144, 226, 0) 0%, rgba(74, 144, 226, 0.2) 50%, rgba(74, 144, 226, 0) 100%);
-  border-radius: 3rpx;
-}
-.login-container .content {
-  flex: 1;
-  padding: 80rpx 40rpx;
+  background-color: #F1F9FF;
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-.login-container .content .title-section {
-  text-align: center;
-  margin-bottom: 100rpx;
-}
-.login-container .content .title-section .subtitle {
-  font-size: 36rpx;
-  color: #4a90e2;
-  letter-spacing: 8rpx;
-  text-transform: uppercase;
-  font-weight: 300;
+  justify-content: center;
   position: relative;
-  padding-bottom: 20rpx;
 }
-.login-container .content .title-section .subtitle::after {
-  content: "";
+.login-container .subtitle-container {
+  margin-bottom: 80rpx;
   position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40rpx;
-  height: 4rpx;
-  background: linear-gradient(90deg, rgba(74, 144, 226, 0) 0%, rgba(74, 144, 226, 0.5) 50%, rgba(74, 144, 226, 0) 100%);
+  top: 220rpx;
 }
-.login-container .content .login-button {
+.login-container .subtitle-container .subtitle {
+  font-size: 42rpx;
+  color: #3b78db;
+  font-weight: 400;
+}
+.login-container .logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 120rpx;
+}
+.login-container .logo-section .logo-circle {
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+  margin-bottom: 30rpx;
+}
+.login-container .logo-section .logo-circle .logo {
+  width: 250rpx;
+  height: 250rpx;
+  border-radius: 50%;
+}
+.login-container .logo-section .logo-text {
+  font-size: 36rpx;
+  color: #3b78db;
+  font-weight: 500;
+}
+.login-container .button-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0 50rpx;
+}
+.login-container .button-container .login-button {
+  width: 300rpx;
+  height: 90rpx;
+  background-color: #4e7bef;
+  color: #ffffff;
+  font-size: 32rpx;
+  font-weight: 400;
+  border-radius: 10rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 85%;
-  height: 96rpx;
-  background: #ffffff;
-  color: #4a90e2;
-  font-size: 32rpx;
-  font-weight: 500;
-  border-radius: 48rpx;
-  box-shadow: 0 4rpx 12rpx rgba(74, 144, 226, 0.1), 0 12rpx 24rpx rgba(74, 144, 226, 0.05);
-  border: 1px solid rgba(74, 144, 226, 0.1);
-  position: relative;
-}
-.login-container .content .login-button::after {
+  letter-spacing: 2rpx;
+  box-shadow: 0 6rpx 12rpx rgba(78, 123, 239, 0.3);
   border: none;
 }
-.login-container .content .login-button .iconfont {
-  font-size: 40rpx;
-  margin-right: 16rpx;
+.login-container .button-container .login-button::after {
+  border: none;
 }
-.login-container .dev-buttons {
-  position: absolute;
-  bottom: 40rpx;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-around;
-  padding: 0 30rpx;
-}
-.login-container .dev-buttons button {
-  margin: 0;
-  background: #f5f7fa;
-  padding: 10rpx 20rpx;
-  font-size: 24rpx;
-  border-radius: 10rpx;
-  color: #666;
+.login-container .button-container .login-button:active {
+  transform: scale(0.98);
+  background-color: #4470e0;
 }

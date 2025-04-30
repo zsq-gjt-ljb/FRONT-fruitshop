@@ -16,7 +16,7 @@
     <view class="category-content">
       <!-- 右侧商品列表 -->
       <!-- <view class="header">
-        <view class="title">南茶北果分类</view>
+        <view class="title">北果南茶分类</view>
         <view class="description">发现更多优质商品</view>
       </view> -->
       
@@ -90,7 +90,7 @@
         </view>
         
         <view v-if="productList.length === 0" class="empty-tip">
-          <image src="/static/images/empty-cart.png" mode="aspectFit" class="empty-image"></image>
+          <image src="/static/images/empty.png" mode="aspectFit" class="empty-image"></image>
           <text class="empty-text">{{ isSearchMode ? '未找到相关商品' : '该分类暂无商品，敬请期待' }}</text>
         </view>
       </view>
@@ -214,79 +214,42 @@ onShow(() => {
     const selectedId = uni.getStorageSync('selectedCategoryId');
     console.log('读取到的分类ID:', selectedId);
     
-    // 检查是否需要强制选中分类
-    const forceSelect = uni.getStorageSync('forceSelectCategory');
-    console.log('是否强制选中分类:', forceSelect);
-    
     if (selectedId) {
       // 将ID转为字符串确保比较一致
       currentCategoryId.value = String(selectedId);
       console.log('设置当前分类ID:', currentCategoryId.value);
       
-      // 如果已经加载了分类列表
-      if (categories.value && categories.value.length > 0) {
-        console.log('查找匹配分类...');
-        // 查找匹配的分类
-        const category = categories.value.find(item => String(item.id) === String(selectedId));
-        if (category) {
-          console.log('找到匹配分类:', category.name);
-          // 选中该分类
-          selectCategory(category);
-          
-          // 如果存在强制选中标记，清除它
-          if (forceSelect) {
-            uni.removeStorageSync('forceSelectCategory');
-          }
-        } else {
-          console.log('未找到匹配分类');
-          // 重新加载分类列表
-          getCategories();
-        }
+      // 如果分类尚未加载，先加载分类列表
+      if (!categories.value || categories.value.length === 0) {
+        console.log('分类列表为空，加载分类列表');
+        getCategories();
+        return;
+      }
+      
+      // 如果已经加载了分类列表，查找匹配的分类
+      const category = categories.value.find(item => String(item.id) === String(selectedId));
+      if (category) {
+        console.log('找到匹配分类:', category.name);
+        // 选中该分类
+        selectCategory(category);
       } else {
-        console.log('分类列表为空，开始加载分类');
-        // 如果分类尚未加载，加载分类列表
+        console.log('未找到匹配分类，重新加载分类列表');
+        // 未找到匹配的分类，重新加载分类列表
         getCategories();
       }
+    } else if (categories.value && categories.value.length > 0) {
+      // 没有选中的分类ID，但分类已加载，选中第一个
+      selectCategory(categories.value[0]);
+    } else {
+      // 没有选中的分类ID，且分类未加载，加载分类列表
+      getCategories();
     }
   } catch (e) {
     console.error('读取选中分类ID失败:', e);
+    // 出现错误，尝试加载分类列表
+    getCategories();
   }
 });
-
-// 根据分类名称进行模糊匹配查找
-const searchCategoryByName = (categoryName) => {
-  if (!categoryName || !categories.value || categories.value.length === 0) {
-    return null;
-  }
-  
-  console.log('尝试通过名称匹配分类:', categoryName);
-  
-  // 预定义的名称映射表 - 将自定义分类名映射到可能的实际分类
-  const nameMap = {
-    '胶东鲜果': ['水果', '新鲜水果', '水果类', '鲜果'],
-    '闽南茶点': ['茶点', '茶叶', '点心', '零食', '茶品'],
-    '闽西特产': ['特产', '特色', '地方特产', '零食'],
-    '海鲜冻品': ['海鲜', '冻品', '水产', '水产品', '海产'],
-    '低GI食品': ['低糖', '健康食品', '低热量', '保健食品'],
-    '会员好礼': ['礼品', '礼盒', '会员', '套装', '礼物']
-  };
-  
-  // 查找匹配的分类名
-  let possibleNames = nameMap[categoryName] || [categoryName];
-  
-  // 尝试查找包含这些可能名称的分类
-  for (const name of possibleNames) {
-    for (const category of categories.value) {
-      if (category.name.includes(name) || name.includes(category.name)) {
-        console.log('找到名称匹配的分类:', category.name);
-        return category;
-      }
-    }
-  }
-  
-  console.log('未找到匹配的分类');
-  return null;
-};
 
 // 获取分类列表
 const getCategories = async () => {
@@ -305,65 +268,61 @@ const getCategories = async () => {
         name: '全部商品'
       }
       categories.value = [allCategory, ...res.data]
-      console.log('categories.value', categories.value)
+      console.log('分类列表加载完成，共', categories.value.length, '项');
       
       // 检查是否有预选分类ID
       if (currentCategoryId.value) {
         console.log('处理预选分类ID:', currentCategoryId.value);
-        // 将两个ID都转为字符串进行比较
+        
+        // 查找匹配ID的分类
         const category = categories.value.find(item => String(item.id) === String(currentCategoryId.value));
         
         if (category) {
-          console.log('找到匹配的分类:', category.name);
+          console.log('找到ID匹配的分类:', category.name);
           selectCategory(category);
           
-          // 检查是否强制选中分类
-          const forceSelect = uni.getStorageSync('forceSelectCategory');
-          if (forceSelect) {
-            // 清除标记
-            uni.removeStorageSync('forceSelectCategory');
-          } else {
-            // 非强制选中时，使用后清除分类ID
-            setTimeout(() => {
-              uni.removeStorageSync('selectedCategoryId');
-              console.log('已清除预选分类ID');
-            }, 500);
-          }
+          // 清除已使用的选择ID
+          setTimeout(() => {
+            uni.removeStorageSync('selectedCategoryId');
+            console.log('已清除预选分类ID');
+          }, 500);
           return;
-        } else {
-          console.log('未找到匹配的分类ID, 尝试通过名称匹配');
-          
-          // 检查是否有传递的分类名称
-          const categoryName = uni.getStorageSync('categoryName');
-          if (categoryName) {
-            // 尝试通过名称匹配
-            const matchedCategory = searchCategoryByName(categoryName);
-            if (matchedCategory) {
-              selectCategory(matchedCategory);
-              
-              // 清除缓存
-              uni.removeStorageSync('categoryName');
-              uni.removeStorageSync('selectedCategoryId');
-              if (uni.getStorageSync('forceSelectCategory')) {
-                uni.removeStorageSync('forceSelectCategory');
-              }
-              return;
-            }
-          }
-          
-          console.log('未找到匹配的分类');
         }
+        
+        // 针对特殊分类进行处理
+        if (currentCategoryId.value === '105') { // 低GI食品
+          console.log('尝试匹配低GI食品相关分类');
+          // 尝试找到包含"健康"、"低糖"等关键词的分类
+          const matchedCategory = categories.value.find(cat => 
+            cat.name.includes('健康') || 
+            cat.name.includes('糖') || 
+            cat.name.includes('低') || 
+            cat.name.includes('保健')
+          );
+          
+          if (matchedCategory) {
+            console.log('找到低GI食品相关分类:', matchedCategory.name);
+            selectCategory(matchedCategory);
+            return;
+          }
+        }
+        
+        // 如果没找到匹配的分类，默认选择第一个(全部商品)
+        console.log('未找到匹配分类，使用默认分类');
       }
       
       // 默认选中第一个分类(全部)
-      if (categories.value.length > 0) {
-        selectCategory(categories.value[0])
-      }
+      console.log('选择默认分类');
+      selectCategory(categories.value[0]);
     }
   } catch (error) {
-    console.error('获取分类列表失败:', error)
+    console.error('获取分类列表失败:', error);
+    uni.showToast({
+      title: '加载分类失败',
+      icon: 'none'
+    });
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
 }
 
@@ -685,8 +644,8 @@ const applySorting = () => {
           height: 30rpx;
           
           .arrow {
-            width: 0;
-            height: 0;
+            width: 5px;
+            height: 15px;
             border-left: 6rpx solid transparent;
             border-right: 6rpx solid transparent;
             

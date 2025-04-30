@@ -42,7 +42,7 @@ const _sfc_main = {
           url: "https://bgnc.online/api/cart/list",
           method: "GET"
         });
-        common_vendor.index.__f__("log", "at pages/cart/cart.vue:160", "购物车API返回:", result);
+        common_vendor.index.__f__("log", "at pages/cart/cart.vue:152", "购物车API返回:", result);
         if (result.code === 200) {
           const mergedCartMap = {};
           const processedData = (result.data || []).map((item) => ({
@@ -70,7 +70,7 @@ const _sfc_main = {
             }
           });
           cartList.value = Object.values(mergedCartMap);
-          common_vendor.index.__f__("log", "at pages/cart/cart.vue:199", "处理后的购物车数据:", cartList.value);
+          common_vendor.index.__f__("log", "at pages/cart/cart.vue:191", "处理后的购物车数据:", cartList.value);
         } else {
           common_vendor.index.showToast({
             title: result.message || "获取购物车失败",
@@ -78,7 +78,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/cart/cart.vue:207", "获取购物车出错:", error);
+        common_vendor.index.__f__("error", "at pages/cart/cart.vue:199", "获取购物车出错:", error);
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
           icon: "none"
@@ -120,7 +120,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/cart/cart.vue:262", "减少数量失败:", error);
+        common_vendor.index.__f__("error", "at pages/cart/cart.vue:254", "减少数量失败:", error);
         item.quantity++;
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
@@ -155,7 +155,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/cart/cart.vue:308", "增加数量失败:", error);
+        common_vendor.index.__f__("error", "at pages/cart/cart.vue:300", "增加数量失败:", error);
         item.quantity--;
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
@@ -189,7 +189,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/cart/cart.vue:353", "更新数量失败:", error);
+        common_vendor.index.__f__("error", "at pages/cart/cart.vue:345", "更新数量失败:", error);
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
           icon: "none"
@@ -224,7 +224,7 @@ const _sfc_main = {
                 });
               }
             } catch (error) {
-              common_vendor.index.__f__("error", "at pages/cart/cart.vue:397", "删除购物车商品失败:", error);
+              common_vendor.index.__f__("error", "at pages/cart/cart.vue:389", "删除购物车商品失败:", error);
               common_vendor.index.showToast({
                 title: "网络错误，请稍后再试",
                 icon: "none"
@@ -280,7 +280,7 @@ const _sfc_main = {
       getCartList();
     });
     common_vendor.onLoad(() => {
-      common_vendor.index.__f__("log", "at pages/cart/cart.vue:470", "购物车页面加载");
+      common_vendor.index.__f__("log", "at pages/cart/cart.vue:462", "购物车页面加载");
     });
     return (_ctx, _cache) => {
       return common_vendor.e({

@@ -11,7 +11,8 @@ const _sfc_main = {
       { name: "待发货", value: 1 },
       { name: "待收货", value: 2 },
       { name: "已完成", value: 3 },
-      { name: "退款/售后", value: 4 }
+      { name: "退款/售后", value: 4 },
+      { name: "已失效", value: -1 }
     ]);
     const activeTab = common_vendor.ref("");
     const orderList = common_vendor.ref([]);
@@ -19,51 +20,129 @@ const _sfc_main = {
     const pageSize = common_vendor.ref(10);
     const hasMore = common_vendor.ref(true);
     const isLoading = common_vendor.ref(false);
-    const switchTab = (tabValue) => {
+    const switchTab = async (tabValue) => {
       if (activeTab.value === tabValue)
         return;
       activeTab.value = tabValue;
       page.value = 1;
       orderList.value = [];
       hasMore.value = true;
-      getOrderList();
+      await getOrderList(tabValue, true);
     };
-    const getOrderList = async () => {
-      if (isLoading.value)
+    const getOrderList = async (tab = activeTab.value, refresh = false) => {
+      if (refresh) {
+        orderList.value = [];
+        page.value = 1;
+        hasMore.value = true;
+      }
+      if (!hasMore.value && !refresh) {
+        common_vendor.index.__f__("log", "at pages/order/list.vue:129", "没有更多数据了");
         return;
+      }
       isLoading.value = true;
+      common_vendor.index.__f__("log", "at pages/order/list.vue:134", "请求订单列表数据，页码：", page.value, "状态：", tab);
       try {
-        const params = {
-          page: page.value,
-          pageSize: pageSize.value
-        };
-        if (activeTab.value !== "") {
-          params.status = activeTab.value;
-        }
         const result = await utils_request.request({
           url: "https://bgnc.online/api/order/list",
           method: "GET",
-          data: params
-        });
-        if (result.code === 200) {
-          const orders = result.data || [];
-          if (page.value === 1) {
-            orderList.value = orders;
-          } else {
-            orderList.value = [...orderList.value, ...orders];
+          data: {
+            pageNum: page.value,
+            pageSize: pageSize.value,
+            status: tab
           }
-          hasMore.value = false;
-          if (hasMore.value) {
-            page.value++;
+        });
+        common_vendor.index.__f__("log", "at pages/order/list.vue:147", "获取订单列表结果:", JSON.stringify(result));
+        if (result.code === 200 && result.data) {
+          let dataList = [];
+          if (Array.isArray(result.data)) {
+            dataList = result.data;
+          } else if (result.data.list && Array.isArray(result.data.list)) {
+            dataList = result.data.list;
+          } else if (typeof result.data === "object") {
+            for (const key in result.data) {
+              if (Array.isArray(result.data[key])) {
+                dataList = result.data[key];
+                break;
+              }
+            }
+          }
+          common_vendor.index.__f__("log", "at pages/order/list.vue:170", "解析后的订单数据:", JSON.stringify(dataList));
+          if (dataList.length > 0) {
+            const processedOrders = await Promise.all(dataList.map(async (order) => {
+              const newOrder = JSON.parse(JSON.stringify(order));
+              if (newOrder.status === 0) {
+                let isTimeout = false;
+                if (newOrder.orderItemList && newOrder.orderItemList.length > 0) {
+                  for (const item of newOrder.orderItemList) {
+                    if (item.timeToLive === "已超时") {
+                      isTimeout = true;
+                      break;
+                    }
+                  }
+                }
+                if (newOrder.timeToLive === "已超时") {
+                  isTimeout = true;
+                }
+                if (!isTimeout && newOrder.createTime) {
+                  const timeLeft = calculateTimeLeft(newOrder.createTime);
+                  newOrder.timeToLive = timeLeft;
+                  if (newOrder.orderItemList && newOrder.orderItemList.length > 0) {
+                    for (let j = 0; j < newOrder.orderItemList.length; j++) {
+                      newOrder.orderItemList[j].timeToLive = timeLeft;
+                    }
+                  }
+                  if (timeLeft === "已超时") {
+                    isTimeout = true;
+                  }
+                }
+                if (isTimeout) {
+                  try {
+                    const updateResult = await utils_request.request({
+                      url: `https://bgnc.online/api/order/`,
+                      method: "PUT",
+                      data: {
+                        id: newOrder.id,
+                        status: -1
+                      }
+                    });
+                    if (updateResult.code === 200) {
+                      common_vendor.index.__f__("log", "at pages/order/list.vue:229", `订单 ${newOrder.id} 更新为已失效状态`);
+                      newOrder.status = -1;
+                    } else {
+                      common_vendor.index.__f__("error", "at pages/order/list.vue:233", `订单 ${newOrder.id} 状态更新失败:`, updateResult.msg);
+                    }
+                  } catch (error) {
+                    common_vendor.index.__f__("error", "at pages/order/list.vue:236", `更新订单 ${newOrder.id} 状态失败:`, error);
+                  }
+                }
+              }
+              return newOrder;
+            }));
+            if (refresh || page.value === 1) {
+              orderList.value = processedOrders;
+            } else {
+              orderList.value = [...orderList.value, ...processedOrders];
+            }
+            if (processedOrders.length < pageSize.value) {
+              hasMore.value = false;
+            } else {
+              page.value += 1;
+              hasMore.value = true;
+            }
+          } else {
+            hasMore.value = false;
+            if (refresh || page.value === 1) {
+              orderList.value = [];
+            }
           }
         } else {
           common_vendor.index.showToast({
-            title: result.message || "获取订单失败",
+            title: result.msg || "获取订单列表失败",
             icon: "none"
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/order/list.vue:162", "获取订单列表失败:", error);
+        common_vendor.index.__f__("error", "at pages/order/list.vue:272", "获取订单列表失败:", error);
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
           icon: "none"
@@ -78,8 +157,11 @@ const _sfc_main = {
         getOrderList();
       }
     };
-    const getStatusText = (status) => {
-      switch (parseInt(status)) {
+    const getStatusText = (order) => {
+      const displayStatus = order.displayStatus !== void 0 ? order.displayStatus : order.status;
+      switch (parseInt(displayStatus)) {
+        case -1:
+          return "已失效";
         case 0:
           return "待支付";
         case 1:
@@ -120,7 +202,7 @@ const _sfc_main = {
                 });
               }
             } catch (error) {
-              common_vendor.index.__f__("error", "at pages/order/list.vue:228", "确认收货失败:", error);
+              common_vendor.index.__f__("error", "at pages/order/list.vue:344", "确认收货失败:", error);
               common_vendor.index.showToast({
                 title: "网络错误，请稍后再试",
                 icon: "none"
@@ -136,7 +218,7 @@ const _sfc_main = {
       });
     };
     common_vendor.onLoad((options) => {
-      common_vendor.index.__f__("log", "at pages/order/list.vue:248", "订单列表页面参数:", options);
+      common_vendor.index.__f__("log", "at pages/order/list.vue:364", "订单列表页面参数:", options);
       if (options.status !== void 0) {
         const status = options.status === "" ? "" : parseInt(options.status);
         activeTab.value = status;
@@ -147,6 +229,7 @@ const _sfc_main = {
       }
     });
     common_vendor.onShow(() => {
+      common_vendor.index.__f__("log", "at pages/order/list.vue:381", "订单列表页面显示,刷新数据");
       page.value = 1;
       orderList.value = [];
       hasMore.value = true;
@@ -162,7 +245,77 @@ const _sfc_main = {
       loadMore();
     });
     common_vendor.onMounted(() => {
-      common_vendor.index.__f__("log", "at pages/order/list.vue:286", "订单列表页面已加载");
+      common_vendor.index.__f__("log", "at pages/order/list.vue:404", "订单列表页面已加载");
+    });
+    const calculateTimeLeft = (createTime) => {
+      if (!createTime)
+        return "";
+      const createDate = new Date(createTime);
+      const deadline = new Date(createDate.getTime() + 30 * 60 * 1e3);
+      const now = /* @__PURE__ */ new Date();
+      if (now >= deadline) {
+        return "已超时";
+      }
+      const timeLeft = deadline.getTime() - now.getTime();
+      const minutes = Math.floor(timeLeft / (1e3 * 60));
+      const seconds = Math.floor(timeLeft % (1e3 * 60) / 1e3);
+      return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    };
+    const checkAndUpdateOrderStatus = async () => {
+      if (!orderList.value || orderList.value.length === 0)
+        return;
+      for (let i = 0; i < orderList.value.length; i++) {
+        const order = orderList.value[i];
+        if (order.status === 0) {
+          const timeLeft = calculateTimeLeft(order.createTime);
+          if (order.orderItemList && order.orderItemList.length > 0) {
+            for (let j = 0; j < order.orderItemList.length; j++) {
+              orderList.value[i].orderItemList[j].timeToLive = timeLeft;
+            }
+          }
+          orderList.value[i].timeToLive = timeLeft;
+          if (timeLeft === "已超时") {
+            try {
+              const result = await utils_request.request({
+                url: `https://bgnc.online/api/order/`,
+                method: "PUT",
+                data: {
+                  id: order.id,
+                  status: -1
+                }
+              });
+              if (result.code === 200) {
+                common_vendor.index.__f__("log", "at pages/order/list.vue:474", `列表中订单 ${order.id} 已超时，状态更新为已失效`);
+                orderList.value[i].status = -1;
+                orderList.value[i].timeToLive = "";
+              } else {
+                common_vendor.index.__f__("error", "at pages/order/list.vue:480", `列表中订单 ${order.id} 状态更新失败:`, result.msg);
+              }
+            } catch (error) {
+              common_vendor.index.__f__("error", "at pages/order/list.vue:483", `列表中更新订单 ${order.id} 状态失败:`, error);
+            }
+          }
+        } else {
+          orderList.value[i].timeToLive = "";
+          if (order.orderItemList && order.orderItemList.length > 0) {
+            for (let j = 0; j < order.orderItemList.length; j++) {
+              orderList.value[i].orderItemList[j].timeToLive = "";
+            }
+          }
+        }
+      }
+    };
+    let timer = null;
+    common_vendor.onMounted(() => {
+      timer = setInterval(() => {
+        checkAndUpdateOrderStatus();
+      }, 1e3);
+    });
+    common_vendor.onUnmounted(() => {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
     });
     return (_ctx, _cache) => {
       return common_vendor.e({
@@ -179,30 +332,34 @@ const _sfc_main = {
         c: common_vendor.f(orderList.value, (order, k0, i0) => {
           return common_vendor.e({
             a: common_vendor.t(order.id),
-            b: common_vendor.t(getStatusText(order.status)),
-            c: common_vendor.t(order.receiverName),
-            d: common_vendor.t(order.receiverPhone),
-            e: common_vendor.t(order.receiverProvince),
-            f: common_vendor.t(order.receiverCity),
-            g: common_vendor.t(order.receiverRegion),
-            h: common_vendor.t(order.receiverDetailAddress),
-            i: order.deliveryCompany
+            b: common_vendor.t(getStatusText(order)),
+            c: order.status === 0 && order.timeToLive
+          }, order.status === 0 && order.timeToLive ? {
+            d: common_vendor.t(order.timeToLive)
+          } : {}, {
+            e: common_vendor.t(order.receiverName),
+            f: common_vendor.t(order.receiverPhone),
+            g: common_vendor.t(order.receiverProvince),
+            h: common_vendor.t(order.receiverCity),
+            i: common_vendor.t(order.receiverRegion),
+            j: common_vendor.t(order.receiverDetailAddress),
+            k: order.deliveryCompany
           }, order.deliveryCompany ? {
-            j: common_vendor.t(order.deliveryCompany)
+            l: common_vendor.t(order.deliveryCompany)
           } : {}, {
-            k: common_vendor.t(order.totalAmount),
-            l: common_vendor.t(order.freightAmount),
-            m: common_vendor.t(order.payAmount),
-            n: order.status === 2
+            m: common_vendor.t(order.totalAmount),
+            n: common_vendor.t(order.freightAmount),
+            o: common_vendor.t(order.payAmount),
+            p: order.status === 2
           }, order.status === 2 ? {
-            o: common_vendor.o(($event) => confirmReceived(order.id), order.id)
+            q: common_vendor.o(($event) => confirmReceived(order.id), order.id)
           } : {}, {
-            p: order.status === 4
+            r: order.status === 4
           }, order.status === 4 ? {
-            q: common_vendor.o(($event) => goToDetail(order.id), order.id)
-          } : {}, {
-            r: order.id,
             s: common_vendor.o(($event) => goToDetail(order.id), order.id)
+          } : {}, {
+            t: order.id,
+            v: common_vendor.o(($event) => goToDetail(order.id), order.id)
           });
         })
       } : {

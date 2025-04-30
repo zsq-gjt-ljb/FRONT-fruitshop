@@ -1,12 +1,5 @@
 <template>
   <view class="home-container">
-    <!-- 顶部标题栏 -->
-    <view class="header-section">
-      <view class="brand-simple">
-        <image src="/static/images/mylogo.png" class="brand-logo-img" mode="aspectFit"></image>
-        <text class="brand-name-text">南茶北果</text>
-      </view>
-    </view>
     
     <!-- 轮播图区 -->
     <view class="banner-wrapper">
@@ -25,60 +18,17 @@
           <view class="banner-content">
             <view class="banner-info">
               <text class="banner-name">{{ banner.name }}</text>
-              <view class="banner-btn">
+              <!-- <view class="banner-btn">
                 <text>查看</text>
                 <uni-icons type="arrowright" size="12" color="#fff"></uni-icons>
-              </view>
+              </view> -->
             </view>
           </view>
         </swiper-item>
       </swiper>
     </view>
     
-    <!-- 品牌特色分类 -->
-    <view class="feature-icons">
-      <view class="feature-title">
-        <text>美食乐园</text>
-      </view>
-      <view class="feature-grid">
-        <view class="feature-item" @tap="navigateToCategoryById('101', '胶东鲜果')">
-          <view class="feature-icon fruit">
-            <uni-icons type="star" size="16" color="#fff"></uni-icons>
-          </view>
-          <text class="feature-text">胶东鲜果</text>
-        </view>
-        <view class="feature-item" @tap="navigateToCategoryById('102', '闽南茶点')">
-          <view class="feature-icon tea">
-            <uni-icons type="cup" size="16" color="#fff"></uni-icons>
-          </view>
-          <text class="feature-text">闽南茶点</text>
-        </view>
-        <view class="feature-item" @tap="navigateToCategoryById('103', '闽西特产')">
-          <view class="feature-icon season">
-            <uni-icons type="calendar" size="16" color="#fff"></uni-icons>
-          </view>
-          <text class="feature-text">闽西特产</text>
-        </view>
-        <view class="feature-item" @tap="navigateToCategoryById('104', '海鲜冻品')">
-          <view class="feature-icon import">
-            <uni-icons type="flag" size="16" color="#fff"></uni-icons>
-          </view>
-          <text class="feature-text">海鲜冻品</text>
-        </view>
-        <view class="feature-item" @tap="navigateToCategoryById('105', '低GI食品')">
-          <view class="feature-icon nuts">
-            <uni-icons type="gift" size="16" color="#fff"></uni-icons>
-          </view>
-          <text class="feature-text">低GI食品</text>
-        </view>
-        <view class="feature-item" @tap="navigateToCategoryById('106', '会员好礼')">
-          <view class="feature-icon gift">
-            <uni-icons type="gift-filled" size="16" color="#fff"></uni-icons>
-          </view>
-          <text class="feature-text">会员好礼</text>
-        </view>
-      </view>
-    </view>
+  
     
     <!-- 品牌承诺部分 -->
     <view class="promise-section">
@@ -87,26 +37,26 @@
           <view class="promise-icon-bg">
             <image src="/static/icons/medal.png" class="promise-icon"></image>
           </view>
-          <text>品质保障</text>
+          <text>品质甄选</text>
         </view>
         <view class="divider"></view>
         <view class="promise-item">
           <view class="promise-icon-bg">
             <image src="/static/icons/exchange.png" class="promise-icon"></image>
           </view>
-          <text>无忧退换</text>
+          <text>安心食材</text>
         </view>
         <view class="divider"></view>
         <view class="promise-item">
           <view class="promise-icon-bg">
             <image src="/static/icons/quality.png" class="promise-icon"></image>
           </view>
-          <text>品质甄选</text>
+          <text>无忧退换</text>
         </view>
       </view>
     </view>
     
-    <!-- 分类部分
+   
     <view class="category-section">
       <view class="section-header">
         <view class="section-title">
@@ -115,23 +65,21 @@
         <text class="view-more" @tap="navigateToAllCategories">全部分类 ></text>
       </view>
       
-      <scroll-view class="category-scroll" scroll-x show-scrollbar="false">
-        <view class="category-list">
-          <view 
-            v-for="(category, index) in categories" 
-            :key="category.id"
-            class="category-item"
-            @tap="navigateToCategory(category)"
-          >
-            <view class="category-icon-wrapper">
-              <image :src="category.image || '/static/images/category-default.png'" mode="aspectFill" class="category-image"></image>
-            </view>
-            <text class="category-name">{{ category.name }}</text>
+      <view class="category-grid">
+        <view 
+          v-for="(category, index) in categories.slice(0, 6)" 
+          :key="category.id"
+          class="category-item"
+          @tap="navigateToCategory(category)"
+        >
+          <view class="category-icon-wrapper">
+            <image :src="category.image || '/static/images/category-default.png'" mode="aspectFill" class="category-image"></image>
           </view>
+          <text class="category-name">{{ category.name }}</text>
         </view>
-      </scroll-view>
+      </view>
     </view>
-     -->
+    
     <!-- 首页推荐商品 -->
     <view class="featured-section">
       <view class="section-header">
@@ -175,10 +123,10 @@
     <!-- 底部品牌 -->
     <view class="footer">
       <view class="footer-logo">
-        <text class="logo-text">南茶北果</text>
+        <text class="logo-text">北果南茶</text>
       </view>
       <view class="footer-slogan">品质生活 自然美味</view>
-      <view class="footer-copyright">© 2023 南茶北果 All Rights Reserved</view>
+      <view class="footer-copyright">© 2023 北果南茶 All Rights Reserved</view>
     </view>
     
     <!-- 规格选择弹窗 - 高级设计 -->
@@ -354,10 +302,14 @@ const loadCategories = async () => {
       
       // 为分类添加默认图片 - 使用自定义图标
       const categoryIcons = [
-        '/static/images/category-fruit.png',
+        '/static/images/category-leaf.png',
         '/static/images/category-tea.png',
         '/static/images/category-snack.png',
-        '/static/images/category-dried.png'
+        '/static/images/category-dried.png',   
+        '/static/images/category-fruit.png',
+        '/static/images/category-gift.png',
+        
+        
       ]
       
       categories.value = categories.value.map((cat, index) => ({
@@ -455,77 +407,23 @@ const goToDetail = (productId) => {
   })
 }
 
-// 导航到分类页面
-const navigateToCategory = (category) => {
-  // 存储选中的分类ID，以便分类页面加载后能读取
-  try {
-    uni.setStorageSync('selectedCategoryId', category.id);
-    console.log('保存选中的分类ID:', category.id, category.name);
-    
-    // 添加调试信息
-    setTimeout(() => {
-      const savedId = uni.getStorageSync('selectedCategoryId');
-      console.log('存储后检查ID:', savedId);
-    }, 100);
-  } catch (e) {
-    console.error('保存分类ID失败:', e);
-  }
+// 根据ID导航到分类页面 
+const navigateToCategoryById = (categoryId, categoryName) => {
+  console.log('跳转到分类页面:', categoryId, categoryName);
   
-  // 跳转到分类页面
+  // 只存储必要的ID信息
+  uni.setStorageSync('selectedCategoryId', categoryId);
+  
+  // 直接跳转
   uni.switchTab({
-    url: '/pages/category/category',
-    success: () => {
-      console.log('成功跳转到分类页面');
-    },
-    fail: (error) => {
-      console.error('跳转到分类页面失败:', error);
-      
-      // 跳转失败时尝试使用navigateTo
-      uni.navigateTo({
-        url: '/pages/category/category'
-      });
-    }
+    url: '/pages/category/category'
   });
 }
 
-// 根据ID导航到分类页面 
-const navigateToCategoryById = (categoryId, categoryName, forceSelect = true) => {
-  console.log('按ID导航到分类页面:', categoryId, '分类名称:', categoryName, '强制选中:', forceSelect);
-  try {
-    // 存储分类ID到本地缓存
-    uni.setStorageSync('selectedCategoryId', categoryId);
-    
-    // 存储分类名称到本地缓存，用于名称匹配
-    if (categoryName) {
-      uni.setStorageSync('categoryName', categoryName);
-    }
-    
-    // 如果需要强制选中并显示对应分类商品，设置额外标记
-    if (forceSelect) {
-      uni.setStorageSync('forceSelectCategory', 'true');
-    }
-    
-    // 跳转到分类页面
-    uni.switchTab({
-      url: '/pages/category/category',
-      success: () => {
-        console.log('成功跳转到分类页面');
-      },
-      fail: (error) => {
-        console.error('跳转到分类页面失败:', error);
-        // 跳转失败时尝试使用navigateTo
-        uni.navigateTo({
-          url: '/pages/category/category'
-        });
-      }
-    });
-  } catch (e) {
-    console.error('导航到分类出错:', e);
-    uni.showToast({
-      title: '跳转失败',
-      icon: 'none'
-    });
-  }
+// 导航到分类页面 - 将所有旧代码删除，使用新函数统一处理
+const navigateToCategory = (category) => {
+  // 直接调用统一的跳转函数
+  navigateToCategoryById(category.id, category.name);
 }
 
 // 跳转到全部分类
@@ -847,7 +745,7 @@ const handleContactEvent = () => {
   min-height: 100vh;
   background-color: #f7f9fc;
   background-image: linear-gradient(to bottom, #f0f5ff, #f7f9fc);
-  padding-bottom: 40rpx;
+  
   position: relative;
   
   &::before {
@@ -1163,50 +1061,52 @@ const handleContactEvent = () => {
     }
   }
   
-  .category-scroll {
-    white-space: nowrap;
-    margin: 0 -8rpx;
-  }
-  
-  .category-list {
+  .category-grid {
     display: flex;
-    padding: 16rpx 8rpx;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 0 20rpx;
     
     .category-item {
-      display: inline-block;
-      width: 140rpx;
-      margin-right: 20rpx;
-      text-align: center;
-      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 33.33%;
+      margin-bottom: 30rpx;
       
       .category-icon-wrapper {
-        width: 90rpx;
-        height: 90rpx;
-        margin: 0 auto 10rpx;
-        background: linear-gradient(135deg, rgba(75, 145, 241, 0.05), rgba(111, 177, 255, 0.1));
-        border-radius: 45rpx;
+        width: 140rpx;
+        height: 140rpx;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
         display: flex;
-        align-items: center;
         justify-content: center;
-        padding: 5rpx;
-        box-shadow: 0 4rpx 8rpx rgba(75, 145, 241, 0.08);
-        border: 1rpx solid rgba(75, 145, 241, 0.1);
+        align-items: center;
         overflow: hidden;
+        margin-bottom: 16rpx;
+        box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+        border: 4rpx solid rgba(255, 255, 255, 0.8);
+        transition: all 0.3s ease;
         
         .category-image {
           width: 70%;
           height: 70%;
-          object-fit: contain;
+          transition: transform 0.3s ease;
+        }
+
+        &:active {
+          transform: scale(0.95);
+          .category-image {
+            transform: scale(0.95);
+          }
         }
       }
       
       .category-name {
-        font-size: 24rpx;
+        font-size: 26rpx;
         color: #333;
-        display: block;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        text-align: center;
+        font-weight: 500;
       }
     }
   }
@@ -1539,8 +1439,8 @@ const handleContactEvent = () => {
           
           &.active {
             background-color: rgba(92, 142, 58, 0.1);
-            color: #5C8E3A;
-            border: 1rpx solid #5C8E3A;
+            color: #4B91F1;
+            border: 1rpx solid #4B91F1;
             font-weight: 500;
           }
         }
@@ -1619,7 +1519,7 @@ const handleContactEvent = () => {
         }
         
         &.buy-now {
-          background: linear-gradient(135deg, #5C8E3A, #8BC34A);
+          background: linear-gradient(135deg, #4B91F1, #4B91F1);
           color: #fff;
           margin-left: 15rpx;
           letter-spacing: 1rpx;
@@ -1681,7 +1581,7 @@ const handleContactEvent = () => {
         
         .popup-price {
           font-size: 40rpx;
-          color: #5C8E3A;
+          color: #4B91F1;
           font-weight: 600;
           margin-bottom: 12rpx;
         }
@@ -1734,7 +1634,7 @@ const handleContactEvent = () => {
           
           .spec-price {
             margin-left: 10rpx;
-            color: #5C8E3A;
+            color: #4B91F1;
             font-weight: 500;
           }
           
@@ -1746,8 +1646,8 @@ const handleContactEvent = () => {
           
           &.active {
             background-color: rgba(92, 142, 58, 0.1);
-            color: #5C8E3A;
-            border-color: #5C8E3A;
+            color: #4B91F1;
+            border-color: #4B91F1;
           }
         }
       }
@@ -1815,7 +1715,7 @@ const handleContactEvent = () => {
         }
         
         &.buy-btn {
-          background: linear-gradient(135deg, #5C8E3A, #8BC34A);
+          background: linear-gradient(135deg, #4B91F1, #4B91F1);
           color: #fff;
           margin-left: 12rpx;
           box-shadow: 0 6rpx 16rpx rgba(92, 142, 58, 0.2);

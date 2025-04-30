@@ -1,7 +1,7 @@
 <template>
   <view class="home-manage">
     <view class="header">
-      <view class="title">南茶北果首页管理</view>
+      <view class="title">北果南茶首页管理</view>
       <view class="description">管理首页展示内容</view>
     </view>
     

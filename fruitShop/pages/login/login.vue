@@ -1,32 +1,23 @@
 <template>
   <view class="login-container">
-    <!-- 顶部区域 -->
-    <view class="header">
-      <view class="blur-background"></view>
-      <view class="logo-container">
-        <image class="logo" src="/static/images/mylogo.png" mode="aspectFit"></image>
-      </view>
+    <!-- 副标题 -->
+    <view class="subtitle-container">
+      <text class="subtitle">北方的鲜果 南方的春茶</text>
     </view>
 
-    <!-- 内容区域 -->
-    <view class="content">
-      <view class="title-section">
-        <text class="subtitle">南茶北果</text>
+    <!-- 中间部分logo -->
+    <view class="logo-section">
+      <view class="logo-circle">
+        <image class="logo" src="/static/images/mylogo.jpg" mode="aspectFit"></image>
       </view>
+     
+    </view>
 
-      <!-- 微信登录按钮 -->
+    <!-- 微信登录按钮 -->
+    <view class="button-container">
       <button class="login-button" @tap="handleWechatLogin">
-        <text class="iconfont icon-wechat"></text>
-        <text>微信一键登录</text>
+        欢迎使用
       </button>
-    </view>
-
-    <!-- 开发环境下显示快速导航 -->
-    <view v-if="isDev" class="dev-buttons">
-      <button @tap="devNavigateTo('/pages/index/index')">首页</button>
-      <button @tap="devNavigateTo('/pages/category/category')">分类</button>
-      <button @tap="devNavigateTo('/pages/cart/cart')">购物车</button>
-      <button @tap="devNavigateTo('/pages/user/user')">我的</button>
     </view>
   </view>
 </template>
@@ -165,129 +156,84 @@ export default {
 <style lang="scss">
 .login-container {
   min-height: 100vh;
-  background-color: #ffffff;
+  background-color: #F1F9FF
+  ;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   position: relative;
   
-  .header {
-    position: relative;
-    height: 45vh;
-    overflow: hidden;
+  .subtitle-container {
+    margin-bottom: 80rpx;
+    position: absolute;
+    top: 220rpx;
     
-    .blur-background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 100%;
-      background: linear-gradient(135deg, rgba(74, 144, 226, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
-      backdrop-filter: blur(20px);
-    }
-    
-    .logo-container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      
-      .logo {
-        width: 180rpx;
-        height: 180rpx;
-        filter: drop-shadow(0 8rpx 24rpx rgba(74, 144, 226, 0.2));
-      }
-    }
-
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -60rpx;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 120rpx;
-      height: 6rpx;
-      background: linear-gradient(90deg, rgba(74, 144, 226, 0) 0%, rgba(74, 144, 226, 0.2) 50%, rgba(74, 144, 226, 0) 100%);
-      border-radius: 3rpx;
+    .subtitle {
+      font-size: 42rpx;
+      color: #3b78db;
+      font-weight: 400;
     }
   }
   
-  .content {
-    flex: 1;
-    padding: 80rpx 40rpx;
+  .logo-section {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom: 120rpx;
     
-    .title-section {
-      text-align: center;
-      margin-bottom: 100rpx;
+    .logo-circle {
+     
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+      margin-bottom: 30rpx;
       
-      .subtitle {
-        font-size: 36rpx;
-        color: #4a90e2;
-        letter-spacing: 8rpx;
-        text-transform: uppercase;
-        font-weight: 300;
-        position: relative;
-        padding-bottom: 20rpx;
-        
-        &::after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 40rpx;
-          height: 4rpx;
-          background: linear-gradient(90deg, rgba(74, 144, 226, 0) 0%, rgba(74, 144, 226, 0.5) 50%, rgba(74, 144, 226, 0) 100%);
-        }
+      .logo {
+        width: 250rpx;
+        height: 250rpx;
+        border-radius: 50%;
       }
     }
     
+    .logo-text {
+      font-size: 36rpx;
+      color: #3b78db;
+      font-weight: 500;
+    }
+  }
+  
+  .button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0 50rpx;
+    
     .login-button {
+      width: 300rpx;
+      height: 90rpx;
+      background-color: #4e7bef;
+      color: #ffffff;
+      font-size: 32rpx;
+      font-weight: 400;
+      border-radius: 10rpx;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 85%;
-      height: 96rpx;
-      background: #ffffff;
-      color: #4a90e2;
-      font-size: 32rpx;
-      font-weight: 500;
-      border-radius: 48rpx;
-      box-shadow: 
-        0 4rpx 12rpx rgba(74, 144, 226, 0.1),
-        0 12rpx 24rpx rgba(74, 144, 226, 0.05);
-      border: 1px solid rgba(74, 144, 226, 0.1);
-      position: relative;
+      letter-spacing: 2rpx;
+      box-shadow: 0 6rpx 12rpx rgba(78, 123, 239, 0.3);
+      border: none;
       
       &::after {
         border: none;
       }
       
-      .iconfont {
-        font-size: 40rpx;
-        margin-right: 16rpx;
+      &:active {
+        transform: scale(0.98);
+        background-color: #4470e0;
       }
-    }
-  }
-  
-  .dev-buttons {
-    position: absolute;
-    bottom: 40rpx;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: space-around;
-    padding: 0 30rpx;
-    
-    button {
-      margin: 0;
-      background: #f5f7fa;
-      padding: 10rpx 20rpx;
-      font-size: 24rpx;
-      border-radius: 10rpx;
-      color: #666;
     }
   }
 }

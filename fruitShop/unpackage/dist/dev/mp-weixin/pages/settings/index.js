@@ -76,11 +76,11 @@ const _sfc_main = {
           method: "GET"
         });
         if (res.code === 200) {
-          common_vendor.index.__f__("log", "at pages/settings/index.vue:220", "res.data是", res);
+          common_vendor.index.__f__("log", "at pages/settings/index.vue:212", "res.data是", res);
           userInfo.value = res.data;
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/settings/index.vue:224", "获取用户信息失败：", error);
+        common_vendor.index.__f__("error", "at pages/settings/index.vue:216", "获取用户信息失败：", error);
       }
     };
     const changeAvatar = () => {
@@ -108,7 +108,7 @@ const _sfc_main = {
                     "Authorization": `Bearer ${common_vendor.index.getStorageSync("token")}`
                   },
                   success: (uploadRes) => {
-                    common_vendor.index.__f__("log", "at pages/settings/index.vue:256", "上传成功, 原始响应:", uploadRes);
+                    common_vendor.index.__f__("log", "at pages/settings/index.vue:248", "上传成功, 原始响应:", uploadRes);
                     try {
                       const response = typeof uploadRes.data === "string" ? JSON.parse(uploadRes.data) : uploadRes.data;
                       if (response.code === 200) {
@@ -121,14 +121,14 @@ const _sfc_main = {
                     }
                   },
                   fail: (err) => {
-                    common_vendor.index.__f__("error", "at pages/settings/index.vue:273", "上传失败:", err);
+                    common_vendor.index.__f__("error", "at pages/settings/index.vue:265", "上传失败:", err);
                     reject(new Error("网络错误"));
                   }
                 });
               });
             };
             const imageUrl = await uploadTask();
-            common_vendor.index.__f__("log", "at pages/settings/index.vue:282", "头像上传成功, URL:", imageUrl);
+            common_vendor.index.__f__("log", "at pages/settings/index.vue:274", "头像上传成功, URL:", imageUrl);
             const updateRes = await utils_request.request({
               url: "https://bgnc.online/api/user/profile",
               method: "PUT",
@@ -147,7 +147,7 @@ const _sfc_main = {
               throw new Error(updateRes.msg || "头像更新失败");
             }
           } catch (error) {
-            common_vendor.index.__f__("error", "at pages/settings/index.vue:308", "头像更新错误:", error);
+            common_vendor.index.__f__("error", "at pages/settings/index.vue:300", "头像更新错误:", error);
             common_vendor.index.showToast({
               title: error.message || "头像更新失败",
               icon: "none"
@@ -183,7 +183,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/settings/index.vue:349", "更新姓名错误:", error);
+        common_vendor.index.__f__("error", "at pages/settings/index.vue:341", "更新姓名错误:", error);
         common_vendor.index.showToast({
           title: "姓名修改失败",
           icon: "error"
@@ -281,7 +281,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/settings/index.vue:466", "更新生日出错:", error);
+        common_vendor.index.__f__("error", "at pages/settings/index.vue:458", "更新生日出错:", error);
         common_vendor.index.showToast({
           title: "生日修改失败",
           icon: "error"
@@ -304,11 +304,6 @@ const _sfc_main = {
         }
       });
     };
-    const navigateToAddressList = () => {
-      common_vendor.index.navigateTo({
-        url: "/pages/address/list"
-      });
-    };
     common_vendor.onMounted(() => {
       getUserInfo();
     });
@@ -324,60 +319,59 @@ const _sfc_main = {
         h: common_vendor.o(showGenderPicker),
         i: common_vendor.t(userInfo.value.userBirthday || "未设置"),
         j: common_vendor.o(showDatePicker),
-        k: common_vendor.o(navigateToAddressList),
-        l: common_vendor.o(handleLogout),
-        m: common_vendor.o(updateName),
-        n: common_vendor.p({
+        k: common_vendor.o(handleLogout),
+        l: common_vendor.o(updateName),
+        m: common_vendor.p({
           mode: "input",
           title: "修改姓名",
           placeholder: "请输入姓名",
           value: userInfo.value.userName
         }),
-        o: common_vendor.sr(nameDialog, "6a74f481-0", {
+        n: common_vendor.sr(nameDialog, "6a74f481-0", {
           "k": "nameDialog"
         }),
-        p: common_vendor.p({
+        o: common_vendor.p({
           type: "dialog"
         }),
-        q: common_vendor.o(updatePhone),
-        r: common_vendor.p({
+        p: common_vendor.o(updatePhone),
+        q: common_vendor.p({
           mode: "input",
           title: "修改手机号",
           placeholder: "请输入手机号",
           value: userInfo.value.phone
         }),
-        s: common_vendor.sr(phoneDialog, "6a74f481-2", {
+        r: common_vendor.sr(phoneDialog, "6a74f481-2", {
           "k": "phoneDialog"
         }),
-        t: common_vendor.p({
+        s: common_vendor.p({
           type: "dialog"
         }),
-        v: common_vendor.o(closeDatePicker),
-        w: common_vendor.o(confirmDatePicker),
-        x: common_vendor.f(years.value, (year, index, i0) => {
+        t: common_vendor.o(closeDatePicker),
+        v: common_vendor.o(confirmDatePicker),
+        w: common_vendor.f(years.value, (year, index, i0) => {
           return {
             a: common_vendor.t(year),
             b: index
           };
         }),
-        y: common_vendor.f(months.value, (month, index, i0) => {
+        x: common_vendor.f(months.value, (month, index, i0) => {
           return {
             a: common_vendor.t(month),
             b: index
           };
         }),
-        z: common_vendor.f(days.value, (day, index, i0) => {
+        y: common_vendor.f(days.value, (day, index, i0) => {
           return {
             a: common_vendor.t(day),
             b: index
           };
         }),
-        A: datePickerValue.value,
-        B: common_vendor.o(onDatePickerChange),
-        C: common_vendor.sr(datePopup, "6a74f481-4", {
+        z: datePickerValue.value,
+        A: common_vendor.o(onDatePickerChange),
+        B: common_vendor.sr(datePopup, "6a74f481-4", {
           "k": "datePopup"
         }),
-        D: common_vendor.p({
+        C: common_vendor.p({
           type: "bottom"
         })
       };

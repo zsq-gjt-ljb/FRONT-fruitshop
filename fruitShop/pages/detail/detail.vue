@@ -8,17 +8,11 @@
       
       <!-- 内容区域 - 仅在加载完成后显示 -->
       <block v-else>
-        <!-- 顶部导航栏 -->
-        <view class="custom-nav">
-          <view class="nav-back" @tap="goBack">
-            <uni-icons type="back" size="24" color="#fff"></uni-icons>
-          </view>
-          <view class="nav-actions">
-            <uni-icons type="home" size="24" color="#fff" @tap="goHome"></uni-icons>
-            <uni-icons type="more-filled" size="24" color="#fff" style="margin-left: 30rpx;"></uni-icons>
-          </view>
+        <!-- 返回按钮 -->
+        <view class="floating-back" @tap="goBack">
+          <uni-icons type="back" size="20" color="#fff"></uni-icons>
         </view>
-    
+        
         <!-- 商品图片轮播 -->
         <swiper class="product-swiper" circular indicator-dots autoplay 
           :indicator-color="'rgba(255,255,255,0.5)'"
@@ -38,8 +32,8 @@
           
           <view class="title-section">
             <view class="product-title">{{ productInfo.name }}</view>
-            <view class="share-btn">
-              <uni-icons type="redo" size="18" color="#999"></uni-icons>
+            <view class="share-button" @tap="handleShare">
+              <uni-icons type="redo-filled" size="24" color="#4B91F1"></uni-icons>
               <text>分享</text>
             </view>
           </view>
@@ -91,7 +85,7 @@
           
           <view class="action-right">
             <view class="cart-btn" @tap="showSpecsPopup">加入购物车</view>
-            <view class="buy-btn" @tap="buyNow">立即购买</view>
+            <view class="buy-btn" @tap="showSpecsPopup">立即购买</view>
           </view>
         </view>
         
@@ -165,7 +159,7 @@
   
   <script setup>
   import { ref, computed, onMounted } from 'vue'
-  import { onLoad } from '@dcloudio/uni-app'
+  import { onLoad, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
   import request from '@/utils/request'
   
   // 页面参数
@@ -367,6 +361,12 @@
       });
       isLoading.value = false;
     }
+    
+    // 设置页面分享信息
+    uni.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline']
+    })
   });
   
   // 返回上一页
@@ -548,18 +548,116 @@
       url: '/pages/checkout/checkout?type=buyNow'
     })
   }
+  
+  // 分享商品
+  const handleShare = () => {
+    // #ifdef MP-WEIXIN
+    try {
+      // 1. 生成分享图片
+      uni.showLoading({
+        title: '生成分享图片...'
+      });
+      
+      // 收集分享内容
+      const shareContent = {
+        title: productInfo.value.name,
+        price: `¥${productInfo.value.price}`,
+        imageUrl: productImages.value[0],
+        qrPath: `/pages/detail/detail?id=${productId.value}`
+      };
+      
+      // 2. 使用微信API创建分享图片
+      uni.canvasToTempFilePath({
+        canvasId: 'shareCanvas',
+        success: function(res) {
+          const tempFilePath = res.tempFilePath;
+          
+          // 3. 保存图片到相册
+          uni.saveImageToPhotosAlbum({
+            filePath: tempFilePath,
+            success: function() {
+              uni.hideLoading();
+              uni.showModal({
+                title: '分享提示',
+                content: '分享图片已保存到相册，可前往分享给好友',
+                showCancel: false
+              });
+            },
+            fail: function() {
+              uni.hideLoading();
+              uni.showModal({
+                title: '分享提示',
+                content: '请先授权保存图片到相册的权限',
+                showCancel: false
+              });
+            }
+          });
+        },
+        fail: function(err) {
+          console.error('生成分享图片失败', err);
+          uni.hideLoading();
+          // 备用方案：直接使用右上角分享
+          uni.showToast({
+            title: '请点击右上角进行分享',
+            icon: 'none'
+          });
+        }
+      });
+    } catch (error) {
+      console.error('分享功能出错:', error);
+      uni.hideLoading();
+      // 备用方案：直接使用右上角分享
+      uni.showToast({
+        title: '请点击右上角进行分享',
+        icon: 'none'
+      });
+    }
+    // #endif
+    
+    // 非微信小程序环境
+    // #ifndef MP-WEIXIN
+    uni.showToast({
+      title: '请点击右上角进行分享',
+      icon: 'none',
+      duration: 2000
+    });
+    // #endif
+  }
+  
+  // 定义页面的分享行为
+  onShareAppMessage(() => {
+    return {
+      title: productInfo.value?.name || '好物推荐',
+      path: `/pages/detail/detail?id=${productId.value}`,
+      imageUrl: productImages.value[0]
+    }
+  })
+  
+  // 分享到朋友圈
+  // 注意：此功能只有微信小程序支持
+  try {
+    onShareTimeline(() => {
+      return {
+        title: productInfo.value?.name || '好物推荐',
+        query: `id=${productId.value}`,
+        imageUrl: productImages.value[0]
+      }
+    })
+  } catch (error) {
+    console.log('分享到朋友圈功能不可用')
+  }
   </script>
   
   <style lang="scss">
   .detail-container {
     min-height: 100vh;
-    background-color: #f0f7ff;
-    padding-bottom: 120rpx; // 为底部操作栏留出空间
+    background-color: #f8f8f8;
+    display: flex;
+    flex-direction: column;
     position: relative;
   
-    /* 加载中动画 */
     .loading-container {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
       right: 0;
@@ -568,91 +666,79 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background-color: #f0f7ff;
-      z-index: 999;
+      background-color: #fff;
       
       .loading-spinner {
         width: 60rpx;
         height: 60rpx;
-        border: 4rpx solid #f3f3f3;
-        border-top: 4rpx solid #4B91F1;
+        border: 6rpx solid #f0f0f0;
+        border-top-color: #4B91F1;
         border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-bottom: 20rpx;
+        animation: spin 0.8s linear infinite;
       }
       
       .loading-text {
         font-size: 28rpx;
         color: #666;
+        margin-top: 20rpx;
+      }
+      
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
       }
     }
     
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  
-    // 自定义导航栏
-    .custom-nav {
+    .floating-back {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 88rpx;
-      z-index: 100;
+      top: 60rpx;
+      left: 30rpx;
+      width: 70rpx;
+      height: 70rpx;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.3);
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 0 30rpx;
-      padding-top: var(--status-bar-height, 20px);
-      background: linear-gradient(to bottom, rgba(75, 145, 241, 0.9), rgba(75, 145, 241, 0.7));
-      
-      .nav-back, .nav-actions {
-        display: flex;
-        align-items: center;
-      }
+      justify-content: center;
+      z-index: 100;
     }
   
     .product-swiper {
-      height: 700rpx;
-      margin-top: calc(88rpx + var(--status-bar-height, 20px));
-      border-radius: 0 0 30rpx 30rpx;
-      overflow: hidden;
-      box-shadow: 0 6rpx 16rpx rgba(75, 145, 241, 0.1);
+      width: 100%;
+      height: 750rpx;
       
       .swiper-image {
         width: 100%;
         height: 100%;
-        object-fit: cover;
       }
     }
-  
-    // 商品信息卡片
+    
     .info-card {
-      margin: -30rpx 30rpx 0;
-      padding: 30rpx;
       background-color: #fff;
-      border-radius: 20rpx;
-      box-shadow: 0 6rpx 16rpx rgba(75, 145, 241, 0.08);
+      border-radius: 24rpx 24rpx 0 0;
+      margin-top: -30rpx;
+      padding: 30rpx;
       position: relative;
-      z-index: 2;
+      z-index: 10;
       
       .price-section {
         display: flex;
-        align-items: baseline;
+        align-items: flex-end;
         margin-bottom: 20rpx;
         
         .current-price {
-          font-size: 48rpx;
+          font-size: 42rpx;
           color: #4B91F1;
-          font-weight: 600;
+          font-weight: bold;
         }
         
         .original-price {
-          font-size: 28rpx;
+          font-size: 24rpx;
           color: #999;
           text-decoration: line-through;
-          margin-left: 16rpx;
+          margin-left: 12rpx;
+          margin-bottom: 4rpx;
         }
         
         .sales-info {
@@ -663,91 +749,89 @@
       }
       
       .title-section {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20rpx;
+        margin-bottom: 16rpx;
         
         .product-title {
-          font-size: 34rpx;
+          font-size: 32rpx;
           color: #333;
           font-weight: 500;
           line-height: 1.4;
-          flex: 1;
-          margin-right: 20rpx;
         }
         
-        .share-btn {
+        // 添加分享按钮样式
+        .share-button {
+          position: absolute;
+          top: 24rpx;
+          right: 20rpx;
           display: flex;
           flex-direction: column;
           align-items: center;
+          background-color: rgba(75, 145, 241, 0.1);
+          border-radius: 50%;
+          width: 80rpx;
+          height: 80rpx;
           justify-content: center;
-          padding: 0 10rpx;
           
           text {
             font-size: 20rpx;
-            color: #999;
-            margin-top: 6rpx;
+            color: #4B91F1;
+            margin-top: 2rpx;
           }
         }
       }
       
       .desc-section {
-        font-size: 28rpx;
+        font-size: 26rpx;
         color: #666;
-        line-height: 1.6;
+        line-height: 1.5;
       }
     }
     
-    // 规格选择入口
     .option-card {
-      margin: 20rpx 30rpx;
       background-color: #fff;
-      border-radius: 20rpx;
-      box-shadow: 0 6rpx 16rpx rgba(75, 145, 241, 0.08);
+      margin-top: 16rpx;
+      padding: 0 30rpx;
       
       .option-item {
-        padding: 30rpx;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        padding: 30rpx 0;
+        font-size: 28rpx;
         
         .item-label {
-          font-size: 28rpx;
           color: #666;
         }
         
         .item-value {
           display: flex;
           align-items: center;
+          color: #333;
           
           text {
-            font-size: 28rpx;
-            color: #333;
             margin-right: 10rpx;
           }
         }
       }
     }
     
-    // 商品详情卡片
     .detail-card {
-      margin: 20rpx 30rpx;
       background-color: #fff;
-      border-radius: 20rpx;
-      box-shadow: 0 6rpx 16rpx rgba(75, 145, 241, 0.08);
-      padding: 30rpx;
+      margin-top: 16rpx;
+      margin-bottom: 150rpx;
+      padding-bottom: 30rpx;
       
       .card-title {
         display: flex;
         align-items: center;
-        margin-bottom: 30rpx;
+        padding: 30rpx;
         
         .title-decorator {
           width: 6rpx;
-          height: 30rpx;
+          height: 32rpx;
           background-color: #4B91F1;
-          margin-right: 16rpx;
           border-radius: 3rpx;
+          margin-right: 16rpx;
         }
         
         text {
@@ -1017,8 +1101,8 @@
             border-radius: 40rpx;
             
             &.add-to-cart {
-              background-color: #000;
-              color: #fff;
+              background-color: rgba(75, 145, 241, 0.1);
+              color: #4B91F1;
               margin-right: 16rpx;
             }
             

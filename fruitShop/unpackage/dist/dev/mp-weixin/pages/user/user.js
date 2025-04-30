@@ -21,7 +21,7 @@ const _sfc_main = {
       // 使用后端返回的userRole字段
     });
     common_vendor.ref([
-      { type: "pending-payment", name: "待支付", icon: "/static/icons/alipay.png", count: 0 },
+      { type: "pending-payment", name: "待支付", icon: "/static/icons/payment.png", count: 0 },
       { type: "undelivered", name: "待发货", icon: "/static/icons/box.png", count: 0 },
       { type: "delivered", name: "待收货", icon: "/static/icons/truck.png", count: 0 },
       { type: "after-sale", name: "退款/售后", icon: "/static/icons/refound.png", count: 0 }
@@ -158,6 +158,18 @@ const _sfc_main = {
     const handleContact = (e) => {
       common_vendor.index.__f__("log", "at pages/user/user.vue:262", "联系客服事件触发:", e.detail);
     };
+    const navigateToSettings = () => {
+      common_vendor.index.navigateTo({
+        url: "/pages/settings/index",
+        fail: (err) => {
+          common_vendor.index.__f__("error", "at pages/user/user.vue:271", "跳转到个人设置页面失败：", err);
+          common_vendor.index.showToast({
+            title: "页面跳转失败",
+            icon: "none"
+          });
+        }
+      });
+    };
     common_vendor.onMounted(() => {
       getUserInfo();
     });
@@ -165,25 +177,26 @@ const _sfc_main = {
       return {
         a: userInfo.value.userAvatar || "/static/images/default-avatar.png",
         b: common_vendor.t(userInfo.value.userName || "微信用户"),
-        c: common_assets._imports_0$2,
+        c: common_assets._imports_0$3,
         d: common_vendor.t(userInfo.value.memberLevel || 1),
-        e: common_vendor.p({
+        e: common_vendor.o(navigateToSettings),
+        f: common_vendor.p({
           type: "right",
           size: "14",
           color: "#999"
         }),
-        f: common_vendor.o(($event) => navigateToOrderList("")),
-        g: common_assets._imports_0$3,
-        h: common_vendor.o(($event) => navigateToOrderList("pending-payment")),
-        i: common_assets._imports_2$1,
-        j: common_vendor.o(($event) => navigateToOrderList("undelivered")),
-        k: common_assets._imports_3$1,
-        l: common_vendor.o(($event) => navigateToOrderList("delivered")),
-        m: common_assets._imports_4,
-        n: common_vendor.o(($event) => navigateToOrderList("completed")),
-        o: common_assets._imports_5,
-        p: common_vendor.o(($event) => navigateToOrderList("after-sale")),
-        q: common_vendor.f(toolsList.value, (item, k0, i0) => {
+        g: common_vendor.o(($event) => navigateToOrderList("")),
+        h: common_assets._imports_1$1,
+        i: common_vendor.o(($event) => navigateToOrderList("pending-payment")),
+        j: common_assets._imports_2$1,
+        k: common_vendor.o(($event) => navigateToOrderList("undelivered")),
+        l: common_assets._imports_3,
+        m: common_vendor.o(($event) => navigateToOrderList("delivered")),
+        n: common_assets._imports_4,
+        o: common_vendor.o(($event) => navigateToOrderList("completed")),
+        p: common_assets._imports_5,
+        q: common_vendor.o(($event) => navigateToOrderList("after-sale")),
+        r: common_vendor.f(toolsList.value, (item, k0, i0) => {
           return {
             a: item.icon,
             b: common_vendor.t(item.name),
@@ -191,8 +204,8 @@ const _sfc_main = {
             d: common_vendor.o(($event) => handleToolClick(item), item.id)
           };
         }),
-        r: common_assets._imports_0$4,
-        s: common_vendor.o(handleContact)
+        s: common_assets._imports_0$4,
+        t: common_vendor.o(handleContact)
       };
     };
   }

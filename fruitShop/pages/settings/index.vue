@@ -58,15 +58,7 @@
       </view>
 
       <!-- 收货地址 -->
-      <view class="settings-item" @tap="navigateToAddressList">
-        <view class="item-left">
-          <text class="label">收货地址</text>
-        </view>
-        <view class="item-right">
-          <text class="value">管理我的收货地址</text>
-          <text class="iconfont icon-right"></text>
-        </view>
-      </view>
+      
     </view>
 
     <!-- 退出登录按钮 -->

@@ -6395,7 +6395,7 @@ function populateParameters(fromRes, toRes) {
   const hostLanguage = (language || "").replace(/_/g, "-");
   const parameters = {
     appId: "__UNI__FFA6BB4",
-    appName: "水果商店",
+    appName: "北果南茶",
     appVersion: "1.0.0",
     appVersionCode: "100",
     appLanguage: getAppLanguage(hostLanguage),
@@ -6544,7 +6544,7 @@ const getAppBaseInfo = {
       hostSDKVersion: SDKVersion,
       hostTheme: theme,
       appId: "__UNI__FFA6BB4",
-      appName: "水果商店",
+      appName: "北果南茶",
       appVersion: "1.0.0",
       appVersionCode: "100",
       appLanguage: getAppLanguage(hostLanguage),
@@ -7261,7 +7261,7 @@ function initOnError() {
 function initRuntimeSocketService() {
   const hosts = "10.90.169.126,127.0.0.1";
   const port = "8090";
-  const id = "mp-weixin_SsxgJe";
+  const id = "mp-weixin_zl3PHy";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -8209,6 +8209,8 @@ const onLoad = /* @__PURE__ */ createHook(ON_LOAD);
 const onReady = /* @__PURE__ */ createHook(ON_READY);
 const onReachBottom = /* @__PURE__ */ createHook(ON_REACH_BOTTOM);
 const onPullDownRefresh = /* @__PURE__ */ createHook(ON_PULL_DOWN_REFRESH);
+const onShareTimeline = /* @__PURE__ */ createHook(ON_SHARE_TIMELINE);
+const onShareAppMessage = /* @__PURE__ */ createHook(ON_SHARE_APP_MESSAGE);
 const r$1 = [
   {
     code: "11",
@@ -63083,7 +63085,7 @@ const pages = [
   {
     path: "pages/index/index",
     style: {
-      navigationBarTitleText: "水果商店"
+      navigationBarTitleText: "北果南茶"
     }
   },
   {
@@ -63179,7 +63181,7 @@ const pages = [
 ];
 const globalStyle = {
   navigationBarTextStyle: "black",
-  navigationBarTitleText: "水果商店",
+  navigationBarTitleText: "南茶北果",
   navigationBarBackgroundColor: "#F8F8F8",
   backgroundColor: "#F8F8F8"
 };
@@ -67056,6 +67058,7 @@ exports.isRequiredField = isRequiredField;
 exports.m = m$2;
 exports.messages = messages;
 exports.n = n$1;
+exports.nextTick$1 = nextTick$1;
 exports.nr = nr;
 exports.o = o$1;
 exports.onHide = onHide;
@@ -67064,6 +67067,8 @@ exports.onMounted = onMounted;
 exports.onPullDownRefresh = onPullDownRefresh;
 exports.onReachBottom = onReachBottom;
 exports.onReady = onReady;
+exports.onShareAppMessage = onShareAppMessage;
+exports.onShareTimeline = onShareTimeline;
 exports.onShow = onShow;
 exports.onUnmounted = onUnmounted;
 exports.p = p$1;

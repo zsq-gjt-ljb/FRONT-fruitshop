@@ -34,9 +34,9 @@ const _sfc_main = {
                   url: `https://bgnc.online/api/order/route?phoneNumber=5713&orderNumber=SF3165555559187`,
                   method: "GET"
                 });
-                common_vendor.index.__f__("log", "at pages/login/login.vue:84", "路由查询结果:", routeRes);
+                common_vendor.index.__f__("log", "at pages/login/login.vue:75", "路由查询结果:", routeRes);
               } catch (error) {
-                common_vendor.index.__f__("error", "at pages/login/login.vue:86", "路由查询失败:", error);
+                common_vendor.index.__f__("error", "at pages/login/login.vue:77", "路由查询失败:", error);
               }
               common_vendor.index.showToast({
                 title: "登录成功",
@@ -53,7 +53,7 @@ const _sfc_main = {
                   common_vendor.index.switchTab({
                     url: "/pages/index/index",
                     fail: (err) => {
-                      common_vendor.index.__f__("error", "at pages/login/login.vue:107", "跳转失败:", err);
+                      common_vendor.index.__f__("error", "at pages/login/login.vue:98", "跳转失败:", err);
                       common_vendor.index.reLaunch({ url: "/pages/index/index" });
                     }
                   });
@@ -73,7 +73,7 @@ const _sfc_main = {
               title: "登录失败，请稍后再试",
               icon: "none"
             });
-            common_vendor.index.__f__("error", "at pages/login/login.vue:127", "微信登录失败：", error);
+            common_vendor.index.__f__("error", "at pages/login/login.vue:118", "微信登录失败：", error);
           }
         },
         fail: () => {
@@ -104,16 +104,10 @@ const _sfc_main = {
   }
 };
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
-  return common_vendor.e({
+  return {
     a: common_assets._imports_0,
-    b: common_vendor.o((...args) => $setup.handleWechatLogin && $setup.handleWechatLogin(...args)),
-    c: $setup.isDev
-  }, $setup.isDev ? {
-    d: common_vendor.o(($event) => $setup.devNavigateTo("/pages/index/index")),
-    e: common_vendor.o(($event) => $setup.devNavigateTo("/pages/category/category")),
-    f: common_vendor.o(($event) => $setup.devNavigateTo("/pages/cart/cart")),
-    g: common_vendor.o(($event) => $setup.devNavigateTo("/pages/user/user"))
-  } : {});
+    b: common_vendor.o((...args) => $setup.handleWechatLogin && $setup.handleWechatLogin(...args))
+  };
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render]]);
 wx.createPage(MiniProgramPage);

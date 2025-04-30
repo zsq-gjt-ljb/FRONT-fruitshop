@@ -36,7 +36,10 @@
             {{ getStatusText(order.status) }}
             <text class="iconfont icon-down">↓</text>
           </view>
-          <text class="order-time">{{ formatDate(order.createTime) }}</text>
+          <view class="time-info">
+            <text class="order-time">{{ formatDate(order.createTime) }}</text>
+            <text v-if="order.timeToLive" class="timeout-tag">{{ order.timeToLive }}</text>
+          </view>
         </view>
         
         <!-- 订单号单独一行 -->
@@ -111,10 +114,6 @@
       <view class="ship-popup">
         <view class="popup-title">订单发货</view>
         <view class="form-item">
-          <text class="label">物流公司</text>
-          <input type="text" v-model="shipForm.company" placeholder="请输入物流公司" />
-        </view>
-        <view class="form-item">
           <text class="label">物流单号</text>
           <input type="text" v-model="shipForm.trackingNo" placeholder="请输入物流单号" />
         </view>
@@ -131,12 +130,12 @@
         <view class="popup-title">修改订单状态</view>
         <view class="status-list">
           <view 
-            v-for="(status, index) in ['待支付', '待发货', '待收货', '已完成', '退款/售后']" 
+            v-for="(status, index) in ['待发货', '待收货', '已完成', '退款/售后']" 
             :key="index"
-            :class="['status-item', { active: currentStatus === index }]"
-            @tap="selectStatus(index)"
+            :class="['status-item', { active: currentStatus === index + 1 }]"
+            @tap="selectStatus(index + 1)"
           >
-            <view :class="['status-dot', `status-dot-${index}`]"></view>
+            <view :class="['status-dot', `status-dot-${index + 1}`]"></view>
             <text>{{ status }}</text>
           </view>
         </view>
@@ -146,19 +145,47 @@
         </view>
       </view>
     </uni-popup>
+
+    <!-- 导出选项弹窗 -->
+    <uni-popup ref="exportPopup" type="center">
+      <view class="export-popup">
+        <view class="popup-title">选择导出订单状态</view>
+        <view class="export-options">
+          <picker 
+            mode="selector" 
+            :range="orderStatus" 
+            :value="exportStatusIndex" 
+            @change="(e) => exportStatusIndex = e.detail.value"
+            class="export-picker"
+          >
+            <view class="picker-value">
+              {{ orderStatus[exportStatusIndex] }}
+              <uni-icons type="bottom" size="14" color="#666"></uni-icons>
+            </view>
+          </picker>
+        </view>
+        <view class="popup-actions">
+          <button class="cancel-btn" @tap="cancelExport">取消</button>
+          <button class="confirm-btn" @tap="confirmExport">确认导出</button>
+        </view>
+      </view>
+    </uni-popup>
   </view>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import request from '@/utils/request'
 import { parseExcelData, exportWorkbook, getExcelFromApi, exportToUserSelectedLocation } from '@/utils/excelUtils'
 
 // 导出状态
 const exporting = ref(false)
+// 导出状态选择
+const exportStatusIndex = ref(0)
+const showExportOptions = ref(false)
 
 // 订单状态筛选
-const orderStatus = ['全部状态', '待支付', '待发货', '待收货', '已完成', '退款/售后']
+const orderStatus = ['全部状态', '已失效(-1)', '待发货(1)', '待收货(2)', '已完成(3)', '退款/售后(4)']
 const statusIndex = ref(0)
 
 // 订单列表
@@ -175,11 +202,11 @@ const totalPages = computed(() => {
 // 发货表单
 const shipPopup = ref(null)
 const statusPopup = ref(null) // 状态修改弹窗
+const exportPopup = ref(null) // 导出弹窗引用
 const currentOrderId = ref('')
 const currentStatus = ref(0) // 当前选中的状态
 const originalStatus = ref(0) // 原始状态
 const shipForm = ref({
-  company: '',
   trackingNo: ''
 })
 
@@ -198,8 +225,18 @@ const getOrderList = async () => {
     // 构建URL查询参数
     let url = `https://bgnc.online/api/order/all?pageNum=${pageNum.value}&pageSize=${pageSize.value}&orderByColumn=createTime&isAsc=desc`
     
-    // 添加筛选条件
-    if (statusIndex.value > 0) url += `&status=${statusIndex.value - 1}`
+    // 添加筛选条件 - 修改状态匹配逻辑
+    if (statusIndex.value > 0) {
+      // 因为已失效(-1)状态被放在第二位,所以需要特殊处理
+      const statusMap = {
+        1: -1, // 已失效
+        2: 1,  // 待发货
+        3: 2,  // 待收货
+        4: 3,  // 已完成
+        5: 4   // 退款/售后
+      }
+      url += `&status=${statusMap[statusIndex.value]}`
+    }
     
     const res = await request({
       url: url,
@@ -211,7 +248,8 @@ const getOrderList = async () => {
       console.log('订单数据:', res.data);
       // 正确处理 rows 和 total
       if (res.data.rows && Array.isArray(res.data.rows)) {
-        orderList.value = res.data.rows;
+        // 过滤掉待支付状态的订单
+        orderList.value = res.data.rows.filter(order => order.status !== 0);
         total.value = res.data.total || 0;
       }
     } else {
@@ -262,8 +300,8 @@ const nextPage = () => {
 // 获取订单状态文本
 const getStatusText = (status) => {
   switch (parseInt(status)) {
-    case 0:
-      return '待支付'
+    case -1:
+      return '已失效'
     case 1:
       return '待发货'
     case 2:
@@ -280,8 +318,8 @@ const getStatusText = (status) => {
 // 获取订单状态样式类
 const getStatusClass = (status) => {
   switch (parseInt(status)) {
-    case 0:
-      return 'status-pending-payment'
+    case -1:
+      return 'status-invalid'
     case 1:
       return 'status-pending-delivery'
     case 2:
@@ -306,7 +344,6 @@ const viewOrderDetail = (id) => {
 const handleShip = (id) => {
   currentOrderId.value = id
   shipForm.value = {
-    company: '',
     trackingNo: ''
   }
   shipPopup.value.open()
@@ -320,14 +357,6 @@ const cancelShip = () => {
 // 确认发货
 const confirmShip = async () => {
   // 表单验证
-  if (!shipForm.value.company.trim()) {
-    uni.showToast({
-      title: '请输入物流公司',
-      icon: 'none'
-    })
-    return
-  }
-  
   if (!shipForm.value.trackingNo.trim()) {
     uni.showToast({
       title: '请输入物流单号',
@@ -342,10 +371,11 @@ const confirmShip = async () => {
     })
     
     const res = await request({
-      url: `https://bgnc.online/api/order/ship/${currentOrderId.value}`,
+      url: `https://bgnc.online/api/order/`,
       method: 'PUT',
       data: {
-        deliveryCompany: shipForm.value.company,
+        id: currentOrderId.value,
+        status: 2, // 更新状态为待收货
         deliverySn: shipForm.value.trackingNo
       }
     })
@@ -429,18 +459,59 @@ const copyOrderId = (id) => {
 // 页面加载时获取订单列表
 onMounted(() => {
   getOrderList()
+  // 打印检查弹窗引用是否正确
+  console.log('弹窗引用:', {shipPopup: shipPopup.value, statusPopup: statusPopup.value, exportPopup: exportPopup.value})
 })
 
 // 导出订单
 const handleExport = async () => {
   if (exporting.value) return
   
+  // 显示导出选项弹窗，而不是直接导出
+  showExportOptions.value = true
+  // 确保弹窗存在后再打开
+  nextTick(() => {
+    if (exportPopup.value) {
+      exportPopup.value.open()
+    } else {
+      console.error('导出弹窗组件引用不存在')
+      uni.showToast({
+        title: '打开导出选项失败',
+        icon: 'none'
+      })
+    }
+  })
+}
+
+// 确认导出
+const confirmExport = async () => {
   try {
     exporting.value = true
+    showExportOptions.value = false
     
-    // 方式1: 先获取数据，再让用户选择保存位置
+    // 关闭弹窗
+    if (exportPopup.value) {
+      exportPopup.value.close()
+    }
+    
+    // 构建导出URL，添加状态参数
+    let exportUrl = 'https://bgnc.online/api/order/excel'
+    
+    // 如果选择了特定状态，添加状态参数
+    if (exportStatusIndex.value > 0) {
+      const statusMap = {
+        1: -1, // 已失效
+        2: 1,  // 待发货
+        3: 2,  // 待收货
+        4: 3,  // 已完成
+        5: 4   // 退款/售后
+      }
+      exportUrl += `?status=${statusMap[exportStatusIndex.value]}`
+    }
+    
+    // 调用导出API
     getExcelFromApi({
-      url: 'https://bgnc.online/api/order/excel',
+      url: exportUrl,
       method: 'GET',
       header: {
         'content-type': 'application/vnd.ms-excel'
@@ -452,7 +523,7 @@ const handleExport = async () => {
         exportToUserSelectedLocation({
           data: result.data,
           headers: Object.keys(result.data[0] || {}),
-          fileName: `订单数据_${Date.now()}.xlsx`,
+          fileName: `订单数据_${getOrderStatusText()}_${Date.now()}.xlsx`,
           success: () => {
             console.log('文件导出成功')
           },
@@ -484,6 +555,22 @@ const handleExport = async () => {
     })
     exporting.value = false
   }
+}
+
+// 取消导出
+const cancelExport = () => {
+  showExportOptions.value = false
+  if (exportPopup.value) {
+    exportPopup.value.close()
+  }
+}
+
+// 获取当前选择的订单状态文本
+const getOrderStatusText = () => {
+  if (exportStatusIndex.value === 0) return '全部'
+  
+  const statusTexts = ['全部', '已失效', '待发货', '待收货', '已完成', '退款售后']
+  return statusTexts[exportStatusIndex.value]
 }
 
 // 处理状态修改
@@ -518,9 +605,10 @@ const confirmStatusChange = async () => {
     })
     
     const res = await request({
-      url: `https://bgnc.online/api/order/status/${currentOrderId.value}`,
+      url: `https://bgnc.online/api/order/`,
       method: 'PUT',
       data: {
+        id: currentOrderId.value,
         status: currentStatus.value
       }
     })
@@ -634,9 +722,24 @@ const confirmStatusChange = async () => {
         padding: 16rpx 24rpx;
         background-color: #f9fbfe;
         
-        .order-time {
-          font-size: 24rpx;
-          color: #666;
+        .time-info {
+          display: flex;
+          align-items: center;
+          gap: 10rpx;
+          
+          .order-time {
+            font-size: 24rpx;
+            color: #666;
+          }
+          
+          .timeout-tag {
+            font-size: 22rpx;
+            color: #ff4d4f;
+            background-color: #fff1f0;
+            padding: 2rpx 12rpx;
+            border-radius: 20rpx;
+            border: 1rpx solid #ffccc7;
+          }
         }
         
         .status-tag {
@@ -940,10 +1043,6 @@ const confirmStatusChange = async () => {
           border-radius: 50%;
           margin-right: 16rpx;
           
-          &.status-dot-0 {
-            background-color: #fa8c16; // 待支付 - 橙色
-          }
-          
           &.status-dot-1 {
             background-color: #52c41a; // 待发货 - 绿色
           }
@@ -976,10 +1075,10 @@ const confirmStatusChange = async () => {
     border-radius: 8rpx;
     font-size: 24rpx;
     
-    &.status-pending-payment {
-      background-color: #fff7e6;
-      color: #fa8c16;
-      border: 1rpx solid #ffd591;
+    &.status-invalid {
+      background-color: #f5f5f5;
+      color: #999;
+      border: 1rpx solid #d9d9d9;
     }
     
     &.status-pending-delivery {
@@ -1038,6 +1137,40 @@ const confirmStatusChange = async () => {
       background-color: #3b78db;
       color: #fff;
       border: 1rpx solid #3b78db;
+    }
+  }
+
+  .export-popup {
+    background-color: #fff;
+    width: 600rpx;
+    border-radius: 16rpx;
+    padding: 40rpx;
+    
+    .popup-title {
+      text-align: center;
+      font-size: 32rpx;
+      font-weight: 500;
+      margin-bottom: 40rpx;
+    }
+    
+    .export-options {
+      margin-bottom: 40rpx;
+      
+      .export-picker {
+        width: 100%;
+        height: 80rpx;
+        background-color: #f5f7fa;
+        border-radius: 8rpx;
+        
+        .picker-value {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 80rpx;
+          padding: 0 20rpx;
+          font-size: 28rpx;
+        }
+      }
     }
   }
 }
