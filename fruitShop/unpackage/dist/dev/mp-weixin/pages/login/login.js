@@ -10,7 +10,29 @@ const _sfc_main = {
       phone: "",
       password: ""
     });
+    const isAgreed = common_vendor.ref(false);
+    const checkboxChange = (e) => {
+      isAgreed.value = e.detail.value.length > 0;
+    };
+    const navigateToUserAgreement = () => {
+      common_vendor.index.navigateTo({
+        url: "/pages/agreement/user-agreement"
+      });
+    };
+    const navigateToPrivacyPolicy = () => {
+      common_vendor.index.navigateTo({
+        url: "/pages/agreement/privacy-policy"
+      });
+    };
     const handleWechatLogin = () => {
+      if (!isAgreed.value) {
+        common_vendor.index.showToast({
+          title: "请阅读并同意用户协议和隐私政策",
+          icon: "none",
+          duration: 2e3
+        });
+        return;
+      }
       common_vendor.index.showLoading({
         title: "登录中..."
       });
@@ -34,9 +56,9 @@ const _sfc_main = {
                   url: `https://bgnc.online/api/order/route?phoneNumber=5713&orderNumber=SF3165555559187`,
                   method: "GET"
                 });
-                common_vendor.index.__f__("log", "at pages/login/login.vue:75", "路由查询结果:", routeRes);
+                common_vendor.index.__f__("log", "at pages/login/login.vue:119", "路由查询结果:", routeRes);
               } catch (error) {
-                common_vendor.index.__f__("error", "at pages/login/login.vue:77", "路由查询失败:", error);
+                common_vendor.index.__f__("error", "at pages/login/login.vue:121", "路由查询失败:", error);
               }
               common_vendor.index.showToast({
                 title: "登录成功",
@@ -53,7 +75,7 @@ const _sfc_main = {
                   common_vendor.index.switchTab({
                     url: "/pages/index/index",
                     fail: (err) => {
-                      common_vendor.index.__f__("error", "at pages/login/login.vue:98", "跳转失败:", err);
+                      common_vendor.index.__f__("error", "at pages/login/login.vue:142", "跳转失败:", err);
                       common_vendor.index.reLaunch({ url: "/pages/index/index" });
                     }
                   });
@@ -73,7 +95,7 @@ const _sfc_main = {
               title: "登录失败，请稍后再试",
               icon: "none"
             });
-            common_vendor.index.__f__("error", "at pages/login/login.vue:118", "微信登录失败：", error);
+            common_vendor.index.__f__("error", "at pages/login/login.vue:162", "微信登录失败：", error);
           }
         },
         fail: () => {
@@ -98,6 +120,10 @@ const _sfc_main = {
     return {
       isDev,
       form,
+      isAgreed,
+      checkboxChange,
+      navigateToUserAgreement,
+      navigateToPrivacyPolicy,
       handleWechatLogin,
       devNavigateTo
     };
@@ -106,7 +132,11 @@ const _sfc_main = {
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return {
     a: common_assets._imports_0,
-    b: common_vendor.o((...args) => $setup.handleWechatLogin && $setup.handleWechatLogin(...args))
+    b: $setup.isAgreed,
+    c: common_vendor.o((...args) => $setup.navigateToUserAgreement && $setup.navigateToUserAgreement(...args)),
+    d: common_vendor.o((...args) => $setup.navigateToPrivacyPolicy && $setup.navigateToPrivacyPolicy(...args)),
+    e: common_vendor.o((...args) => $setup.checkboxChange && $setup.checkboxChange(...args)),
+    f: common_vendor.o((...args) => $setup.handleWechatLogin && $setup.handleWechatLogin(...args))
   };
 }
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render]]);

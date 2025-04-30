@@ -4,6 +4,8 @@ const common_vendor = require("./common/vendor.js");
 const utils_request = require("./utils/request.js");
 if (!Math) {
   "./pages/login/login.js";
+  "./pages/agreement/user-agreement.js";
+  "./pages/agreement/privacy-policy.js";
   "./pages/index/index.js";
   "./pages/category/category.js";
   "./pages/cart/cart.js";

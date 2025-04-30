@@ -366,7 +366,7 @@ const _sfc_main = {
           return common_vendor.e({
             a: address.id === selectedAddressId.value
           }, address.id === selectedAddressId.value ? {
-            b: "8e456dc0-0-" + i0,
+            b: "10615b9a-0-" + i0,
             c: common_vendor.p({
               type: "checkmarkempty",
               size: "14",
@@ -411,7 +411,7 @@ const _sfc_main = {
         r: common_vendor.o((e) => addressForm.value.isDefault = e.detail.value),
         s: common_vendor.t(editingAddress.value ? "修改" : "保存"),
         t: common_vendor.o(handleSave),
-        v: common_vendor.sr(formPopup, "8e456dc0-1", {
+        v: common_vendor.sr(formPopup, "10615b9a-1", {
           "k": "formPopup"
         }),
         w: common_vendor.p({
@@ -440,7 +440,7 @@ const _sfc_main = {
         C: indicatorStyle,
         D: pickerValue.value,
         E: common_vendor.o(handlePickerChange),
-        F: common_vendor.sr(regionPopup, "8e456dc0-2", {
+        F: common_vendor.sr(regionPopup, "10615b9a-2", {
           "k": "regionPopup"
         }),
         G: common_vendor.p({

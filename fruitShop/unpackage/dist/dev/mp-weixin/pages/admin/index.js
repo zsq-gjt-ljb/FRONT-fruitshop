@@ -44,7 +44,7 @@ const _sfc_main = {
         b: common_vendor.t(adminInfo.value.name),
         c: common_vendor.f(menuItems.value, (item, index, i0) => {
           return {
-            a: "596ec987-0-" + i0,
+            a: "0f445bd8-0-" + i0,
             b: common_vendor.p({
               type: item.icon,
               size: "20",

@@ -941,9 +941,9 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
             b: common_vendor.t(product.name),
             c: common_vendor.t(product.description),
             d: common_vendor.o(($event) => viewProduct(product), product.id),
-            e: "7c24ceb6-3-" + i0,
+            e: "38a84dee-3-" + i0,
             f: common_vendor.o(($event) => editProduct(product), product.id),
-            g: "7c24ceb6-4-" + i0,
+            g: "38a84dee-4-" + i0,
             h: common_vendor.o(($event) => confirmDelete(product), product.id),
             i: product.id
           };
@@ -1014,7 +1014,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
             a: common_vendor.t(category.name),
             b: formData.basic.category === category.name
           }, formData.basic.category === category.name ? {
-            c: "7c24ceb6-12-" + i0 + ",7c24ceb6-10",
+            c: "38a84dee-12-" + i0 + ",38a84dee-10",
             d: common_vendor.p({
               type: "checkmarkempty",
               size: "18",
@@ -1030,7 +1030,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
       }, categoryLoading.value ? {} : {}, {
         I: !categoryLoading.value && categoryList.value.length === 0
       }, !categoryLoading.value && categoryList.value.length === 0 ? {} : {}, {
-        J: common_vendor.sr(categoryPopup, "7c24ceb6-10,7c24ceb6-8", {
+        J: common_vendor.sr(categoryPopup, "38a84dee-10,38a84dee-8", {
           "k": "categoryPopup"
         }),
         K: common_vendor.p({
@@ -1125,7 +1125,7 @@ const _sfc_main = /* @__PURE__ */ Object.assign(__default__, {
         aC: common_vendor.f(formData.specs, (spec, index, i0) => {
           return {
             a: common_vendor.t(index + 1),
-            b: "7c24ceb6-19-" + i0,
+            b: "38a84dee-19-" + i0,
             c: common_vendor.o(($event) => removeSpec(index), index),
             d: spec.name,
             e: common_vendor.o(($event) => spec.name = $event.detail.value, index),

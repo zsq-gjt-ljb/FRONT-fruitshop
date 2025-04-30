@@ -402,7 +402,7 @@ const _sfc_main = {
           return {
             a: banner.indexPic || "/static/images/default-product.png",
             b: common_vendor.t(banner.name),
-            c: "2a9a35dc-1-" + i0,
+            c: "efbd98c2-1-" + i0,
             d: common_vendor.o(($event) => deleteBanner(banner.id), index),
             e: index
           };
@@ -418,7 +418,7 @@ const _sfc_main = {
           return {
             a: product.indexPic || "/static/images/default-product.png",
             b: common_vendor.t(product.name),
-            c: "2a9a35dc-2-" + i0,
+            c: "efbd98c2-2-" + i0,
             d: common_vendor.o(($event) => deleteHomeProduct(product.id), index),
             e: index
           };

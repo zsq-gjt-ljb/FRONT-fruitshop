@@ -7,6 +7,22 @@
 			}
 		},
 		{
+			"path": "pages/agreement/user-agreement",
+			"style": {
+				"navigationBarTitleText": "用户协议",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
+			"path": "pages/agreement/privacy-policy",
+			"style": {
+				"navigationBarTitleText": "隐私政策",
+				"navigationBarBackgroundColor": "#ffffff",
+				"navigationBarTextStyle": "black"
+			}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "北果南茶"

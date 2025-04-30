@@ -298,7 +298,7 @@ const _sfc_main = {
           return common_vendor.e({
             a: item.selected
           }, item.selected ? {
-            b: "70415e38-1-" + i0,
+            b: "702118b1-1-" + i0,
             c: common_vendor.p({
               type: "checkmarkempty",
               size: "14",
@@ -314,7 +314,7 @@ const _sfc_main = {
             i: common_vendor.t(item.spec)
           } : {}, {
             j: common_vendor.t(item.price),
-            k: "70415e38-2-" + i0,
+            k: "702118b1-2-" + i0,
             l: common_vendor.p({
               type: "minus",
               size: "12",
@@ -329,7 +329,7 @@ const _sfc_main = {
             r: common_vendor.o(common_vendor.m(($event) => item.quantity = $event.detail.value, {
               number: true
             }), item.id),
-            s: "70415e38-3-" + i0,
+            s: "702118b1-3-" + i0,
             t: common_vendor.p({
               type: "plus",
               size: "12",
@@ -338,7 +338,7 @@ const _sfc_main = {
             v: item.quantity >= item.stock ? 1 : "",
             w: common_vendor.o(($event) => increaseQuantity(item), item.id),
             x: common_vendor.o(($event) => goToDetail(item.productId), item.id),
-            y: "70415e38-4-" + i0,
+            y: "702118b1-4-" + i0,
             z: common_vendor.o(($event) => deleteCartItem(item), item.id),
             A: item.id
           });

@@ -395,7 +395,7 @@ const _sfc_main = {
           }, index < 2 ? {} : {}, {
             c: common_vendor.t(product.name),
             d: common_vendor.t(product.price || "暂无价格"),
-            e: "4a81274a-0-" + i0,
+            e: "2d1fa052-0-" + i0,
             f: common_vendor.o(($event) => showQuickBuy(product), product.id),
             g: product.id,
             h: common_vendor.o(($event) => goToDetail(product.productId), product.id)

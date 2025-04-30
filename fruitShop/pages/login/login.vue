@@ -10,13 +10,25 @@
       <view class="logo-circle">
         <image class="logo" src="/static/images/mylogo.jpg" mode="aspectFit"></image>
       </view>
-     
+    </view>
+
+    <!-- 协议勾选框 -->
+    <view class="agreement-container">
+      <checkbox-group @change="checkboxChange">
+        <label class="checkbox-label">
+          <checkbox :checked="isAgreed" color="#4e7bef" style="transform:scale(0.8)" />
+          <text class="agreement-text">我已阅读并同意</text>
+          <text class="agreement-link" @tap="navigateToUserAgreement">《用户协议》</text>
+          <text class="agreement-text">和</text>
+          <text class="agreement-link" @tap="navigateToPrivacyPolicy">《隐私政策》</text>
+        </label>
+      </checkbox-group>
     </view>
 
     <!-- 微信登录按钮 -->
     <view class="button-container">
       <button class="login-button" @tap="handleWechatLogin">
-        欢迎使用
+        授权登录
       </button>
     </view>
   </view>
@@ -36,9 +48,41 @@ export default {
       phone: '',
       password: ''
     })
+    
+    // 是否同意协议
+    const isAgreed = ref(false)
+    
+    // 勾选框变化
+    const checkboxChange = (e) => {
+      isAgreed.value = e.detail.value.length > 0
+    }
+    
+    // 导航到用户协议页面
+    const navigateToUserAgreement = () => {
+      uni.navigateTo({
+        url: '/pages/agreement/user-agreement'
+      })
+    }
+    
+    // 导航到隐私政策页面
+    const navigateToPrivacyPolicy = () => {
+      uni.navigateTo({
+        url: '/pages/agreement/privacy-policy'
+      })
+    }
 
     // 微信登录
     const handleWechatLogin = () => {
+      // 检查是否勾选了协议
+      if (!isAgreed.value) {
+        uni.showToast({
+          title: '请阅读并同意用户协议和隐私政策',
+          icon: 'none',
+          duration: 2000
+        })
+        return
+      }
+      
       // 显示加载中
       uni.showLoading({
         title: '登录中...'
@@ -146,6 +190,10 @@ export default {
     return {
       isDev,
       form,
+      isAgreed,
+      checkboxChange,
+      navigateToUserAgreement,
+      navigateToPrivacyPolicy,
       handleWechatLogin,
       devNavigateTo
     }
@@ -156,8 +204,7 @@ export default {
 <style lang="scss">
 .login-container {
   min-height: 100vh;
-  background-color: #F1F9FF
-  ;
+  background-color: #F1F9FF;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -180,10 +227,9 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 120rpx;
+    margin-bottom: 60rpx;
     
     .logo-circle {
-     
       border-radius: 50%;
       display: flex;
       justify-content: center;
@@ -202,6 +248,24 @@ export default {
       font-size: 36rpx;
       color: #3b78db;
       font-weight: 500;
+    }
+  }
+  
+  .agreement-container {
+    margin-bottom: 40rpx;
+    
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      font-size: 28rpx;
+    }
+    
+    .agreement-text {
+      color: #666;
+    }
+    
+    .agreement-link {
+      color: #4e7bef;
     }
   }
   

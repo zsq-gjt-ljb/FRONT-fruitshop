@@ -7261,7 +7261,7 @@ function initOnError() {
 function initRuntimeSocketService() {
   const hosts = "10.90.169.126,127.0.0.1";
   const port = "8090";
-  const id = "mp-weixin_zl3PHy";
+  const id = "mp-weixin_3LbLNb";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -63080,6 +63080,22 @@ const pages = [
     path: "pages/login/login",
     style: {
       navigationBarTitleText: "登录注册"
+    }
+  },
+  {
+    path: "pages/agreement/user-agreement",
+    style: {
+      navigationBarTitleText: "用户协议",
+      navigationBarBackgroundColor: "#ffffff",
+      navigationBarTextStyle: "black"
+    }
+  },
+  {
+    path: "pages/agreement/privacy-policy",
+    style: {
+      navigationBarTitleText: "隐私政策",
+      navigationBarBackgroundColor: "#ffffff",
+      navigationBarTextStyle: "black"
     }
   },
   {
