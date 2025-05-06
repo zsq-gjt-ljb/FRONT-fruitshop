@@ -22,15 +22,7 @@
     
     <!-- 内容区域 -->
     <view class="content">
-      <view class="debug-info">
-        <text>当前菜单: {{ activeMenu }}</text>
-        <text>组件状态: {{ activeMenu === 'product' ? '应显示商品管理' : 
-                         activeMenu === 'category' ? '应显示分类管理' : 
-                         activeMenu === 'home' ? '应显示首页管理' : 
-                         activeMenu === 'order' ? '应显示订单管理' : 
-                         activeMenu === 'user' ? '应显示用户管理' : 
-                         activeMenu === 'discount' ? '应显示折扣管理' : '未知' }}</text>
-      </view>
+     
       
       <!-- 根据选中的菜单显示不同的管理组件 -->
       <product-manage v-if="activeMenu === 'product'"></product-manage>

@@ -32,13 +32,13 @@ const _sfc_main = {
     ]);
     const switchMenu = (menuId) => {
       activeMenu.value = menuId;
-      common_vendor.index.__f__("log", "at pages/admin/index.vue:77", "切换到菜单:", menuId);
+      common_vendor.index.__f__("log", "at pages/admin/index.vue:69", "切换到菜单:", menuId);
     };
     common_vendor.onMounted(() => {
-      common_vendor.index.__f__("log", "at pages/admin/index.vue:82", "管理员页面已加载");
-      common_vendor.index.__f__("log", "at pages/admin/index.vue:83", "当前激活的菜单:", activeMenu.value);
-      common_vendor.index.__f__("log", "at pages/admin/index.vue:84", "管理员信息:", adminInfo.value);
-      common_vendor.index.__f__("log", "at pages/admin/index.vue:85", "组件是否已注册:", !!ProductManage, !!CategoryManage, !!HomeManage, !!OrderManage, !!UserManage, !!DiscountManage);
+      common_vendor.index.__f__("log", "at pages/admin/index.vue:74", "管理员页面已加载");
+      common_vendor.index.__f__("log", "at pages/admin/index.vue:75", "当前激活的菜单:", activeMenu.value);
+      common_vendor.index.__f__("log", "at pages/admin/index.vue:76", "管理员信息:", adminInfo.value);
+      common_vendor.index.__f__("log", "at pages/admin/index.vue:77", "组件是否已注册:", !!ProductManage, !!CategoryManage, !!HomeManage, !!OrderManage, !!UserManage, !!DiscountManage);
     });
     return (_ctx, _cache) => {
       return common_vendor.e({
@@ -58,19 +58,17 @@ const _sfc_main = {
             f: common_vendor.o(($event) => switchMenu(item.id), item.id)
           };
         }),
-        d: common_vendor.t(activeMenu.value),
-        e: common_vendor.t(activeMenu.value === "product" ? "应显示商品管理" : activeMenu.value === "category" ? "应显示分类管理" : activeMenu.value === "home" ? "应显示首页管理" : activeMenu.value === "order" ? "应显示订单管理" : activeMenu.value === "user" ? "应显示用户管理" : activeMenu.value === "discount" ? "应显示折扣管理" : "未知"),
-        f: activeMenu.value === "product"
+        d: activeMenu.value === "product"
       }, activeMenu.value === "product" ? {} : {}, {
-        g: activeMenu.value === "category"
+        e: activeMenu.value === "category"
       }, activeMenu.value === "category" ? {} : {}, {
-        h: activeMenu.value === "home"
+        f: activeMenu.value === "home"
       }, activeMenu.value === "home" ? {} : {}, {
-        i: activeMenu.value === "order"
+        g: activeMenu.value === "order"
       }, activeMenu.value === "order" ? {} : {}, {
-        j: activeMenu.value === "user"
+        h: activeMenu.value === "user"
       }, activeMenu.value === "user" ? {} : {}, {
-        k: activeMenu.value === "discount"
+        i: activeMenu.value === "discount"
       }, activeMenu.value === "discount" ? {} : {});
     };
   }
