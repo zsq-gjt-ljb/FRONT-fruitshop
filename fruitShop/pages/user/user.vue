@@ -4,12 +4,15 @@
     <view class="user-header" @tap="navigateToSettings">
       <view class="blur-background"></view>
       <view class="user-info">
-        <image class="avatar" :src="userInfo.userAvatar || '/static/images/default-avatar.png'" mode="aspectFill" />
+        <image class="avatar" :src="isGuest ? '/static/images/default-avatar.png' : (userInfo.userAvatar || '/static/images/default-avatar.png')" mode="aspectFill" />
         <view class="info">
-          <text class="nickname">{{ userInfo.userName || '微信用户' }}</text>
-          <view class="level-tag">
+          <text class="nickname">{{ isGuest ? '游客' : (userInfo.userName || '微信用户') }}</text>
+          <view class="level-tag" v-if="!isGuest">
             <image class="vip-icon" src="/static/icons/vip.png" mode="aspectFit" />
             <text>VIP {{ userInfo.memberLevel || 1 }}</text>
+          </view>
+          <view class="login-btn" v-if="isGuest" @tap.stop="navigateToLogin">
+            <text>点击登录</text>
           </view>
         </view>
       </view>
@@ -79,7 +82,7 @@
     
     <!-- 官方客服按钮，添加在页面底部 -->
     <view class="customer-service-section">
-      <button open-type="contact" class="official-service-btn" @contact="handleContact">
+      <button open-type="contact" class="official-service-btn" @contact="handleContact" @tap="handleServiceClick">
         <image class="icon" src="/static/icons/service.png" mode="aspectFit" />
         <text>联系官方客服</text>
       </button>
@@ -88,6 +91,7 @@
 </template>
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
 import request from '@/utils/request'
 import CustomerService from '@/components/business/CustomerService.vue'
 
@@ -98,7 +102,10 @@ const userInfo = ref({
   memberLevel: 1,
   userRole: ''  // 使用后端返回的userRole字段
 })
-                                                                                                                 
+
+// 是否为游客模式
+const isGuest = ref(false)
+
 // 订单类型
 const orderTypes = ref([
   { type: 'pending-payment', name: '待支付', icon: '/static/icons/payment.png', count: 0 },
@@ -143,8 +150,57 @@ const toolsList = computed(() => {
   return baseTools
 })
 
+// 检查是否为游客模式
+const checkGuestMode = () => {
+  const token = uni.getStorageSync('token');
+  
+  // 如果没有token，设置为游客模式
+  if (!token) {
+    isGuest.value = true;
+    return true;
+  }
+  
+  // 不是游客模式，重置状态
+  isGuest.value = false;
+  return false;
+}
+
+// 提示需要登录
+const showLoginTip = () => {
+  if (isGuest.value) {
+    uni.showModal({
+      title: '需要登录',
+      content: '该功能需要登录后才能使用，是否立即登录？',
+      success: (res) => {
+        if (res.confirm) {
+          // 记录当前页面路径，以便登录后返回
+          const currentPage = '/' + getCurrentPages()[getCurrentPages().length - 1].route;
+          uni.navigateTo({
+            url: '/pages/login/login?redirect=' + encodeURIComponent(currentPage)
+          });
+        }
+      }
+    });
+    return true;
+  }
+  return false;
+}
+
+// 直接跳转到登录页面
+const navigateToLogin = () => {
+  const currentPage = '/' + getCurrentPages()[getCurrentPages().length - 1].route;
+  uni.navigateTo({
+    url: '/pages/login/login?redirect=' + encodeURIComponent(currentPage)
+  });
+}
+
 // 获取用户信息
 const getUserInfo = async () => {
+  // 如果是游客模式，不请求用户信息
+  if (isGuest.value) {
+    return;
+  }
+  
   try {
     const res = await request({
       url: 'https://bgnc.online/api/user/profile',
@@ -177,6 +233,11 @@ const getUserInfo = async () => {
 
 // 跳转到订单列表
 const navigateToOrderList = (type) => {
+  // 检查是否为游客模式，如果是则显示登录提示
+  if (showLoginTip()) {
+    return;
+  }
+  
   // 将订单类型映射到状态值
   let status = ''; // 默认全部
   
@@ -205,6 +266,11 @@ const navigateToOrderList = (type) => {
 
 // 工具点击处理
 const handleToolClick = (item) => {
+  // 检查是否为游客模式，如果是则显示登录提示
+  if (showLoginTip()) {
+    return;
+  }
+  
   // 如果是客服功能,直接导航到联系客服页面
   if (item.type === 'customer-service') {
     // 不再只是打印日志，而是跳转到联系客服页面
@@ -263,8 +329,21 @@ const handleContact = (e) => {
   // 可以在这里添加统计或其他处理逻辑
 }
 
+// 客服按钮点击前处理
+const handleServiceClick = () => {
+  // 检查是否为游客模式，如果是则显示登录提示
+  if (showLoginTip()) {
+    return;
+  }
+}
+
 // 跳转到个人设置页面
 const navigateToSettings = () => {
+  // 检查是否为游客模式，如果是则显示登录提示
+  if (showLoginTip()) {
+    return;
+  }
+  
   uni.navigateTo({
     url: '/pages/settings/index',
     fail: (err) => {
@@ -278,7 +357,23 @@ const navigateToSettings = () => {
 }
 
 onMounted(() => {
-  getUserInfo()
+  // 检查是否游客模式
+  checkGuestMode();
+  
+  // 如果不是游客模式，获取用户信息
+  if (!isGuest.value) {
+    getUserInfo();
+  }
+})
+
+onShow(() => {
+  // 每次页面显示时检查游客模式
+  checkGuestMode();
+  
+  // 如果不是游客模式，获取用户信息
+  if (!isGuest.value) {
+    getUserInfo();
+  }
 })
 </script>
 
@@ -353,6 +448,22 @@ onMounted(() => {
             font-size: 24rpx;
             color: #ffffff;
             font-weight: 400;
+            letter-spacing: 1rpx;
+          }
+        }
+        
+        .login-btn {
+          display: inline-flex;
+          align-items: center;
+          background: rgba(255, 255, 255, 0.25);
+          border-radius: 26rpx;
+          padding: 8rpx 20rpx;
+          backdrop-filter: blur(10px);
+          
+          text {
+            font-size: 24rpx;
+            color: #ffffff;
+            font-weight: 500;
             letter-spacing: 1rpx;
           }
         }

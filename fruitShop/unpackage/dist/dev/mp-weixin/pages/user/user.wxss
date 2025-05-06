@@ -91,6 +91,21 @@
   font-weight: 400;
   letter-spacing: 1rpx;
 }
+.user-container .user-header .user-info .info .login-btn {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 26rpx;
+  padding: 8rpx 20rpx;
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+}
+.user-container .user-header .user-info .info .login-btn text {
+  font-size: 24rpx;
+  color: #ffffff;
+  font-weight: 500;
+  letter-spacing: 1rpx;
+}
 .user-container .card-section {
   margin: 24rpx;
   background: #ffffff;

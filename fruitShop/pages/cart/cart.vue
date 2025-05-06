@@ -399,6 +399,11 @@ const deleteCartItem = (item) => {
 
 // 结算
 const handleCheckout = () => {
+  // 检查游客模式
+  if (checkGuestMode()) {
+    return;
+  }
+
   // 检查是否有选中的商品
   const selectedItems = cartList.value.filter(item => item.selected)
   
@@ -449,18 +454,64 @@ const goToHome = () => {
 
 // 页面显示时刷新数据
 onShow(() => {
+  // 检查游客模式
+  if (checkGuestMode()) {
+    return;
+  }
+  
   getCartList()
 })
 
 // 下拉刷新
 onPullDownRefresh(() => {
+  // 检查游客模式
+  if (checkGuestMode()) {
+    uni.stopPullDownRefresh();
+    return;
+  }
+  
   getCartList()
 })
 
 // 页面加载
 onLoad(() => {
   console.log('购物车页面加载')
+  
+  // 检查游客模式
+  checkGuestMode()
 })
+
+// 检查是否为游客模式
+const checkGuestMode = () => {
+  const isGuestMode = uni.getStorageSync('isGuestMode');
+  const token = uni.getStorageSync('token');
+  
+  // 如果是游客模式并且没有token，跳转到登录页面
+  if (isGuestMode && !token) {
+    // 先显示提示
+    uni.showModal({
+      title: '需要登录',
+      content: '查看购物车需要登录，是否立即登录？',
+      success: (res) => {
+        if (res.confirm) {
+          // 记录当前页面路径，以便登录后返回
+          const currentPage = '/' + getCurrentPages()[getCurrentPages().length - 1].route;
+          uni.navigateTo({
+            url: '/pages/login/login?redirect=' + encodeURIComponent(currentPage)
+          });
+        } else {
+          // 用户取消，跳转到首页
+          uni.switchTab({
+            url: '/pages/index/index'
+          });
+        }
+      }
+    });
+    return true;
+  }
+  
+  return false;
+}
 </script>
 
 <style lang="scss">

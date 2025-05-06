@@ -144,7 +144,35 @@ onLoad((options) => {
   if (options.type === 'buyNow') {
     orderType.value = 'buyNow'
   }
+  
+  // 检查游客模式
+  checkGuestMode()
 })
+
+// 检查是否为游客模式
+const checkGuestMode = () => {
+  const isGuestMode = uni.getStorageSync('isGuestMode');
+  const token = uni.getStorageSync('token');
+  
+  // 如果是游客模式并且没有token，跳转到登录页面
+  if (isGuestMode && !token) {
+    // 记录当前页面路径，以便登录后返回
+    const currentPage = '/' + getCurrentPages()[getCurrentPages().length - 1].route;
+    uni.navigateTo({
+      url: '/pages/login/login?redirect=' + encodeURIComponent(currentPage),
+      success: () => {
+        uni.showToast({
+          title: '请先登录后再结算',
+          icon: 'none',
+          duration: 2000
+        });
+      }
+    });
+    return true;
+  }
+  
+  return false;
+}
 
 // 获取会员信息
 const getMemberInfo = async () => {
@@ -339,6 +367,11 @@ const goToAddressList = () => {
 
 // 提交订单
 const submitOrder = async () => {
+  // 检查是否是游客模式
+  if (checkGuestMode()) {
+    return;
+  }
+  
   if (!selectedAddress.value) {
     uni.showToast({
       title: '请选择收货地址',

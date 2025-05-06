@@ -84,8 +84,8 @@
           </view>
           
           <view class="action-right">
-            <view class="cart-btn" @tap="showSpecsPopup">加入购物车</view>
-            <view class="buy-btn" @tap="showSpecsPopup">立即购买</view>
+            <view class="cart-btn" @tap="handleAddToCart">加入购物车</view>
+            <view class="buy-btn" @tap="handleBuyNow">立即购买</view>
           </view>
         </view>
         
@@ -181,6 +181,45 @@
   const isLoading = ref(true)
   
   const specMap = new Map()
+  
+  // 检查是否为游客模式
+  const checkGuestMode = () => {
+    const isGuestMode = uni.getStorageSync('isGuestMode');
+    const token = uni.getStorageSync('token');
+    
+    // 如果是游客模式并且没有token，跳转到登录页面
+    if (isGuestMode && !token) {
+      // 先显示提示
+      uni.showModal({
+        title: '需要登录',
+        content: '该功能需要登录后才能使用，是否立即登录？',
+        success: (res) => {
+          if (res.confirm) {
+            // 记录当前页面路径，以便登录后返回
+            const currentPage = '/' + getCurrentPages()[getCurrentPages().length - 1].route;
+            const params = getCurrentPages()[getCurrentPages().length - 1].options;
+            let redirectUrl = currentPage;
+            
+            // 如果有参数，拼接到URL中
+            if (params && Object.keys(params).length > 0) {
+              const queryString = Object.keys(params)
+                .map(key => `${key}=${params[key]}`)
+                .join('&');
+              redirectUrl = `${currentPage}?${queryString}`;
+            }
+            
+            // 确认后跳转到登录页面
+            uni.navigateTo({
+              url: '/pages/login/login?redirect=' + encodeURIComponent(redirectUrl)
+            });
+          }
+        }
+      });
+      return true;
+    }
+    
+    return false;
+  }
   
   // 处理SKU规格数据 - 这个函数缺失导致了整个流程中断
   const processSkuData = (skuDataList) => {
@@ -462,6 +501,11 @@
   
   // 添加到购物车
   const addToCart = async () => {
+    // 游客模式检查
+    if (checkGuestMode()) {
+      return;
+    }
+
     // 检查是否选择了规格
     if (!selectedSkuId.value) {
       uni.showToast({
@@ -505,6 +549,11 @@
   
   // 立即购买
   const buyNow = async () => {
+    // 游客模式检查
+    if (checkGuestMode()) {
+      return;
+    }
+
     if (!selectedSpec && productInfo.value.hasSpecs) {
       showSpecsPopup()
       return
@@ -645,6 +694,28 @@
     })
   } catch (error) {
     console.log('分享到朋友圈功能不可用')
+  }
+  
+  // 处理底部栏加入购物车点击
+  const handleAddToCart = () => {
+    // 游客模式检查
+    if (checkGuestMode()) {
+      return;
+    }
+    
+    // 显示规格选择弹窗
+    showSpecsPopup();
+  }
+  
+  // 处理底部栏立即购买点击
+  const handleBuyNow = () => {
+    // 游客模式检查
+    if (checkGuestMode()) {
+      return;
+    }
+    
+    // 显示规格选择弹窗
+    showSpecsPopup();
   }
   </script>
   

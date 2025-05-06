@@ -25,12 +25,31 @@ if (!Math) {
 const _sfc_main = {
   onLaunch: function() {
     common_vendor.index.__f__("log", "at App.vue:4", "App Launch");
+    const token = common_vendor.index.getStorageSync("token");
+    const isGuestMode = common_vendor.index.getStorageSync("isGuestMode");
+    common_vendor.index.__f__("log", "at App.vue:10", "App启动，检查登录状态: token=", token, "isGuestMode=", isGuestMode);
+    if (!token && !isGuestMode) {
+      common_vendor.index.__f__("log", "at App.vue:14", "未登录状态，导航到登录页面");
+      setTimeout(() => {
+        common_vendor.index.reLaunch({
+          url: "/pages/login/login",
+          success: () => {
+            common_vendor.index.__f__("log", "at App.vue:19", "成功导航到登录页面");
+          },
+          fail: (err) => {
+            common_vendor.index.__f__("error", "at App.vue:22", "导航到登录页面失败:", err);
+          }
+        });
+      }, 100);
+    } else {
+      common_vendor.index.__f__("log", "at App.vue:27", "已有登录状态或游客模式，不跳转");
+    }
   },
   onShow: function() {
-    common_vendor.index.__f__("log", "at App.vue:7", "App Show");
+    common_vendor.index.__f__("log", "at App.vue:31", "App Show");
   },
   onHide: function() {
-    common_vendor.index.__f__("log", "at App.vue:10", "App Hide");
+    common_vendor.index.__f__("log", "at App.vue:34", "App Hide");
   }
 };
 function createApp() {

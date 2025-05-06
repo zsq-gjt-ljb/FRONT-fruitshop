@@ -25,17 +25,23 @@
       </checkbox-group>
     </view>
 
-    <!-- 微信登录按钮 -->
+    <!-- 登录按钮 -->
     <view class="button-container">
-      <button class="login-button" @tap="handleWechatLogin">
+      <button class="login-button" @click="handleWechatLogin">
         授权登录
+      </button>
+      
+      <!-- 游客模式按钮 -->
+      <button class="guest-button" @click="handleGuestLogin">
+        游客模式
       </button>
     </view>
   </view>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import request from '@/utils/request'
 
 export default {
@@ -51,6 +57,25 @@ export default {
     
     // 是否同意协议
     const isAgreed = ref(false)
+    
+    // 重定向URL
+    const redirectUrl = ref('')
+    
+    // 获取页面参数
+    onLoad((options) => {
+      console.log('登录页面参数:', options)
+      if (options.redirect) {
+        redirectUrl.value = decodeURIComponent(options.redirect)
+        console.log('获取到重定向URL:', redirectUrl.value)
+      }
+    })
+    
+    // 页面加载完成
+    onMounted(() => {
+      console.log('登录页面已加载完成')
+      // 默认勾选协议
+      isAgreed.value = false
+    })
     
     // 勾选框变化
     const checkboxChange = (e) => {
@@ -70,9 +95,58 @@ export default {
         url: '/pages/agreement/privacy-policy'
       })
     }
+    
+    // 处理登录成功后的跳转
+    const handleSuccessNavigation = () => {
+      console.log('处理导航跳转, 重定向URL:', redirectUrl.value)
+      
+      // 如果有重定向URL，则跳转到该URL
+      if (redirectUrl.value) {
+        // 判断是否是tabBar页面
+        const tabBarPages = ['/pages/index/index', '/pages/category/category', '/pages/cart/cart', '/pages/user/user']
+        const isTabBar = tabBarPages.includes(redirectUrl.value)
+        
+        if (isTabBar) {
+          console.log('跳转到tabBar页面:', redirectUrl.value)
+          uni.switchTab({
+            url: redirectUrl.value,
+            fail: (err) => {
+              console.error('跳转失败:', err)
+              uni.switchTab({ url: '/pages/index/index' })
+            }
+          })
+        } else {
+          console.log('跳转到非tabBar页面:', redirectUrl.value)
+          uni.navigateTo({
+            url: redirectUrl.value,
+            fail: (err) => {
+              console.error('跳转失败:', err)
+              uni.switchTab({ url: '/pages/index/index' })
+            }
+          })
+        }
+      } else {
+        // 没有重定向URL，跳转到首页
+        console.log('无重定向URL，跳转到首页')
+        try {
+          uni.switchTab({
+            url: '/pages/index/index',
+            fail: (err) => {
+              console.error('跳转到首页失败:', err)
+              uni.reLaunch({ url: '/pages/index/index' })
+            }
+          })
+        } catch (error) {
+          console.error('跳转异常:', error)
+          uni.reLaunch({ url: '/pages/index/index' })
+        }
+      }
+    }
 
     // 微信登录
     const handleWechatLogin = () => {
+      console.log('点击了微信登录按钮')
+      
       // 检查是否勾选了协议
       if (!isAgreed.value) {
         uni.showToast({
@@ -110,6 +184,9 @@ export default {
               // 保存用户信息和token
               uni.setStorageSync('token', response.data.access_token)
               
+              // 清除游客模式标记
+              uni.removeStorageSync('isGuestMode')
+              
               // 登录成功后查询路由信息
               try {
                 const routeRes = await request({
@@ -128,25 +205,10 @@ export default {
                 duration: 1500
               })
               
-              // 立即跳转
-              try {
-                const pages = getCurrentPages()
-                if (pages.length >= 10) {
-                  uni.reLaunch({ 
-                    url: '/pages/index/index'
-                  })
-                } else {
-                  uni.switchTab({
-                    url: '/pages/index/index',
-                    fail: (err) => {
-                      console.error('跳转失败:', err)
-                      uni.reLaunch({ url: '/pages/index/index' })
-                    }
-                  })
-                }
-              } catch (error) {
-                uni.reLaunch({ url: '/pages/index/index' })
-              }
+              // 处理跳转
+              setTimeout(() => {
+                handleSuccessNavigation()
+              }, 1600)
             } else {
               uni.showToast({
                 title: response.message || '登录失败',
@@ -162,14 +224,42 @@ export default {
             console.error('微信登录失败：', error)
           }
         },
-        fail: () => {
+        fail: (err) => {
           uni.hideLoading()
           uni.showToast({
             title: '微信登录失败',
             icon: 'none'
           }) 
+          console.error('微信登录API调用失败:', err)
         }
       })
+    }
+    
+    // 游客模式登录
+    const handleGuestLogin = () => {
+      console.log('点击了游客模式按钮')
+      
+      // 游客模式不需要检查协议勾选
+      // 直接设置游客模式标记
+      uni.setStorageSync('isGuestMode', true)
+      
+      // 游客登录提示
+      uni.showToast({
+        title: '以游客身份浏览',
+        icon: 'success',
+        duration: 1500
+      })
+      
+      // 游客模式总是导航到首页，忽略重定向URL
+      setTimeout(() => {
+        uni.switchTab({
+          url: '/pages/index/index',
+          fail: (err) => {
+            console.error('跳转到首页失败:', err)
+            uni.reLaunch({ url: '/pages/index/index' })
+          }
+        })
+      }, 1600)
     }
 
     // 开发环境导航方法
@@ -195,6 +285,7 @@ export default {
       navigateToUserAgreement,
       navigateToPrivacyPolicy,
       handleWechatLogin,
+      handleGuestLogin,
       devNavigateTo
     }
   }
@@ -272,12 +363,13 @@ export default {
   .button-container {
     width: 100%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     padding: 0 50rpx;
     
     .login-button {
       width: 300rpx;
-      height: 90rpx;
+      height: 100rpx;
       background-color: #4e7bef;
       color: #ffffff;
       font-size: 32rpx;
@@ -289,6 +381,7 @@ export default {
       letter-spacing: 2rpx;
       box-shadow: 0 6rpx 12rpx rgba(78, 123, 239, 0.3);
       border: none;
+      margin-bottom: 30rpx;
       
       &::after {
         border: none;
@@ -297,6 +390,31 @@ export default {
       &:active {
         transform: scale(0.98);
         background-color: #4470e0;
+      }
+    }
+    
+    .guest-button {
+      width: 300rpx;
+      height: 100rpx;
+      background-color: #ffffff;
+      color: #4e7bef;
+      font-size: 32rpx;
+      font-weight: 400;
+      border-radius: 10rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 2rpx;
+      box-shadow: 0 6rpx 12rpx rgba(0, 0, 0, 0.1);
+      border: 1rpx solid #4e7bef;
+      
+      &::after {
+        border: none;
+      }
+      
+      &:active {
+        transform: scale(0.98);
+        background-color: #f5f8ff;
       }
     }
   }

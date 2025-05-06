@@ -5,9 +5,9 @@ const request = async (options = {}) => {
     console.log('发送请求到:', options.url);
     if (options.data) console.log('请求数据:', options.data);
 
-    // 获取本地存储的token和会员等级
+    // 获取本地存储的token和游客模式标记
     const token = uni.getStorageSync('token');
-    // const memberLevel = uni.getStorageSync('memberLevel');
+    const isGuestMode = uni.getStorageSync('isGuestMode');
 
     // 组装请求头 - 移除中文请求头
     const header = {
@@ -31,11 +31,24 @@ const request = async (options = {}) => {
     if (response.statusCode === 200) {
       return response.data;
     } else if (response.statusCode === 401) {
-      // token过期，跳转到登录页
-      uni.navigateTo({
-        url: '/pages/login/login'
-      });
-      throw new Error('未授权，请重新登录');
+      // 检查是否需要登录的API
+      const requiresAuth = checkIfRequiresAuth(options.url);
+      
+      // 如果是游客模式下访问需要登录的API
+      if (isGuestMode && requiresAuth) {
+        // 跳转到登录页面并设置返回页面
+        const currentPage = getCurrentPageUrl();
+        uni.navigateTo({
+          url: '/pages/login/login?redirect=' + encodeURIComponent(currentPage)
+        });
+        throw new Error('游客模式无法访问，请登录');
+      } else {
+        // 正常的token过期，跳转到登录页
+        uni.navigateTo({
+          url: '/pages/login/login'
+        });
+        throw new Error('未授权，请重新登录');
+      }
     } else {
       uni.showToast({
         title: response.data.message || '请求失败',
@@ -50,6 +63,38 @@ const request = async (options = {}) => {
     });
     throw error;
   }
+};
+
+// 获取当前页面URL
+const getCurrentPageUrl = () => {
+  const pages = getCurrentPages();
+  const currentPage = pages[pages.length - 1];
+  const url = `/${currentPage.route}`;
+  
+  const query = currentPage.options;
+  if (Object.keys(query).length > 0) {
+    const queryStr = Object.keys(query)
+      .map(key => `${key}=${query[key]}`)
+      .join('&');
+    return `${url}?${queryStr}`;
+  }
+  
+  return url;
+};
+
+// 检查API是否需要认证
+const checkIfRequiresAuth = (url) => {
+  // 需要认证的API路径列表
+  const requiresAuthPaths = [
+    '/api/user/profile',
+    '/api/addressbook',
+    '/api/order',
+    '/api/user',
+    '/api/cart'
+  ];
+  
+  // 检查URL是否包含需要认证的路径
+  return requiresAuthPaths.some(path => url.includes(path));
 };
 
 // 递归转换ID字段为字符串

@@ -34,7 +34,7 @@ const _sfc_main = common_vendor.defineComponent({
 });
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return common_vendor.e({
-    a: common_assets._imports_0$4,
+    a: common_assets._imports_0$3,
     b: _ctx.showText
   }, _ctx.showText ? {
     c: common_vendor.t(_ctx.text)

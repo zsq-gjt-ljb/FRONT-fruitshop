@@ -235,6 +235,9 @@ const _sfc_main = {
       });
     };
     const handleCheckout = () => {
+      if (checkGuestMode()) {
+        return;
+      }
       const selectedItems = cartList.value.filter((item) => item.selected);
       if (selectedItems.length === 0) {
         common_vendor.index.showToast({
@@ -274,14 +277,46 @@ const _sfc_main = {
       });
     };
     common_vendor.onShow(() => {
+      if (checkGuestMode()) {
+        return;
+      }
       getCartList();
     });
     common_vendor.onPullDownRefresh(() => {
+      if (checkGuestMode()) {
+        common_vendor.index.stopPullDownRefresh();
+        return;
+      }
       getCartList();
     });
     common_vendor.onLoad(() => {
-      common_vendor.index.__f__("log", "at pages/cart/cart.vue:462", "购物车页面加载");
+      common_vendor.index.__f__("log", "at pages/cart/cart.vue:478", "购物车页面加载");
+      checkGuestMode();
     });
+    const checkGuestMode = () => {
+      const isGuestMode = common_vendor.index.getStorageSync("isGuestMode");
+      const token = common_vendor.index.getStorageSync("token");
+      if (isGuestMode && !token) {
+        common_vendor.index.showModal({
+          title: "需要登录",
+          content: "查看购物车需要登录，是否立即登录？",
+          success: (res) => {
+            if (res.confirm) {
+              const currentPage = "/" + getCurrentPages()[getCurrentPages().length - 1].route;
+              common_vendor.index.navigateTo({
+                url: "/pages/login/login?redirect=" + encodeURIComponent(currentPage)
+              });
+            } else {
+              common_vendor.index.switchTab({
+                url: "/pages/index/index"
+              });
+            }
+          }
+        });
+        return true;
+      }
+      return false;
+    };
     return (_ctx, _cache) => {
       return common_vendor.e({
         a: cartList.value.length === 0

@@ -25,9 +25,35 @@ const _sfc_main = {
     const selectedSkuId = common_vendor.ref("");
     const isLoading = common_vendor.ref(true);
     const specMap = /* @__PURE__ */ new Map();
+    const checkGuestMode = () => {
+      const isGuestMode = common_vendor.index.getStorageSync("isGuestMode");
+      const token = common_vendor.index.getStorageSync("token");
+      if (isGuestMode && !token) {
+        common_vendor.index.showModal({
+          title: "需要登录",
+          content: "该功能需要登录后才能使用，是否立即登录？",
+          success: (res) => {
+            if (res.confirm) {
+              const currentPage = "/" + getCurrentPages()[getCurrentPages().length - 1].route;
+              const params = getCurrentPages()[getCurrentPages().length - 1].options;
+              let redirectUrl = currentPage;
+              if (params && Object.keys(params).length > 0) {
+                const queryString = Object.keys(params).map((key) => `${key}=${params[key]}`).join("&");
+                redirectUrl = `${currentPage}?${queryString}`;
+              }
+              common_vendor.index.navigateTo({
+                url: "/pages/login/login?redirect=" + encodeURIComponent(redirectUrl)
+              });
+            }
+          }
+        });
+        return true;
+      }
+      return false;
+    };
     const processSkuData = (skuDataList) => {
       try {
-        common_vendor.index.__f__("log", "at pages/detail/detail.vue:188", "开始处理SKU数据:", skuDataList);
+        common_vendor.index.__f__("log", "at pages/detail/detail.vue:227", "开始处理SKU数据:", skuDataList);
         productSpecs.value = [];
         specMap.clear();
         if (!skuDataList || skuDataList.length === 0) {
@@ -46,7 +72,7 @@ const _sfc_main = {
           return;
         }
         skuDataList.forEach((sku) => {
-          common_vendor.index.__f__("log", "at pages/detail/detail.vue:213", "处理SKU项:", sku);
+          common_vendor.index.__f__("log", "at pages/detail/detail.vue:252", "处理SKU项:", sku);
           if (sku.spData) {
             const specs = sku.spData.split(";");
             specs.forEach((spec) => {
@@ -86,9 +112,9 @@ const _sfc_main = {
             id: productSpecs.value[0].skuId
           };
         }
-        common_vendor.index.__f__("log", "at pages/detail/detail.vue:263", "处理后的规格数据:", productSpecs.value);
+        common_vendor.index.__f__("log", "at pages/detail/detail.vue:302", "处理后的规格数据:", productSpecs.value);
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/detail/detail.vue:265", "处理SKU数据出错:", error);
+        common_vendor.index.__f__("error", "at pages/detail/detail.vue:304", "处理SKU数据出错:", error);
         productSpecs.value = [{ name: "默认规格", price: productInfo.value.price, stock: 100 }];
         selectedSpec.value = "默认规格";
       }
@@ -103,16 +129,16 @@ const _sfc_main = {
         return;
       }
       isLoading.value = true;
-      common_vendor.index.__f__("log", "at pages/detail/detail.vue:284", `尝试获取商品数据，ID=${id}`);
+      common_vendor.index.__f__("log", "at pages/detail/detail.vue:323", `尝试获取商品数据，ID=${id}`);
       try {
-        common_vendor.index.__f__("log", "at pages/detail/detail.vue:287", "正在获取商品详情, ID:", id);
+        common_vendor.index.__f__("log", "at pages/detail/detail.vue:326", "正在获取商品详情, ID:", id);
         const result = await utils_request.request({
           url: `https://bgnc.online/api/product/${id}`,
           method: "GET"
         });
-        common_vendor.index.__f__("log", "at pages/detail/detail.vue:294", "API返回结果:", result);
+        common_vendor.index.__f__("log", "at pages/detail/detail.vue:333", "API返回结果:", result);
         if (result.code === 200 && result.data) {
-          common_vendor.index.__f__("log", "at pages/detail/detail.vue:297", "获取到商品详情:", result.data);
+          common_vendor.index.__f__("log", "at pages/detail/detail.vue:336", "获取到商品详情:", result.data);
           productInfo.value = result.data;
           productImages.value = [];
           if (result.data.indexPic) {
@@ -130,7 +156,7 @@ const _sfc_main = {
           }
           skuList.value = result.data.skuList || [];
           processSkuData(result.data.skuList || []);
-          common_vendor.index.__f__("log", "at pages/detail/detail.vue:327", "处理后的商品数据:", {
+          common_vendor.index.__f__("log", "at pages/detail/detail.vue:366", "处理后的商品数据:", {
             images: productImages.value,
             info: productInfo.value,
             specs: productSpecs.value,
@@ -143,7 +169,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/detail/detail.vue:340", "获取商品详情出错:", error);
+        common_vendor.index.__f__("error", "at pages/detail/detail.vue:379", "获取商品详情出错:", error);
         common_vendor.index.showToast({
           title: "网络错误",
           icon: "none"
@@ -153,12 +179,12 @@ const _sfc_main = {
       }
     };
     common_vendor.onLoad((options) => {
-      common_vendor.index.__f__("log", "at pages/detail/detail.vue:352", "详情页收到参数:", options);
+      common_vendor.index.__f__("log", "at pages/detail/detail.vue:391", "详情页收到参数:", options);
       if (options.id) {
         productId.value = options.id;
         getProductDetail(options.id);
       } else {
-        common_vendor.index.__f__("error", "at pages/detail/detail.vue:357", "没有收到有效的商品ID");
+        common_vendor.index.__f__("error", "at pages/detail/detail.vue:396", "没有收到有效的商品ID");
         common_vendor.index.showToast({
           title: "商品ID无效",
           icon: "none"
@@ -237,6 +263,9 @@ const _sfc_main = {
       }
     };
     const addToCart = async () => {
+      if (checkGuestMode()) {
+        return;
+      }
       if (!selectedSkuId.value) {
         common_vendor.index.showToast({
           title: "请选择规格",
@@ -267,7 +296,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/detail/detail.vue:498", "添加购物车失败:", error);
+        common_vendor.index.__f__("error", "at pages/detail/detail.vue:542", "添加购物车失败:", error);
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
           icon: "none"
@@ -276,6 +305,9 @@ const _sfc_main = {
     };
     const buyNow = async () => {
       var _a;
+      if (checkGuestMode()) {
+        return;
+      }
       if (!selectedSpec && productInfo.value.hasSpecs) {
         showSpecsPopup();
         return;
@@ -290,7 +322,7 @@ const _sfc_main = {
           memberLevel = result.data.memberLevel || "";
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/detail/detail.vue:525", "获取会员信息失败:", error);
+        common_vendor.index.__f__("error", "at pages/detail/detail.vue:574", "获取会员信息失败:", error);
       }
       let price = parseFloat(((_a = currentSku.value) == null ? void 0 : _a.price) || productInfo.value.price);
       const checkoutItem = {
@@ -345,7 +377,7 @@ const _sfc_main = {
             });
           },
           fail: function(err) {
-            common_vendor.index.__f__("error", "at pages/detail/detail.vue:597", "生成分享图片失败", err);
+            common_vendor.index.__f__("error", "at pages/detail/detail.vue:646", "生成分享图片失败", err);
             common_vendor.index.hideLoading();
             common_vendor.index.showToast({
               title: "请点击右上角进行分享",
@@ -354,7 +386,7 @@ const _sfc_main = {
           }
         });
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/detail/detail.vue:607", "分享功能出错:", error);
+        common_vendor.index.__f__("error", "at pages/detail/detail.vue:656", "分享功能出错:", error);
         common_vendor.index.hideLoading();
         common_vendor.index.showToast({
           title: "请点击右上角进行分享",
@@ -380,8 +412,20 @@ const _sfc_main = {
         };
       });
     } catch (error) {
-      common_vendor.index.__f__("log", "at pages/detail/detail.vue:647", "分享到朋友圈功能不可用");
+      common_vendor.index.__f__("log", "at pages/detail/detail.vue:696", "分享到朋友圈功能不可用");
     }
+    const handleAddToCart = () => {
+      if (checkGuestMode()) {
+        return;
+      }
+      showSpecsPopup();
+    };
+    const handleBuyNow = () => {
+      if (checkGuestMode()) {
+        return;
+      }
+      showSpecsPopup();
+    };
     return (_ctx, _cache) => {
       return common_vendor.e({
         a: isLoading.value
@@ -438,8 +482,8 @@ const _sfc_main = {
           color: "#666"
         }),
         w: common_vendor.o(goToCart),
-        x: common_vendor.o(showSpecsPopup),
-        y: common_vendor.o(showSpecsPopup),
+        x: common_vendor.o(handleAddToCart),
+        y: common_vendor.o(handleBuyNow),
         z: showSpecs.value
       }, showSpecs.value ? {
         A: common_vendor.o(hideSpecsPopup),

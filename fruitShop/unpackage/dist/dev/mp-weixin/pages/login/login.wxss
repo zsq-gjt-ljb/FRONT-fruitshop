@@ -83,12 +83,13 @@
 .login-container .button-container {
   width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   padding: 0 50rpx;
 }
 .login-container .button-container .login-button {
   width: 300rpx;
-  height: 90rpx;
+  height: 100rpx;
   background-color: #4e7bef;
   color: #ffffff;
   font-size: 32rpx;
@@ -100,6 +101,7 @@
   letter-spacing: 2rpx;
   box-shadow: 0 6rpx 12rpx rgba(78, 123, 239, 0.3);
   border: none;
+  margin-bottom: 30rpx;
 }
 .login-container .button-container .login-button::after {
   border: none;
@@ -107,4 +109,26 @@
 .login-container .button-container .login-button:active {
   transform: scale(0.98);
   background-color: #4470e0;
+}
+.login-container .button-container .guest-button {
+  width: 300rpx;
+  height: 100rpx;
+  background-color: #ffffff;
+  color: #4e7bef;
+  font-size: 32rpx;
+  font-weight: 400;
+  border-radius: 10rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 2rpx;
+  box-shadow: 0 6rpx 12rpx rgba(0, 0, 0, 0.1);
+  border: 1rpx solid #4e7bef;
+}
+.login-container .button-container .guest-button::after {
+  border: none;
+}
+.login-container .button-container .guest-button:active {
+  transform: scale(0.98);
+  background-color: #f5f8ff;
 }
