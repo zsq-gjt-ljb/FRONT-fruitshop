@@ -4,6 +4,7 @@
     "category-manage": "/pages/admin/components/CategoryManage",
     "home-manage": "/pages/admin/components/HomeManage",
     "order-manage": "/pages/admin/components/OrderManage",
-    "user-manage": "/pages/admin/components/UserManage"
+    "user-manage": "/pages/admin/components/UserManage",
+    "discount-manage": "/pages/admin/components/DiscountManage"
   }
 } 

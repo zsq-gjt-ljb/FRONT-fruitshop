@@ -2,17 +2,21 @@
   <view class="user-manage">
     <!-- 搜索和筛选区 -->
     <view class="search-bar">
-      <view class="search-input">
-        <text class="iconfont icon-search"></text>
-        <input 
-          type="text" 
-          v-model="searchKey" 
-          placeholder="搜索用户昵称/手机号"
-          @confirm="searchUsers"
-        />
-      </view>
       
       <view class="filter-options">
+        <!-- 年份选择器 -->
+        <picker 
+          mode="selector" 
+          :range="yearOptions" 
+          :value="selectedYearIndex"
+          @change="onYearChange"
+          class="year-picker"
+        >
+          <text>{{ yearOptions[selectedYearIndex] }}</text>
+        </picker>
+        
+        <button class="query-btn" @tap="queryConsume">查询</button>
+        
         <picker 
           mode="selector" 
           :range="vipLevels" 
@@ -30,7 +34,7 @@
         <text class="col">用户信息</text>
         <text class="col">会员等级</text>
         <text class="col">性别</text>
-        <text class="col">注册时间</text>
+        <text class="col">年度消费</text>
         <text class="col">操作</text>
       </view>
 
@@ -67,12 +71,12 @@
           <text>{{ user.userSex === '1' ? '男' : user.userSex === '2' ? '女' : '未知' }}</text>
         </view>
 
-        <!-- 注册时间 -->
-        <view class="col login-date">
-          <text>{{ user.loginDate || '未登录' }}</text>
+        <!-- 年度消费 -->
+        <view class="col consume-quota">
+          <text>¥{{ user.consumeQuota || '0.00' }}</text>
         </view>
 
-        <!-- 操作按钮 - 改为下拉框操作 -->
+        <!-- 操作按钮 -->
         <view class="col actions">
           <picker 
             mode="selector" 
@@ -145,6 +149,49 @@ const userList = ref([])
 // 弹窗引用
 const confirmPopup = ref(null)
 
+// 年份选择
+const currentYear = new Date().getFullYear()
+const yearOptions = Array.from({length: 10}, (_, i) => (currentYear - i).toString())
+const selectedYearIndex = ref(0)
+
+// 年份变更处理
+const onYearChange = (e) => {
+  selectedYearIndex.value = e.detail.value
+}
+
+// 查询用户消费
+const queryConsume = async () => {
+  const year = yearOptions[selectedYearIndex.value]
+  try {
+    const res = await request({
+      url: 'https://bgnc.online/api/user/list',
+      method: 'GET',
+      data: {
+        pageNum: currentPage.value,
+        pageSize: pageSize.value,
+        year: year
+      }
+    })
+    
+    if (res.code === 200 && res.data) {
+      userList.value = res.data.rows || []
+      total.value = res.data.total || 0
+      totalPages.value = Math.ceil(total.value / pageSize.value) || 1
+    } else {
+      uni.showToast({
+        title: res.msg || '获取数据失败',
+        icon: 'none'
+      })
+    }
+  } catch (error) {
+    console.error('查询用户消费失败：', error)
+    uni.showToast({
+      title: '网络错误，请稍后再试',
+      icon: 'none'
+    })
+  }
+}
+
 // 获取用户列表
 const getUserList = async () => {
   loading.value = true
@@ -155,18 +202,18 @@ const getUserList = async () => {
       data: {
         pageNum: currentPage.value,
         pageSize: pageSize.value,
-       
+        year: yearOptions[selectedYearIndex.value]
       }
     })
     
-    if (res.code === 0 || res.code === 200) {
+    if (res.code === 200 && res.data) {
       console.log('用户列表数据:', res.data)
       userList.value = res.data.rows || []
       total.value = res.data.total || 0
       totalPages.value = Math.ceil(total.value / pageSize.value) || 1
     } else {
       uni.showToast({
-        title: res.message || '获取用户列表失败',
+        title: res.msg || '获取用户列表失败',
         icon: 'none'
       })
     }
@@ -299,6 +346,27 @@ onMounted(() => {
     
     .filter-options {
       margin-left: 16rpx;
+      display: flex;
+      align-items: center;
+      gap: 16rpx;
+      
+      .year-picker {
+        background-color: #f5f7fa;
+        padding: 8rpx 16rpx;
+        border-radius: 6rpx;
+        font-size: 24rpx;
+        color: #666;
+      }
+      
+      .query-btn {
+        background-color: #4a90e2;
+        color: #ffffff;
+        font-size: 24rpx;
+        padding: 8rpx 20rpx;
+        border-radius: 6rpx;
+        margin: 0;
+        line-height: 1.5;
+      }
       
       text {
         font-size: 24rpx;
@@ -402,7 +470,7 @@ onMounted(() => {
           }
         }
         
-        &.user-sex, &.login-date {
+        &.user-sex, &.consume-quota {
           font-size: 22rpx;
           color: #666;
         }
@@ -490,5 +558,11 @@ onMounted(() => {
       }
     }
   }
+}
+
+.consume-quota {
+  font-size: 24rpx;
+  color: #ff6b00;
+  font-weight: bold;
 }
 </style> 

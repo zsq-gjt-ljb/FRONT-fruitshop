@@ -66,6 +66,7 @@
                 "desc": "保存订单数据和导出文件"
             }
         },
+        "lazyCodeLoading": "requiredComponents",
         "requiredPrivateInfos": [
             "chooseAddress",
             "chooseLocation",

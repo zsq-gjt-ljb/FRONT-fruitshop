@@ -6,6 +6,7 @@
     "category-manage": "./components/CategoryManage",
     "home-manage": "./components/HomeManage",
     "order-manage": "./components/OrderManage",
-    "user-manage": "./components/UserManage"
+    "user-manage": "./components/UserManage",
+    "discount-manage": "./components/DiscountManage"
   }
 }

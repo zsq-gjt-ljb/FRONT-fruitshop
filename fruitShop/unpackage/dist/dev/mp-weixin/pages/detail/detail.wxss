@@ -121,8 +121,7 @@ to {
   line-height: 1.4;
 }
 .detail-container .info-card .title-section .share-button {
-  position: absolute;
-  top: 24rpx;
+  position: fixed;
   right: 20rpx;
   display: flex;
   flex-direction: column;
@@ -132,6 +131,7 @@ to {
   width: 80rpx;
   height: 80rpx;
   justify-content: center;
+  margin-top: -15rpx;
 }
 .detail-container .info-card .title-section .share-button text {
   font-size: 20rpx;

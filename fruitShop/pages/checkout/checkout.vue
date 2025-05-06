@@ -235,33 +235,88 @@ const originalPrice = computed(() => {
   }, 0)
 })
 
+// 从API获取实际折扣
+const updateDiscountFromApi = async () => {
+  try {
+    const res = await request({
+      url: 'https://bgnc.online/api/discount/',
+      method: 'GET'
+    })
+    
+    if (res.code === 200 && res.data) {
+      // API返回的折扣格式是"1.00"表示不打折，"0.99"表示99折，需要转换
+      const discountData = res.data.map(item => ({
+        ...item,
+        // 转换为前端使用的折扣值: API的0.99 => 显示为9.9折
+        discount: parseFloat(item.discount) * 10
+      }))
+      
+      // 保存折扣数据用于显示和计算
+      discountInfo.value = discountData
+    }
+  } catch (error) {
+    console.error('获取折扣率失败:', error)
+  }
+}
+
+// 会员折扣数据
+const discountInfo = ref([])
+
+// 获取当前用户实际折扣值
+const userDiscount = computed(() => {
+  if (!memberLevel.value || discountInfo.value.length === 0) return 10; // 默认为10折(不打折)
+  
+  const userDiscountInfo = discountInfo.value.find(item => 
+    item.memberLevel === Number(memberLevel.value)
+  );
+  
+  return userDiscountInfo ? userDiscountInfo.discount : 10;
+})
+
 // 计算折扣金额
 const discountAmount = computed(() => {
-  let discount = 0
-  console.log('计算折扣时的会员等级:', memberLevel.value, '类型:', typeof memberLevel.value)
+  // 如果是10折(不打折)，则返回0
+  if (userDiscount.value >= 10) return 0;
   
-  switch (memberLevel.value) {
-    case '1': case 1:
-      discount = originalPrice.value * 0.01 // 99折 = 1%折扣
-      break
-    case '2': case 2:
-      discount = originalPrice.value * 0.11 // 89折 = 11%折扣
-      break
-    case '3': case 3:
-      discount = originalPrice.value * 0.14 // 86折 = 14%折扣
-      break
-    default:
-      discount = 0
-  }
+  // 计算折扣比例(例如9.5折 = 0.05的折扣率)
+  const discountRate = (10 - userDiscount.value) / 10;
   
-  console.log('原始价格:', originalPrice.value, '折扣金额:', discount)
+  // 计算折扣金额
+  const discount = originalPrice.value * discountRate;
+  
+  console.log('原始价格:', originalPrice.value, '折扣率:', discountRate, '折扣金额:', discount);
+  
   // 确保折扣金额至少有0.01元，不然就不显示折扣区块
   if (discount > 0 && discount < 0.01) {
-    discount = 0.01
+    return 0.01;
   }
   
-  return discount
-})
+  return discount;
+});
+
+// 会员等级文本
+const memberLevelText = computed(() => {
+  const level = typeof memberLevel.value === 'string' ? memberLevel.value : String(memberLevel.value);
+  
+  // 从已保存的折扣数据中查找
+  if (discountInfo.value.length > 0) {
+    const userDiscountInfo = discountInfo.value.find(item => 
+      item.memberLevel === Number(level)
+    );
+    
+    if (userDiscountInfo) {
+      // 保留一位小数显示
+      const discountDisplay = userDiscountInfo.discount.toFixed(1);
+      // 如果是10.0折，显示"无折扣"，否则显示折扣值
+      return userDiscountInfo.discount >= 10 
+        ? `V${level}会员(无折扣)` 
+        : `V${level}会员(${discountDisplay}折)`;
+    }
+  }
+  
+  // 默认文本
+  return `V${level}会员`;
+});
 
 // 计算最终价格
 const finalPrice = computed(() => {
@@ -273,22 +328,6 @@ const finalPrice = computed(() => {
   }
   
   return originalPrice.value - discountAmount.value + shippingFee.value;
-})
-
-// 会员等级文本
-const memberLevelText = computed(() => {
-  const level = typeof memberLevel.value === 'string' ? memberLevel.value : String(memberLevel.value)
-  
-  switch (level) {
-    case '1':
-      return 'V1会员(99折)'
-    case '2':
-      return 'V2会员(89折)'
-    case '3':
-      return 'V3会员(86折)'
-    default:
-      return ''
-  }
 })
 
 // 前往地址列表
@@ -569,6 +608,8 @@ onMounted(() => {
   console.log('结算页面已加载')
   // 确保初始加载时也获取地址
   getAddressList()
+  // 获取折扣信息
+  updateDiscountFromApi()
 })
 </script>
 

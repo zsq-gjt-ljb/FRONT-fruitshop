@@ -28,7 +28,8 @@
                          activeMenu === 'category' ? '应显示分类管理' : 
                          activeMenu === 'home' ? '应显示首页管理' : 
                          activeMenu === 'order' ? '应显示订单管理' : 
-                         activeMenu === 'user' ? '应显示用户管理' : '未知' }}</text>
+                         activeMenu === 'user' ? '应显示用户管理' : 
+                         activeMenu === 'discount' ? '应显示折扣管理' : '未知' }}</text>
       </view>
       
       <!-- 根据选中的菜单显示不同的管理组件 -->
@@ -37,6 +38,7 @@
       <home-manage v-if="activeMenu === 'home'"></home-manage>
       <order-manage v-if="activeMenu === 'order'"></order-manage>
       <user-manage v-if="activeMenu === 'user'"></user-manage>
+      <discount-manage v-if="activeMenu === 'discount'"></discount-manage>
     </view>
   </view>
 </template>
@@ -48,6 +50,7 @@ import CategoryManage from './components/CategoryManage.vue'
 import HomeManage from './components/HomeManage.vue'
 import OrderManage from './components/OrderManage.vue'
 import UserManage from './components/UserManage.vue'
+import DiscountManage from './components/DiscountManage.vue'
 
 // 当前选中的菜单
 const activeMenu = ref('product')
@@ -64,7 +67,8 @@ const menuItems = ref([
   { id: 'category', name: '分类管理', icon: 'list' },
   { id: 'home', name: '首页管理', icon: 'home' },
   { id: 'order', name: '订单管理', icon: 'cart' },
-  { id: 'user', name: '用户管理', icon: 'person' }
+  { id: 'user', name: '用户管理', icon: 'person' },
+  { id: 'discount', name: '折扣管理', icon: 'medal' }
 ])
 
 // 切换菜单
@@ -78,7 +82,7 @@ onMounted(() => {
   console.log('管理员页面已加载')
   console.log('当前激活的菜单:', activeMenu.value)
   console.log('管理员信息:', adminInfo.value)
-  console.log('组件是否已注册:', !!ProductManage, !!CategoryManage, !!HomeManage, !!OrderManage, !!UserManage)
+  console.log('组件是否已注册:', !!ProductManage, !!CategoryManage, !!HomeManage, !!OrderManage, !!UserManage, !!DiscountManage)
 })
 </script>
 

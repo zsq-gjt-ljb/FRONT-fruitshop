@@ -12,6 +12,7 @@
     "pages/settings/index",
     "pages/address/edit",
     "pages/admin/components/ProductManage",
+    "pages/admin/components/DiscountManage",
     "pages/address/list",
     "pages/checkout/checkout",
     "pages/order/list",
@@ -63,6 +64,7 @@
       "desc": "保存订单数据和导出文件"
     }
   },
+  "lazyCodeLoading": "requiredComponents",
   "requiredPrivateInfos": [
     "chooseAddress",
     "chooseLocation",

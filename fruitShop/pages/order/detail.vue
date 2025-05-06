@@ -123,7 +123,7 @@
     
     <!-- 底部操作按钮 -->
     <view class="action-bar">
-      <view class="action-btn" @tap="goBack">返回上一页</view>
+      <view class="action-btn" @tap="goBack">上一页</view>
       <view class="payment-section" v-if="showPayButton">
         <view class="payment-info">
           <text class="payment-label">还需支付</text>
@@ -948,8 +948,8 @@ const goBack = () => {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28rpx;
-      margin-right: 20rpx;
+      font-size: 25rpx;
+      margin-right: 60rpx;
       padding: 0 30rpx;
       background-color: #f5f5f5;
       color: #666;

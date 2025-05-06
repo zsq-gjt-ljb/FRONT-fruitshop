@@ -7259,9 +7259,9 @@ function initOnError() {
   };
 }
 function initRuntimeSocketService() {
-  const hosts = "10.90.169.126,127.0.0.1";
+  const hosts = "10.90.241.136,127.0.0.1";
   const port = "8090";
-  const id = "mp-weixin_3LbLNb";
+  const id = "mp-weixin_R8sgyN";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -63154,6 +63154,12 @@ const pages = [
     path: "pages/admin/components/ProductManage",
     style: {
       navigationBarTitleText: "商品管理"
+    }
+  },
+  {
+    path: "pages/admin/components/DiscountManage",
+    style: {
+      navigationBarTitleText: "折扣管理"
     }
   },
   {

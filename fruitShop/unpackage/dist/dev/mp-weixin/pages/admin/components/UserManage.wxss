@@ -48,6 +48,25 @@
 }
 .user-manage .search-bar .filter-options {
   margin-left: 16rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+.user-manage .search-bar .filter-options .year-picker {
+  background-color: #f5f7fa;
+  padding: 8rpx 16rpx;
+  border-radius: 6rpx;
+  font-size: 24rpx;
+  color: #666;
+}
+.user-manage .search-bar .filter-options .query-btn {
+  background-color: #4a90e2;
+  color: #ffffff;
+  font-size: 24rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 6rpx;
+  margin: 0;
+  line-height: 1.5;
 }
 .user-manage .search-bar .filter-options text {
   font-size: 24rpx;
@@ -134,7 +153,7 @@
   border-radius: 4rpx;
   font-size: 22rpx;
 }
-.user-manage .user-list .user-item .col.user-sex, .user-manage .user-list .user-item .col.login-date {
+.user-manage .user-list .user-item .col.user-sex, .user-manage .user-list .user-item .col.consume-quota {
   font-size: 22rpx;
   color: #666;
 }
@@ -206,4 +225,9 @@
 .confirm-dialog .dialog-buttons button.confirm-btn {
   background: #4a90e2;
   color: #ffffff;
+}
+.consume-quota {
+  font-size: 24rpx;
+  color: #ff6b00;
+  font-weight: bold;
 }

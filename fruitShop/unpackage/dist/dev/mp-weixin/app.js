@@ -15,6 +15,7 @@ if (!Math) {
   "./pages/settings/index.js";
   "./pages/address/edit.js";
   "./pages/admin/components/ProductManage.js";
+  "./pages/admin/components/DiscountManage.js";
   "./pages/address/list.js";
   "./pages/checkout/checkout.js";
   "./pages/order/list.js";

@@ -185,7 +185,7 @@ const exportStatusIndex = ref(0)
 const showExportOptions = ref(false)
 
 // 订单状态筛选
-const orderStatus = ['全部状态', '已失效(-1)', '待发货(1)', '待收货(2)', '已完成(3)', '退款/售后(4)']
+const orderStatus = ['全部状态', '已失效', '待发货', '待收货', '已完成', '退款/售后']
 const statusIndex = ref(0)
 
 // 订单列表
@@ -497,7 +497,7 @@ const confirmExport = async () => {
     // 构建导出URL，添加状态参数
     let exportUrl = 'https://bgnc.online/api/order/excel'
     
-    // 如果选择了特定状态，添加状态参数
+    // 只有选择了特定状态（非全部状态）时，才添加状态参数
     if (exportStatusIndex.value > 0) {
       const statusMap = {
         1: -1, // 已失效
@@ -968,7 +968,7 @@ const confirmStatusChange = async () => {
       }
       
       input {
-        width: 100%;
+       
         height: 80rpx;
         border: 1rpx solid #e8e8e8;
         border-radius: 8rpx;

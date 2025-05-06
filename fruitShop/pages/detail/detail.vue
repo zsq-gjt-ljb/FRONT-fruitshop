@@ -760,8 +760,7 @@
         
         // 添加分享按钮样式
         .share-button {
-          position: absolute;
-          top: 24rpx;
+          position: fixed;
           right: 20rpx;
           display: flex;
           flex-direction: column;
@@ -771,6 +770,7 @@
           width: 80rpx;
           height: 80rpx;
           justify-content: center;
+          margin-top: -15rpx;
           
           text {
             font-size: 20rpx;

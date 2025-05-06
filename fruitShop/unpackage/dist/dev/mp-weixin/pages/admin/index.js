@@ -6,13 +6,14 @@ if (!Array) {
 }
 const _easycom_uni_icons = () => "../../node-modules/@dcloudio/uni-ui/lib/uni-icons/uni-icons.js";
 if (!Math) {
-  (_easycom_uni_icons + ProductManage + CategoryManage + HomeManage + OrderManage + UserManage)();
+  (_easycom_uni_icons + ProductManage + CategoryManage + HomeManage + OrderManage + UserManage + DiscountManage)();
 }
 const ProductManage = () => "./components/ProductManage2.js";
 const CategoryManage = () => "./components/CategoryManage.js";
 const HomeManage = () => "./components/HomeManage.js";
 const OrderManage = () => "./components/OrderManage.js";
 const UserManage = () => "./components/UserManage.js";
+const DiscountManage = () => "./components/DiscountManage2.js";
 const _sfc_main = {
   __name: "index",
   setup(__props) {
@@ -26,17 +27,18 @@ const _sfc_main = {
       { id: "category", name: "分类管理", icon: "list" },
       { id: "home", name: "首页管理", icon: "home" },
       { id: "order", name: "订单管理", icon: "cart" },
-      { id: "user", name: "用户管理", icon: "person" }
+      { id: "user", name: "用户管理", icon: "person" },
+      { id: "discount", name: "折扣管理", icon: "medal" }
     ]);
     const switchMenu = (menuId) => {
       activeMenu.value = menuId;
-      common_vendor.index.__f__("log", "at pages/admin/index.vue:73", "切换到菜单:", menuId);
+      common_vendor.index.__f__("log", "at pages/admin/index.vue:77", "切换到菜单:", menuId);
     };
     common_vendor.onMounted(() => {
-      common_vendor.index.__f__("log", "at pages/admin/index.vue:78", "管理员页面已加载");
-      common_vendor.index.__f__("log", "at pages/admin/index.vue:79", "当前激活的菜单:", activeMenu.value);
-      common_vendor.index.__f__("log", "at pages/admin/index.vue:80", "管理员信息:", adminInfo.value);
-      common_vendor.index.__f__("log", "at pages/admin/index.vue:81", "组件是否已注册:", !!ProductManage, !!CategoryManage, !!HomeManage, !!OrderManage, !!UserManage);
+      common_vendor.index.__f__("log", "at pages/admin/index.vue:82", "管理员页面已加载");
+      common_vendor.index.__f__("log", "at pages/admin/index.vue:83", "当前激活的菜单:", activeMenu.value);
+      common_vendor.index.__f__("log", "at pages/admin/index.vue:84", "管理员信息:", adminInfo.value);
+      common_vendor.index.__f__("log", "at pages/admin/index.vue:85", "组件是否已注册:", !!ProductManage, !!CategoryManage, !!HomeManage, !!OrderManage, !!UserManage, !!DiscountManage);
     });
     return (_ctx, _cache) => {
       return common_vendor.e({
@@ -57,7 +59,7 @@ const _sfc_main = {
           };
         }),
         d: common_vendor.t(activeMenu.value),
-        e: common_vendor.t(activeMenu.value === "product" ? "应显示商品管理" : activeMenu.value === "category" ? "应显示分类管理" : activeMenu.value === "home" ? "应显示首页管理" : activeMenu.value === "order" ? "应显示订单管理" : activeMenu.value === "user" ? "应显示用户管理" : "未知"),
+        e: common_vendor.t(activeMenu.value === "product" ? "应显示商品管理" : activeMenu.value === "category" ? "应显示分类管理" : activeMenu.value === "home" ? "应显示首页管理" : activeMenu.value === "order" ? "应显示订单管理" : activeMenu.value === "user" ? "应显示用户管理" : activeMenu.value === "discount" ? "应显示折扣管理" : "未知"),
         f: activeMenu.value === "product"
       }, activeMenu.value === "product" ? {} : {}, {
         g: activeMenu.value === "category"
@@ -67,7 +69,9 @@ const _sfc_main = {
         i: activeMenu.value === "order"
       }, activeMenu.value === "order" ? {} : {}, {
         j: activeMenu.value === "user"
-      }, activeMenu.value === "user" ? {} : {});
+      }, activeMenu.value === "user" ? {} : {}, {
+        k: activeMenu.value === "discount"
+      }, activeMenu.value === "discount" ? {} : {});
     };
   }
 };

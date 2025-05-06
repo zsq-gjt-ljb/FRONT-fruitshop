@@ -25,6 +25,21 @@
         
         <!-- 订单信息 -->
         <view class="order-info">
+          <!-- 商品信息 -->
+          <view class="product-info">
+            <view class="product-item" v-for="item in order.orderItemList" :key="item.id">
+              <image class="product-image" :src="item.productPic" mode="aspectFill"></image>
+              <view class="product-details">
+                <text class="product-name">{{ item.productName }}</text>
+                <text class="product-attr" v-if="item.productAttr">{{ item.productAttr }}</text>
+                <view class="product-price-qty">
+                  <text class="price">￥{{ item.productPrice }}</text>
+                  <text class="quantity">x{{ item.productQuantity }}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+          
           <view class="info-item">
             <text class="label">收货人:</text>
             <text class="value">{{ order.receiverName }}</text>
@@ -603,6 +618,61 @@ onUnmounted(() => {
       
       .order-info {
         padding: 0 24rpx;
+        
+        .product-info {
+          padding: 24rpx 0;
+          border-bottom: 1rpx solid #f5f5f5;
+          
+          .product-item {
+            display: flex;
+            padding: 20rpx 0;
+            
+            .product-image {
+              width: 160rpx;
+              height: 160rpx;
+              border-radius: 8rpx;
+              margin-right: 20rpx;
+              background-color: #f5f5f5;
+            }
+            
+            .product-details {
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+              
+              .product-name {
+                font-size: 28rpx;
+                color: #333;
+                line-height: 1.4;
+                margin-bottom: 10rpx;
+              }
+              
+              .product-attr {
+                font-size: 24rpx;
+                color: #999;
+                margin-bottom: 10rpx;
+              }
+              
+              .product-price-qty {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                
+                .price {
+                  font-size: 28rpx;
+                  color: #ff6b00;
+                  font-weight: 500;
+                }
+                
+                .quantity {
+                  font-size: 26rpx;
+                  color: #999;
+                }
+              }
+            }
+          }
+        }
         
         .info-item {
           padding: 24rpx 0;

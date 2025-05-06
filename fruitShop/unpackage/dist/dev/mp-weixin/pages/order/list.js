@@ -36,11 +36,11 @@ const _sfc_main = {
         hasMore.value = true;
       }
       if (!hasMore.value && !refresh) {
-        common_vendor.index.__f__("log", "at pages/order/list.vue:129", "没有更多数据了");
+        common_vendor.index.__f__("log", "at pages/order/list.vue:144", "没有更多数据了");
         return;
       }
       isLoading.value = true;
-      common_vendor.index.__f__("log", "at pages/order/list.vue:134", "请求订单列表数据，页码：", page.value, "状态：", tab);
+      common_vendor.index.__f__("log", "at pages/order/list.vue:149", "请求订单列表数据，页码：", page.value, "状态：", tab);
       try {
         const result = await utils_request.request({
           url: "https://bgnc.online/api/order/list",
@@ -51,7 +51,7 @@ const _sfc_main = {
             status: tab
           }
         });
-        common_vendor.index.__f__("log", "at pages/order/list.vue:147", "获取订单列表结果:", JSON.stringify(result));
+        common_vendor.index.__f__("log", "at pages/order/list.vue:162", "获取订单列表结果:", JSON.stringify(result));
         if (result.code === 200 && result.data) {
           let dataList = [];
           if (Array.isArray(result.data)) {
@@ -66,7 +66,7 @@ const _sfc_main = {
               }
             }
           }
-          common_vendor.index.__f__("log", "at pages/order/list.vue:170", "解析后的订单数据:", JSON.stringify(dataList));
+          common_vendor.index.__f__("log", "at pages/order/list.vue:185", "解析后的订单数据:", JSON.stringify(dataList));
           if (dataList.length > 0) {
             const processedOrders = await Promise.all(dataList.map(async (order) => {
               const newOrder = JSON.parse(JSON.stringify(order));
@@ -106,13 +106,13 @@ const _sfc_main = {
                       }
                     });
                     if (updateResult.code === 200) {
-                      common_vendor.index.__f__("log", "at pages/order/list.vue:229", `订单 ${newOrder.id} 更新为已失效状态`);
+                      common_vendor.index.__f__("log", "at pages/order/list.vue:244", `订单 ${newOrder.id} 更新为已失效状态`);
                       newOrder.status = -1;
                     } else {
-                      common_vendor.index.__f__("error", "at pages/order/list.vue:233", `订单 ${newOrder.id} 状态更新失败:`, updateResult.msg);
+                      common_vendor.index.__f__("error", "at pages/order/list.vue:248", `订单 ${newOrder.id} 状态更新失败:`, updateResult.msg);
                     }
                   } catch (error) {
-                    common_vendor.index.__f__("error", "at pages/order/list.vue:236", `更新订单 ${newOrder.id} 状态失败:`, error);
+                    common_vendor.index.__f__("error", "at pages/order/list.vue:251", `更新订单 ${newOrder.id} 状态失败:`, error);
                   }
                 }
               }
@@ -142,7 +142,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/order/list.vue:272", "获取订单列表失败:", error);
+        common_vendor.index.__f__("error", "at pages/order/list.vue:287", "获取订单列表失败:", error);
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
           icon: "none"
@@ -202,7 +202,7 @@ const _sfc_main = {
                 });
               }
             } catch (error) {
-              common_vendor.index.__f__("error", "at pages/order/list.vue:344", "确认收货失败:", error);
+              common_vendor.index.__f__("error", "at pages/order/list.vue:359", "确认收货失败:", error);
               common_vendor.index.showToast({
                 title: "网络错误，请稍后再试",
                 icon: "none"
@@ -218,7 +218,7 @@ const _sfc_main = {
       });
     };
     common_vendor.onLoad((options) => {
-      common_vendor.index.__f__("log", "at pages/order/list.vue:364", "订单列表页面参数:", options);
+      common_vendor.index.__f__("log", "at pages/order/list.vue:379", "订单列表页面参数:", options);
       if (options.status !== void 0) {
         const status = options.status === "" ? "" : parseInt(options.status);
         activeTab.value = status;
@@ -229,7 +229,7 @@ const _sfc_main = {
       }
     });
     common_vendor.onShow(() => {
-      common_vendor.index.__f__("log", "at pages/order/list.vue:381", "订单列表页面显示,刷新数据");
+      common_vendor.index.__f__("log", "at pages/order/list.vue:396", "订单列表页面显示,刷新数据");
       page.value = 1;
       orderList.value = [];
       hasMore.value = true;
@@ -245,7 +245,7 @@ const _sfc_main = {
       loadMore();
     });
     common_vendor.onMounted(() => {
-      common_vendor.index.__f__("log", "at pages/order/list.vue:404", "订单列表页面已加载");
+      common_vendor.index.__f__("log", "at pages/order/list.vue:419", "订单列表页面已加载");
     });
     const calculateTimeLeft = (createTime) => {
       if (!createTime)
@@ -285,14 +285,14 @@ const _sfc_main = {
                 }
               });
               if (result.code === 200) {
-                common_vendor.index.__f__("log", "at pages/order/list.vue:474", `列表中订单 ${order.id} 已超时，状态更新为已失效`);
+                common_vendor.index.__f__("log", "at pages/order/list.vue:489", `列表中订单 ${order.id} 已超时，状态更新为已失效`);
                 orderList.value[i].status = -1;
                 orderList.value[i].timeToLive = "";
               } else {
-                common_vendor.index.__f__("error", "at pages/order/list.vue:480", `列表中订单 ${order.id} 状态更新失败:`, result.msg);
+                common_vendor.index.__f__("error", "at pages/order/list.vue:495", `列表中订单 ${order.id} 状态更新失败:`, result.msg);
               }
             } catch (error) {
-              common_vendor.index.__f__("error", "at pages/order/list.vue:483", `列表中更新订单 ${order.id} 状态失败:`, error);
+              common_vendor.index.__f__("error", "at pages/order/list.vue:498", `列表中更新订单 ${order.id} 状态失败:`, error);
             }
           }
         } else {
@@ -337,29 +337,42 @@ const _sfc_main = {
           }, order.status === 0 && order.timeToLive ? {
             d: common_vendor.t(order.timeToLive)
           } : {}, {
-            e: common_vendor.t(order.receiverName),
-            f: common_vendor.t(order.receiverPhone),
-            g: common_vendor.t(order.receiverProvince),
-            h: common_vendor.t(order.receiverCity),
-            i: common_vendor.t(order.receiverRegion),
-            j: common_vendor.t(order.receiverDetailAddress),
-            k: order.deliveryCompany
+            e: common_vendor.f(order.orderItemList, (item, k1, i1) => {
+              return common_vendor.e({
+                a: item.productPic,
+                b: common_vendor.t(item.productName),
+                c: item.productAttr
+              }, item.productAttr ? {
+                d: common_vendor.t(item.productAttr)
+              } : {}, {
+                e: common_vendor.t(item.productPrice),
+                f: common_vendor.t(item.productQuantity),
+                g: item.id
+              });
+            }),
+            f: common_vendor.t(order.receiverName),
+            g: common_vendor.t(order.receiverPhone),
+            h: common_vendor.t(order.receiverProvince),
+            i: common_vendor.t(order.receiverCity),
+            j: common_vendor.t(order.receiverRegion),
+            k: common_vendor.t(order.receiverDetailAddress),
+            l: order.deliveryCompany
           }, order.deliveryCompany ? {
-            l: common_vendor.t(order.deliveryCompany)
+            m: common_vendor.t(order.deliveryCompany)
           } : {}, {
-            m: common_vendor.t(order.totalAmount),
-            n: common_vendor.t(order.freightAmount),
-            o: common_vendor.t(order.payAmount),
-            p: order.status === 2
+            n: common_vendor.t(order.totalAmount),
+            o: common_vendor.t(order.freightAmount),
+            p: common_vendor.t(order.payAmount),
+            q: order.status === 2
           }, order.status === 2 ? {
-            q: common_vendor.o(($event) => confirmReceived(order.id), order.id)
+            r: common_vendor.o(($event) => confirmReceived(order.id), order.id)
           } : {}, {
-            r: order.status === 4
+            s: order.status === 4
           }, order.status === 4 ? {
-            s: common_vendor.o(($event) => goToDetail(order.id), order.id)
+            t: common_vendor.o(($event) => goToDetail(order.id), order.id)
           } : {}, {
-            t: order.id,
-            v: common_vendor.o(($event) => goToDetail(order.id), order.id)
+            v: order.id,
+            w: common_vendor.o(($event) => goToDetail(order.id), order.id)
           });
         })
       } : {

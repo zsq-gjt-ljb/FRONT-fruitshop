@@ -14,7 +14,7 @@ if (!Math) {
 const _sfc_main = {
   __name: "UserManage",
   setup(__props) {
-    const searchKey = common_vendor.ref("");
+    common_vendor.ref("");
     const loading = common_vendor.ref(false);
     const vipLevels = ["全部等级", "VIP1", "VIP2", "VIP3", "VIP4", "VIP5"];
     const selectedLevel = common_vendor.ref(0);
@@ -26,6 +26,42 @@ const _sfc_main = {
     const currentUser = common_vendor.ref(null);
     const userList = common_vendor.ref([]);
     const confirmPopup = common_vendor.ref(null);
+    const currentYear = (/* @__PURE__ */ new Date()).getFullYear();
+    const yearOptions = Array.from({ length: 10 }, (_, i) => (currentYear - i).toString());
+    const selectedYearIndex = common_vendor.ref(0);
+    const onYearChange = (e) => {
+      selectedYearIndex.value = e.detail.value;
+    };
+    const queryConsume = async () => {
+      const year = yearOptions[selectedYearIndex.value];
+      try {
+        const res = await utils_request.request({
+          url: "https://bgnc.online/api/user/list",
+          method: "GET",
+          data: {
+            pageNum: currentPage.value,
+            pageSize: pageSize.value,
+            year
+          }
+        });
+        if (res.code === 200 && res.data) {
+          userList.value = res.data.rows || [];
+          total.value = res.data.total || 0;
+          totalPages.value = Math.ceil(total.value / pageSize.value) || 1;
+        } else {
+          common_vendor.index.showToast({
+            title: res.msg || "获取数据失败",
+            icon: "none"
+          });
+        }
+      } catch (error) {
+        common_vendor.index.__f__("error", "at pages/admin/components/UserManage.vue:187", "查询用户消费失败：", error);
+        common_vendor.index.showToast({
+          title: "网络错误，请稍后再试",
+          icon: "none"
+        });
+      }
+    };
     const getUserList = async () => {
       loading.value = true;
       try {
@@ -34,22 +70,23 @@ const _sfc_main = {
           method: "GET",
           data: {
             pageNum: currentPage.value,
-            pageSize: pageSize.value
+            pageSize: pageSize.value,
+            year: yearOptions[selectedYearIndex.value]
           }
         });
-        if (res.code === 0 || res.code === 200) {
-          common_vendor.index.__f__("log", "at pages/admin/components/UserManage.vue:163", "用户列表数据:", res.data);
+        if (res.code === 200 && res.data) {
+          common_vendor.index.__f__("log", "at pages/admin/components/UserManage.vue:210", "用户列表数据:", res.data);
           userList.value = res.data.rows || [];
           total.value = res.data.total || 0;
           totalPages.value = Math.ceil(total.value / pageSize.value) || 1;
         } else {
           common_vendor.index.showToast({
-            title: res.message || "获取用户列表失败",
+            title: res.msg || "获取用户列表失败",
             icon: "none"
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/UserManage.vue:174", "获取用户列表失败：", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/UserManage.vue:221", "获取用户列表失败：", error);
         common_vendor.index.showToast({
           title: "获取用户列表失败",
           icon: "none"
@@ -57,10 +94,6 @@ const _sfc_main = {
       } finally {
         loading.value = false;
       }
-    };
-    const searchUsers = () => {
-      currentPage.value = 1;
-      getUserList();
     };
     const onLevelChange = (e) => {
       selectedLevel.value = e.detail.value;
@@ -105,7 +138,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/UserManage.vue:244", "修改用户等级失败：", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/UserManage.vue:291", "修改用户等级失败：", error);
         common_vendor.index.showToast({
           title: "修改用户等级失败",
           icon: "none"
@@ -129,49 +162,51 @@ const _sfc_main = {
     });
     return (_ctx, _cache) => {
       return common_vendor.e({
-        a: common_vendor.o(searchUsers),
-        b: searchKey.value,
-        c: common_vendor.o(($event) => searchKey.value = $event.detail.value),
-        d: common_vendor.t(vipLevels[selectedLevel.value]),
-        e: vipLevels,
-        f: selectedLevel.value,
-        g: common_vendor.o(onLevelChange),
-        h: loading.value
+        a: common_vendor.t(common_vendor.unref(yearOptions)[selectedYearIndex.value]),
+        b: common_vendor.unref(yearOptions),
+        c: selectedYearIndex.value,
+        d: common_vendor.o(onYearChange),
+        e: common_vendor.o(queryConsume),
+        f: common_vendor.t(vipLevels[selectedLevel.value]),
+        g: vipLevels,
+        h: selectedLevel.value,
+        i: common_vendor.o(onLevelChange),
+        j: loading.value
       }, loading.value ? {
-        i: common_vendor.p({
+        k: common_vendor.p({
           type: "spinner-cycle",
           size: "30",
           color: "#4a90e2"
         })
       } : userList.value.length === 0 ? {} : {}, {
-        j: userList.value.length === 0,
-        k: common_vendor.f(userList.value, (user, k0, i0) => {
+        l: userList.value.length === 0,
+        m: common_vendor.f(userList.value, (user, k0, i0) => {
           return {
             a: user.userAvatar || "/static/images/default-avatar.png",
             b: common_vendor.t(user.userName || "未设置昵称"),
             c: common_vendor.t(user.phone || "未绑定手机"),
             d: common_vendor.t(user.memberLevel || 1),
             e: common_vendor.t(user.userSex === "1" ? "男" : user.userSex === "2" ? "女" : "未知"),
-            f: common_vendor.t(user.loginDate || "未登录"),
+            f: common_vendor.t(user.consumeQuota || "0.00"),
             g: (user.memberLevel || 1) - 1,
             h: common_vendor.o((e) => handleEditLevelChange(e, user), user.id),
             i: user.id
           };
         }),
-        l: vipLevels.slice(1),
-        m: currentPage.value === 1 ? 1 : "",
-        n: common_vendor.o(prevPage),
-        o: common_vendor.t(currentPage.value),
-        p: common_vendor.t(totalPages.value),
-        q: currentPage.value === totalPages.value || totalPages.value === 0 ? 1 : "",
-        r: common_vendor.o(nextPage),
-        s: common_vendor.t(editingLevel.value),
-        t: common_vendor.o(cancelEdit),
-        v: common_vendor.o(confirmEdit),
-        w: common_vendor.sr(confirmPopup, "0c80738b-1", {
+        n: vipLevels.slice(1),
+        o: currentPage.value === 1 ? 1 : "",
+        p: common_vendor.o(prevPage),
+        q: common_vendor.t(currentPage.value),
+        r: common_vendor.t(totalPages.value),
+        s: currentPage.value === totalPages.value || totalPages.value === 0 ? 1 : "",
+        t: common_vendor.o(nextPage),
+        v: common_vendor.t(editingLevel.value),
+        w: common_vendor.o(cancelEdit),
+        x: common_vendor.o(confirmEdit),
+        y: common_vendor.sr(confirmPopup, "0c80738b-1", {
           "k": "confirmPopup"
         }),
-        x: common_vendor.p({
+        z: common_vendor.p({
           type: "dialog"
         })
       });
