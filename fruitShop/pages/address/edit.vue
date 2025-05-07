@@ -747,6 +747,7 @@
         .action-buttons {
           display: flex;
           align-items: center;
+          margin-left: auto;
           
           .edit-btn, .delete-btn {
             font-size: 26rpx;
@@ -758,6 +759,7 @@
           .edit-btn {
             color: #3b78db;
             background-color: rgba(59, 120, 219, 0.1);
+            margin-right: -10rpx;
           }
           
           .delete-btn {
@@ -831,7 +833,7 @@
             }
             
             input, textarea, .region-picker {
-              width: 100%;
+              width: 91vw;
               height: 80rpx;
               background-color: #f8f9fc;
               border-radius: 8rpx;

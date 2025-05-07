@@ -43,8 +43,16 @@
           <text class="value">{{ getTotalQuantity() }}件</text>
         </view>
         <view class="summary-item">
-          <text class="label">商品总额:</text>
+          <text class="label">商品总价:</text>
           <text class="value price">￥{{ getTotalPrice() }}</text>
+        </view>
+        <view class="summary-item">
+          <text class="label">运费:</text>
+          <text class="value">￥{{ formatAmount(freightAmount) }}</text>
+        </view>
+        <view class="summary-item">
+          <text class="label">应付总额:</text>
+          <text class="value price">￥{{ formatAmount(payAmount) }}</text>
         </view>
       </view>
     </view>
@@ -127,7 +135,7 @@
       <view class="payment-section" v-if="showPayButton">
         <view class="payment-info">
           <text class="payment-label">还需支付</text>
-          <text class="payment-amount">￥{{ getTotalPrice() }}</text>
+          <text class="payment-amount">￥{{ formatAmount(payAmount) }}</text>
         </view>
         <view class="pay-btn" @tap="handlePay" :class="{'loading': payLoading}">
           去支付
@@ -160,6 +168,9 @@ let orderTimer = null
 // 添加新的响应式变量
 const timeToLive = ref('')
 const isTimeoutOrder = ref(false)
+// 添加运费和应付总额
+const freightAmount = ref('')
+const payAmount = ref('')
 
 // 物流信息相关
 const deliverySn = ref('') // 快递单号
@@ -193,6 +204,18 @@ const getOrderDetail = async () => {
     if (result.code === 200) {
       // 处理返回的数据
       if (result.data) {
+        // 设置运费和总额
+        freightAmount.value = result.data.freightAmount || '0.00';
+        payAmount.value = result.data.payAmount || '';
+        
+        // 如果没有payAmount，则需要自己计算
+        if (!payAmount.value) {
+          const totalProductPrice = getTotalPrice();
+          const freight = parseFloat(freightAmount.value) || 0;
+          const total = parseFloat(totalProductPrice) + freight;
+          payAmount.value = total.toFixed(2);
+        }
+        
         // 检查订单是否已超时
         let isTimeout = false;
         
@@ -207,6 +230,9 @@ const getOrderDetail = async () => {
           isTimeout = true;
           timeToLive.value = "已超时";
           isTimeoutOrder.value = true;
+        } else if (result.data.timeToLive) {
+          // 如果有倒计时信息
+          timeToLive.value = result.data.timeToLive;
         }
         
         // 如果订单已超时但状态仍为待支付(0),则更新为已失效(-1)
@@ -303,11 +329,17 @@ const getTotalQuantity = () => {
 
 // 计算商品总价
 const getTotalPrice = () => {
-  // 商品价格已经包含了数量的计算，不需要再乘以数量
-  const total = orderItems.value.reduce((sum, item) => {
-    return sum + (parseFloat(item.productPrice) || 0)
-  }, 0)
-  return total.toFixed(2)
+  let total = 0;
+  
+  // 首先检查订单项中是否有价格信息
+  if (orderItems.value && orderItems.value.length > 0) {
+    // 从订单项中计算总价，注意 productPrice 已经包含了单价×数量的计算
+    total = orderItems.value.reduce((sum, item) => {
+      return sum + (parseFloat(item.productPrice) || 0);
+    }, 0);
+  }
+  
+  return total.toFixed(2);
 }
 
 // 返回上一页并刷新数据
@@ -669,6 +701,12 @@ onUnmounted(() => {
 // 返回上一页
 const goBack = () => {
   navigateBack()
+}
+
+// 格式化金额，确保显示两位小数
+const formatAmount = (amount) => {
+  if (!amount && amount !== 0) return '0.00';
+  return parseFloat(amount).toFixed(2);
 }
 </script>
 

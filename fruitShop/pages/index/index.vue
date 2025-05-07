@@ -67,7 +67,7 @@
       
       <view class="category-grid">
         <view 
-          v-for="(category, index) in categories.slice(0, 6)" 
+          v-for="(category, index) in categories.slice(0, 8)" 
           :key="category.id"
           class="category-item"
           @tap="navigateToCategory(category)"
@@ -302,12 +302,14 @@ const loadCategories = async () => {
       
       // 为分类添加默认图片 - 使用自定义图标
       const categoryIcons = [
-        '/static/images/category-leaf.png',
-        '/static/images/category-tea.png',
-        '/static/images/category-snack.png',
-        '/static/images/category-dried.png',   
-        '/static/images/category-fruit.png',
-        '/static/images/category-gift.png',
+       '/static/images/category-fruit.png',
+ '/static/images/category-tea.png',
+ '/static/images/category-leaf.png',
+ '/static/images/category-dried.png',  
+ '/static/images/category-snack.png',
+'/static/images/category-digi.png',
+'/static/images/category-gift.png',
+ '/static/images/category-feature.png'
         
         
       ]
@@ -1071,12 +1073,12 @@ const handleContactEvent = () => {
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 33.33%;
+      width: 25%;
       margin-bottom: 30rpx;
       
       .category-icon-wrapper {
-        width: 140rpx;
-        height: 140rpx;
+        width: 120rpx;
+        height: 120rpx;
         background-color: rgba(255, 255, 255, 0.9);
         border-radius: 50%;
         display: flex;
@@ -1103,7 +1105,7 @@ const handleContactEvent = () => {
       }
       
       .category-name {
-        font-size: 26rpx;
+        font-size: 24rpx;
         color: #333;
         text-align: center;
         font-weight: 500;

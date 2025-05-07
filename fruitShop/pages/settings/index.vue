@@ -46,16 +46,7 @@
         </view>
       </view>
 
-      <!-- 生日设置 -->
-      <view class="settings-item" @tap="showDatePicker">
-        <view class="item-left">
-          <text class="label">生日</text>
-        </view>
-        <view class="item-right">
-          <text class="value">{{ userInfo.userBirthday || '未设置' }}</text>
-          <text class="iconfont icon-right"></text>
-        </view>
-      </view>
+  
 
       <!-- 收货地址 -->
       

@@ -101,7 +101,7 @@ const _sfc_main = {
           method: "GET"
         });
         if (res.code === 200) {
-          common_vendor.index.__f__("log", "at pages/user/user.vue:210", "res.data是", res.data);
+          common_vendor.index.__f__("log", "at pages/user/user.vue:205", "res.data是", res.data);
           userInfo.value = {
             userAvatar: res.data.userAvatar,
             userName: res.data.userName,
@@ -114,13 +114,13 @@ const _sfc_main = {
             status: res.data.status,
             openId: res.data.openId
           };
-          common_vendor.index.__f__("log", "at pages/user/user.vue:223", "处理后的用户信息:", userInfo.value);
+          common_vendor.index.__f__("log", "at pages/user/user.vue:218", "处理后的用户信息:", userInfo.value);
           common_vendor.index.setStorageSync("userAvatar", res.data.userAvatar);
           common_vendor.index.setStorageSync("userName", res.data.userName);
           common_vendor.index.setStorageSync("userRole", res.data.userRole);
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/user/user.vue:230", "获取用户信息失败：", error);
+        common_vendor.index.__f__("error", "at pages/user/user.vue:225", "获取用户信息失败：", error);
       }
     };
     const navigateToOrderList = (type) => {
@@ -157,7 +157,7 @@ const _sfc_main = {
         common_vendor.index.navigateTo({
           url: "/pages/user/contact",
           fail: (err) => {
-            common_vendor.index.__f__("error", "at pages/user/user.vue:280", "跳转到联系客服页面失败：", err);
+            common_vendor.index.__f__("error", "at pages/user/user.vue:275", "跳转到联系客服页面失败：", err);
             common_vendor.index.showToast({
               title: "页面跳转失败",
               icon: "none"
@@ -175,7 +175,7 @@ const _sfc_main = {
               common_vendor.index.navigateTo({
                 url: item.path,
                 fail: (err) => {
-                  common_vendor.index.__f__("error", "at pages/user/user.vue:300", "跳转失败：", err);
+                  common_vendor.index.__f__("error", "at pages/user/user.vue:295", "跳转失败：", err);
                   common_vendor.index.showToast({
                     title: "页面跳转失败",
                     icon: "none"
@@ -190,21 +190,13 @@ const _sfc_main = {
       common_vendor.index.navigateTo({
         url: item.path,
         fail: (err) => {
-          common_vendor.index.__f__("error", "at pages/user/user.vue:317", "跳转失败：", err);
+          common_vendor.index.__f__("error", "at pages/user/user.vue:312", "跳转失败：", err);
           common_vendor.index.showToast({
             title: "页面跳转失败",
             icon: "none"
           });
         }
       });
-    };
-    const handleContact = (e) => {
-      common_vendor.index.__f__("log", "at pages/user/user.vue:328", "联系客服事件触发:", e.detail);
-    };
-    const handleServiceClick = () => {
-      if (showLoginTip()) {
-        return;
-      }
     };
     const navigateToSettings = () => {
       if (showLoginTip()) {
@@ -213,7 +205,7 @@ const _sfc_main = {
       common_vendor.index.navigateTo({
         url: "/pages/settings/index",
         fail: (err) => {
-          common_vendor.index.__f__("error", "at pages/user/user.vue:350", "跳转到个人设置页面失败：", err);
+          common_vendor.index.__f__("error", "at pages/user/user.vue:345", "跳转到个人设置页面失败：", err);
           common_vendor.index.showToast({
             title: "页面跳转失败",
             icon: "none"
@@ -239,7 +231,7 @@ const _sfc_main = {
         b: common_vendor.t(isGuest.value ? "游客" : userInfo.value.userName || "微信用户"),
         c: !isGuest.value
       }, !isGuest.value ? {
-        d: common_assets._imports_0$4,
+        d: common_assets._imports_0$3,
         e: common_vendor.t(userInfo.value.memberLevel || 1)
       } : {}, {
         f: isGuest.value
@@ -270,10 +262,7 @@ const _sfc_main = {
             c: item.id,
             d: common_vendor.o(($event) => handleToolClick(item), item.id)
           };
-        }),
-        w: common_assets._imports_0$3,
-        x: common_vendor.o(handleContact),
-        y: common_vendor.o(handleServiceClick)
+        })
       });
     };
   }

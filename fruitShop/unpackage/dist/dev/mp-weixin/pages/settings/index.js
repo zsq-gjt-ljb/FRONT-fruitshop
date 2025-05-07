@@ -40,22 +40,6 @@ const _sfc_main = {
     const days = common_vendor.ref([]);
     const datePickerValue = common_vendor.ref([0, 0, 0]);
     const selectedDate = common_vendor.ref("");
-    const initDatePicker = () => {
-      const currentYear = (/* @__PURE__ */ new Date()).getFullYear();
-      years.value = Array.from({ length: currentYear - 1980 + 1 }, (_, i) => i + 1980);
-      months.value = Array.from({ length: 12 }, (_, i) => i + 1);
-      updateDays(1980, 1);
-      if (userInfo.value.userBirthday) {
-        const [year, month, day] = userInfo.value.userBirthday.split("-").map((num) => parseInt(num));
-        const yearIndex = years.value.findIndex((y) => y === year);
-        const monthIndex = months.value.findIndex((m) => m === month);
-        const dayIndex = days.value.findIndex((d) => d === day);
-        if (yearIndex >= 0 && monthIndex >= 0 && dayIndex >= 0) {
-          datePickerValue.value = [yearIndex, monthIndex, dayIndex];
-          updateDays(year, month);
-        }
-      }
-    };
     const updateDays = (year, month) => {
       const daysInMonth = new Date(year, month, 0).getDate();
       days.value = Array.from({ length: daysInMonth }, (_, i) => i + 1);
@@ -76,11 +60,11 @@ const _sfc_main = {
           method: "GET"
         });
         if (res.code === 200) {
-          common_vendor.index.__f__("log", "at pages/settings/index.vue:212", "res.data是", res);
+          common_vendor.index.__f__("log", "at pages/settings/index.vue:203", "res.data是", res);
           userInfo.value = res.data;
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/settings/index.vue:216", "获取用户信息失败：", error);
+        common_vendor.index.__f__("error", "at pages/settings/index.vue:207", "获取用户信息失败：", error);
       }
     };
     const changeAvatar = () => {
@@ -108,7 +92,7 @@ const _sfc_main = {
                     "Authorization": `Bearer ${common_vendor.index.getStorageSync("token")}`
                   },
                   success: (uploadRes) => {
-                    common_vendor.index.__f__("log", "at pages/settings/index.vue:248", "上传成功, 原始响应:", uploadRes);
+                    common_vendor.index.__f__("log", "at pages/settings/index.vue:239", "上传成功, 原始响应:", uploadRes);
                     try {
                       const response = typeof uploadRes.data === "string" ? JSON.parse(uploadRes.data) : uploadRes.data;
                       if (response.code === 200) {
@@ -121,14 +105,14 @@ const _sfc_main = {
                     }
                   },
                   fail: (err) => {
-                    common_vendor.index.__f__("error", "at pages/settings/index.vue:265", "上传失败:", err);
+                    common_vendor.index.__f__("error", "at pages/settings/index.vue:256", "上传失败:", err);
                     reject(new Error("网络错误"));
                   }
                 });
               });
             };
             const imageUrl = await uploadTask();
-            common_vendor.index.__f__("log", "at pages/settings/index.vue:274", "头像上传成功, URL:", imageUrl);
+            common_vendor.index.__f__("log", "at pages/settings/index.vue:265", "头像上传成功, URL:", imageUrl);
             const updateRes = await utils_request.request({
               url: "https://bgnc.online/api/user/profile",
               method: "PUT",
@@ -147,7 +131,7 @@ const _sfc_main = {
               throw new Error(updateRes.msg || "头像更新失败");
             }
           } catch (error) {
-            common_vendor.index.__f__("error", "at pages/settings/index.vue:300", "头像更新错误:", error);
+            common_vendor.index.__f__("error", "at pages/settings/index.vue:291", "头像更新错误:", error);
             common_vendor.index.showToast({
               title: error.message || "头像更新失败",
               icon: "none"
@@ -183,7 +167,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/settings/index.vue:341", "更新姓名错误:", error);
+        common_vendor.index.__f__("error", "at pages/settings/index.vue:332", "更新姓名错误:", error);
         common_vendor.index.showToast({
           title: "姓名修改失败",
           icon: "error"
@@ -252,10 +236,6 @@ const _sfc_main = {
         });
       }
     };
-    const showDatePicker = () => {
-      initDatePicker();
-      datePopup.value.open();
-    };
     const closeDatePicker = () => {
       datePopup.value.close();
     };
@@ -281,7 +261,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/settings/index.vue:458", "更新生日出错:", error);
+        common_vendor.index.__f__("error", "at pages/settings/index.vue:449", "更新生日出错:", error);
         common_vendor.index.showToast({
           title: "生日修改失败",
           icon: "error"
@@ -317,61 +297,59 @@ const _sfc_main = {
         f: common_vendor.o(showPhoneDialog),
         g: common_vendor.t(genderText.value),
         h: common_vendor.o(showGenderPicker),
-        i: common_vendor.t(userInfo.value.userBirthday || "未设置"),
-        j: common_vendor.o(showDatePicker),
-        k: common_vendor.o(handleLogout),
-        l: common_vendor.o(updateName),
-        m: common_vendor.p({
+        i: common_vendor.o(handleLogout),
+        j: common_vendor.o(updateName),
+        k: common_vendor.p({
           mode: "input",
           title: "修改姓名",
           placeholder: "请输入姓名",
           value: userInfo.value.userName
         }),
-        n: common_vendor.sr(nameDialog, "95edf658-0", {
+        l: common_vendor.sr(nameDialog, "95edf658-0", {
           "k": "nameDialog"
         }),
-        o: common_vendor.p({
+        m: common_vendor.p({
           type: "dialog"
         }),
-        p: common_vendor.o(updatePhone),
-        q: common_vendor.p({
+        n: common_vendor.o(updatePhone),
+        o: common_vendor.p({
           mode: "input",
           title: "修改手机号",
           placeholder: "请输入手机号",
           value: userInfo.value.phone
         }),
-        r: common_vendor.sr(phoneDialog, "95edf658-2", {
+        p: common_vendor.sr(phoneDialog, "95edf658-2", {
           "k": "phoneDialog"
         }),
-        s: common_vendor.p({
+        q: common_vendor.p({
           type: "dialog"
         }),
-        t: common_vendor.o(closeDatePicker),
-        v: common_vendor.o(confirmDatePicker),
-        w: common_vendor.f(years.value, (year, index, i0) => {
+        r: common_vendor.o(closeDatePicker),
+        s: common_vendor.o(confirmDatePicker),
+        t: common_vendor.f(years.value, (year, index, i0) => {
           return {
             a: common_vendor.t(year),
             b: index
           };
         }),
-        x: common_vendor.f(months.value, (month, index, i0) => {
+        v: common_vendor.f(months.value, (month, index, i0) => {
           return {
             a: common_vendor.t(month),
             b: index
           };
         }),
-        y: common_vendor.f(days.value, (day, index, i0) => {
+        w: common_vendor.f(days.value, (day, index, i0) => {
           return {
             a: common_vendor.t(day),
             b: index
           };
         }),
-        z: datePickerValue.value,
-        A: common_vendor.o(onDatePickerChange),
-        B: common_vendor.sr(datePopup, "95edf658-4", {
+        x: datePickerValue.value,
+        y: common_vendor.o(onDatePickerChange),
+        z: common_vendor.sr(datePopup, "95edf658-4", {
           "k": "datePopup"
         }),
-        C: common_vendor.p({
+        A: common_vendor.p({
           type: "bottom"
         })
       };

@@ -16,11 +16,11 @@ const _sfc_main = {
   setup(__props) {
     common_vendor.ref("");
     const loading = common_vendor.ref(false);
-    const vipLevels = ["全部等级", "VIP1", "VIP2", "VIP3", "VIP4", "VIP5"];
+    const vipLevels = ["全部等级", "VIP1", "VIP2", "VIP3"];
     const selectedLevel = common_vendor.ref(0);
     const editingLevel = common_vendor.ref(1);
     const currentPage = common_vendor.ref(1);
-    const pageSize = common_vendor.ref(10);
+    const pageSize = common_vendor.ref(5);
     const totalPages = common_vendor.ref(1);
     const total = common_vendor.ref(0);
     const currentUser = common_vendor.ref(null);
@@ -55,7 +55,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/UserManage.vue:187", "查询用户消费失败：", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/UserManage.vue:195", "查询用户消费失败：", error);
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
           icon: "none"
@@ -75,7 +75,7 @@ const _sfc_main = {
           }
         });
         if (res.code === 200 && res.data) {
-          common_vendor.index.__f__("log", "at pages/admin/components/UserManage.vue:210", "用户列表数据:", res.data);
+          common_vendor.index.__f__("log", "at pages/admin/components/UserManage.vue:218", "用户列表数据:", res.data);
           userList.value = res.data.rows || [];
           total.value = res.data.total || 0;
           totalPages.value = Math.ceil(total.value / pageSize.value) || 1;
@@ -86,7 +86,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/UserManage.vue:221", "获取用户列表失败：", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/UserManage.vue:229", "获取用户列表失败：", error);
         common_vendor.index.showToast({
           title: "获取用户列表失败",
           icon: "none"
@@ -138,7 +138,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/UserManage.vue:291", "修改用户等级失败：", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/UserManage.vue:299", "修改用户等级失败：", error);
         common_vendor.index.showToast({
           title: "修改用户等级失败",
           icon: "none"
@@ -178,8 +178,7 @@ const _sfc_main = {
           size: "30",
           color: "#4a90e2"
         })
-      } : userList.value.length === 0 ? {} : {}, {
-        l: userList.value.length === 0,
+      } : userList.value.length === 0 ? {} : {
         m: common_vendor.f(userList.value, (user, k0, i0) => {
           return {
             a: user.userAvatar || "/static/images/default-avatar.png",
@@ -193,7 +192,9 @@ const _sfc_main = {
             i: user.id
           };
         }),
-        n: vipLevels.slice(1),
+        n: vipLevels.slice(1)
+      }, {
+        l: userList.value.length === 0,
         o: currentPage.value === 1 ? 1 : "",
         p: common_vendor.o(prevPage),
         q: common_vendor.t(currentPage.value),

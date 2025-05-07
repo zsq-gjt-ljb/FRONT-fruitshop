@@ -99,6 +99,7 @@
 .address-edit-container .saved-address .address-actions .action-buttons {
   display: flex;
   align-items: center;
+  margin-left: auto;
 }
 .address-edit-container .saved-address .address-actions .action-buttons .edit-btn, .address-edit-container .saved-address .address-actions .action-buttons .delete-btn {
   font-size: 26rpx;
@@ -109,6 +110,7 @@
 .address-edit-container .saved-address .address-actions .action-buttons .edit-btn {
   color: #3b78db;
   background-color: rgba(59, 120, 219, 0.1);
+  margin-right: -10rpx;
 }
 .address-edit-container .saved-address .address-actions .action-buttons .delete-btn {
   color: #ff5a5f;
@@ -171,7 +173,7 @@
   font-weight: 500;
 }
 .address-edit-container .form-popup .form-content .form-group .form-item input, .address-edit-container .form-popup .form-content .form-group .form-item textarea, .address-edit-container .form-popup .form-content .form-group .form-item .region-picker {
-  width: 100%;
+  width: 91vw;
   height: 80rpx;
   background-color: #f8f9fc;
   border-radius: 8rpx;

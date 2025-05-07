@@ -81,12 +81,7 @@
     </view>
     
     <!-- 官方客服按钮，添加在页面底部 -->
-    <view class="customer-service-section">
-      <button open-type="contact" class="official-service-btn" @contact="handleContact" @tap="handleServiceClick">
-        <image class="icon" src="/static/icons/service.png" mode="aspectFit" />
-        <text>联系官方客服</text>
-      </button>
-    </view>
+   
   </view>
 </template>
 <script setup>

@@ -22,7 +22,7 @@
       <text class="tips-title">温馨提示：</text>
       <text class="tips-content">1. 客服服务时间：9:00-18:00</text>
       <text class="tips-content">2. 非工作时间留言，我们会在上班后第一时间回复</text>
-      <text class="tips-content">3. 如有紧急问题，请拨打电话：400-123-4567</text>
+      <text class="tips-content">3. 如有紧急问题，请拨打电话：18159890621</text>
     </view>
   </view>
 </template>
