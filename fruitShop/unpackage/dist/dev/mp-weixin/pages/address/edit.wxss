@@ -73,9 +73,10 @@
   color: #666;
 }
 .address-edit-container .saved-address .address-info .address-detail {
-  font-size: 28rpx;
-  color: #333;
-  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
 .address-edit-container .saved-address .address-actions {
   display: flex;
@@ -214,6 +215,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 91vw;
+  padding-right: 20rpx;
+  box-sizing: border-box;
+}
+.address-edit-container .form-popup .form-content .form-group .form-item.default-address .label {
+  margin-bottom: 0;
 }
 .address-edit-container .form-popup .popup-footer {
   padding: 20rpx 30rpx;

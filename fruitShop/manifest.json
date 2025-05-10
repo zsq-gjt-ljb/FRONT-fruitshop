@@ -66,7 +66,6 @@
                 "desc": "保存订单数据和导出文件"
             }
         },
-        "lazyCodeLoading": "requiredComponents",
         "requiredPrivateInfos": [
             "chooseAddress",
             "chooseLocation",
@@ -75,7 +74,15 @@
             "onLocationChange",
             "startLocationUpdate",
             "startLocationUpdateBackground"
-        ]
+        ],
+        "lazyCodeLoading": "requiredComponents",
+        "optimization": {
+            "subPackages": true
+        },
+        "plugins": {},
+        "functionalPages": false,
+        "resizable": false,
+        "darkmode": false
     },
     "mp-alipay" : {
         "usingComponents" : true

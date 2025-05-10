@@ -3,10 +3,10 @@ Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
 const common_vendor = require("./common/vendor.js");
 const utils_request = require("./utils/request.js");
 if (!Math) {
+  "./pages/index/index.js";
   "./pages/login/login.js";
   "./pages/agreement/user-agreement.js";
   "./pages/agreement/privacy-policy.js";
-  "./pages/index/index.js";
   "./pages/category/category.js";
   "./pages/cart/cart.js";
   "./pages/user/user.js";
@@ -28,28 +28,38 @@ const _sfc_main = {
     const token = common_vendor.index.getStorageSync("token");
     const isGuestMode = common_vendor.index.getStorageSync("isGuestMode");
     common_vendor.index.__f__("log", "at App.vue:10", "App启动，检查登录状态: token=", token, "isGuestMode=", isGuestMode);
-    if (!token && !isGuestMode) {
-      common_vendor.index.__f__("log", "at App.vue:14", "未登录状态，导航到登录页面");
-      setTimeout(() => {
-        common_vendor.index.reLaunch({
-          url: "/pages/login/login",
-          success: () => {
-            common_vendor.index.__f__("log", "at App.vue:19", "成功导航到登录页面");
-          },
-          fail: (err) => {
-            common_vendor.index.__f__("error", "at App.vue:22", "导航到登录页面失败:", err);
-          }
-        });
-      }, 100);
-    } else {
-      common_vendor.index.__f__("log", "at App.vue:27", "已有登录状态或游客模式，不跳转");
+    if (token) {
+      common_vendor.index.__f__("log", "at App.vue:14", "用户已登录，token存在");
+      return;
+    }
+    if (!isGuestMode) {
+      common_vendor.index.__f__("log", "at App.vue:20", "首次启动，自动设置为游客模式");
+      common_vendor.index.setStorageSync("isGuestMode", true);
     }
   },
   onShow: function() {
-    common_vendor.index.__f__("log", "at App.vue:31", "App Show");
+    common_vendor.index.__f__("log", "at App.vue:25", "App Show");
   },
   onHide: function() {
-    common_vendor.index.__f__("log", "at App.vue:34", "App Hide");
+    common_vendor.index.__f__("log", "at App.vue:28", "App Hide");
+  },
+  // 全局分享配置
+  onShareAppMessage(res) {
+    return {
+      title: "北果南茶 - 新鲜水果，健康生活",
+      path: "/pages/index/index",
+      imageUrl: "/static/images/share.png"
+      // 确保此图片存在
+    };
+  },
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: "北果南茶 - 新鲜水果，健康生活",
+      query: "",
+      imageUrl: "/static/images/share.png"
+      // 确保此图片存在
+    };
   }
 };
 function createApp() {

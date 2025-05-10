@@ -1,9 +1,9 @@
 {
   "pages": [
+    "pages/index/index",
     "pages/login/login",
     "pages/agreement/user-agreement",
     "pages/agreement/privacy-policy",
-    "pages/index/index",
     "pages/category/category",
     "pages/cart/cart",
     "pages/user/user",
@@ -23,7 +23,10 @@
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "南茶北果",
     "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8"
+    "backgroundColor": "#F8F8F8",
+    "navigationStyle": "default",
+    "enableShareAppMessage": true,
+    "enableShareTimeline": true
   },
   "tabBar": {
     "color": "#999999",
@@ -64,7 +67,6 @@
       "desc": "保存订单数据和导出文件"
     }
   },
-  "lazyCodeLoading": "requiredComponents",
   "requiredPrivateInfos": [
     "chooseAddress",
     "chooseLocation",
@@ -74,5 +76,10 @@
     "startLocationUpdate",
     "startLocationUpdateBackground"
   ],
+  "lazyCodeLoading": "requiredComponents",
+  "plugins": {},
+  "functionalPages": false,
+  "resizable": false,
+  "darkmode": false,
   "usingComponents": {}
 }

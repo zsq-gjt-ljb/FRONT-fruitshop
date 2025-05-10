@@ -190,7 +190,7 @@ const _sfc_main = {
 };
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return {
-    a: common_assets._imports_0,
+    a: common_assets._imports_0$1,
     b: $setup.isAgreed,
     c: common_vendor.o((...args) => $setup.navigateToUserAgreement && $setup.navigateToUserAgreement(...args)),
     d: common_vendor.o((...args) => $setup.navigateToPrivacyPolicy && $setup.navigateToPrivacyPolicy(...args)),

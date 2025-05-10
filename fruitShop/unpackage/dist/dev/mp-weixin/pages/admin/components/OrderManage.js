@@ -296,13 +296,12 @@ const _sfc_main = {
             common_vendor.index.__f__("log", "at pages/admin/components/OrderManage.vue:520", "Excel数据解析成功:", result);
             utils_excelUtils.exportToUserSelectedLocation({
               data: result.data,
-              headers: Object.keys(result.data[0] || {}),
               fileName: `订单数据_${getOrderStatusText()}_${Date.now()}.xlsx`,
               success: () => {
-                common_vendor.index.__f__("log", "at pages/admin/components/OrderManage.vue:528", "文件导出成功");
+                common_vendor.index.__f__("log", "at pages/admin/components/OrderManage.vue:527", "文件导出成功");
               },
               fail: (error) => {
-                common_vendor.index.__f__("error", "at pages/admin/components/OrderManage.vue:531", "文件导出失败:", error);
+                common_vendor.index.__f__("error", "at pages/admin/components/OrderManage.vue:530", "文件导出失败:", error);
                 common_vendor.index.showToast({
                   title: "导出失败，请重试",
                   icon: "none"
@@ -311,7 +310,7 @@ const _sfc_main = {
             });
           },
           fail: (error) => {
-            common_vendor.index.__f__("error", "at pages/admin/components/OrderManage.vue:540", "获取Excel数据失败:", error);
+            common_vendor.index.__f__("error", "at pages/admin/components/OrderManage.vue:539", "获取Excel数据失败:", error);
             common_vendor.index.showToast({
               title: "导出失败，请重试",
               icon: "none"
@@ -322,7 +321,7 @@ const _sfc_main = {
           }
         });
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/OrderManage.vue:551", "导出订单失败:", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/OrderManage.vue:550", "导出订单失败:", error);
         common_vendor.index.showToast({
           title: "导出失败，请重试",
           icon: "none"
@@ -385,7 +384,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/OrderManage.vue:630", "状态修改失败", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/OrderManage.vue:629", "状态修改失败", error);
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
           icon: "none"

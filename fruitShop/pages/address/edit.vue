@@ -717,9 +717,10 @@
         }
         
         .address-detail {
-          font-size: 28rpx;
-          color: #333;
-          line-height: 1.4;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          width: 100%;
         }
       }
       
@@ -881,6 +882,13 @@
               display: flex;
               justify-content: space-between;
               align-items: center;
+              width: 91vw;
+              padding-right: 20rpx;
+              box-sizing: border-box;
+              
+              .label {
+                margin-bottom: 0;
+              }
             }
           }
         }

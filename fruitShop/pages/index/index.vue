@@ -247,7 +247,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, defineExpose } from 'vue'
 import request from '@/utils/request'
 import FloatingContact from '@/components/FloatingContact.vue'
 
@@ -740,6 +740,30 @@ const handleContactEvent = () => {
   console.log('联系客服事件被触发')
   // 在这里可以添加联系客服的逻辑
 }
+
+// 分享配置
+const onShareAppMessage = (res) => {
+  return {
+    title: '北果南茶 - 新鲜水果，健康生活',
+    path: '/pages/index/index',
+    imageUrl: homeProducts.value[0]?.indexPic || '/static/images/share.png'
+  }
+}
+
+// 分享到朋友圈
+const onShareTimeline = () => {
+  return {
+    title: '北果南茶 - 新鲜水果，健康生活',
+    query: '',
+    imageUrl: homeProducts.value[0]?.indexPic || '/static/images/share.png'
+  }
+}
+
+// 导出分享方法
+defineExpose({
+  onShareAppMessage,
+  onShareTimeline
+})
 </script>
 
 <style lang="scss">

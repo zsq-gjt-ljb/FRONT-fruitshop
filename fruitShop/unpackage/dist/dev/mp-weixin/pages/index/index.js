@@ -13,7 +13,7 @@ if (!Math) {
 const FloatingContact = () => "../../components/FloatingContact.js";
 const _sfc_main = {
   __name: "index",
-  setup(__props) {
+  setup(__props, { expose: __expose }) {
     const bannerList = common_vendor.ref([]);
     const categories = common_vendor.ref([]);
     const homeProducts = common_vendor.ref([]);
@@ -368,6 +368,26 @@ const _sfc_main = {
     const handleContactEvent = () => {
       common_vendor.index.__f__("log", "at pages/index/index.vue:740", "联系客服事件被触发");
     };
+    const onShareAppMessage = (res) => {
+      var _a;
+      return {
+        title: "北果南茶 - 新鲜水果，健康生活",
+        path: "/pages/index/index",
+        imageUrl: ((_a = homeProducts.value[0]) == null ? void 0 : _a.indexPic) || "/static/images/share.png"
+      };
+    };
+    const onShareTimeline = () => {
+      var _a;
+      return {
+        title: "北果南茶 - 新鲜水果，健康生活",
+        query: "",
+        imageUrl: ((_a = homeProducts.value[0]) == null ? void 0 : _a.indexPic) || "/static/images/share.png"
+      };
+    };
+    __expose({
+      onShareAppMessage,
+      onShareTimeline
+    });
     return (_ctx, _cache) => {
       return common_vendor.e({
         a: common_vendor.f(bannerList.value, (banner, index, i0) => {
@@ -378,7 +398,7 @@ const _sfc_main = {
             d: common_vendor.o(($event) => goToDetail(banner.productId), banner.id)
           };
         }),
-        b: common_assets._imports_0$1,
+        b: common_assets._imports_0,
         c: common_assets._imports_1,
         d: common_assets._imports_2,
         e: common_vendor.o(navigateToAllCategories),
@@ -492,5 +512,6 @@ const _sfc_main = {
     };
   }
 };
+_sfc_main.__runtimeHooks = 6;
 wx.createPage(_sfc_main);
 //# sourceMappingURL=../../../.sourcemap/mp-weixin/pages/index/index.js.map

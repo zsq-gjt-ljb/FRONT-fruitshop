@@ -73,10 +73,7 @@
               <uni-icons type="home" size="24" color="#666"></uni-icons>
               <text>首页</text>
             </view>
-            <view class="action-icon" @tap="contactService">
-              <uni-icons type="headphones" size="24" color="#666"></uni-icons>
-              <text>客服</text>
-            </view>
+            
             <view class="action-icon" @tap="goToCart">
               <uni-icons type="cart" size="24" color="#666"></uni-icons>
               <text>购物车</text>

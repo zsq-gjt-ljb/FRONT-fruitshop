@@ -37,7 +37,7 @@ export default {
     // 客服图标
     icon: {
       type: String,
-      default: '/static/images/customer-service.png'
+      default: '/static/icons/service.png'
     },
     // 是否为悬浮按钮
     isFloat: {

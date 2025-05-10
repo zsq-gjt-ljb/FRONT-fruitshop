@@ -53,7 +53,7 @@ const _sfc_main = {
     };
     const processSkuData = (skuDataList) => {
       try {
-        common_vendor.index.__f__("log", "at pages/detail/detail.vue:227", "开始处理SKU数据:", skuDataList);
+        common_vendor.index.__f__("log", "at pages/detail/detail.vue:224", "开始处理SKU数据:", skuDataList);
         productSpecs.value = [];
         specMap.clear();
         if (!skuDataList || skuDataList.length === 0) {
@@ -72,7 +72,7 @@ const _sfc_main = {
           return;
         }
         skuDataList.forEach((sku) => {
-          common_vendor.index.__f__("log", "at pages/detail/detail.vue:252", "处理SKU项:", sku);
+          common_vendor.index.__f__("log", "at pages/detail/detail.vue:249", "处理SKU项:", sku);
           if (sku.spData) {
             const specs = sku.spData.split(";");
             specs.forEach((spec) => {
@@ -112,9 +112,9 @@ const _sfc_main = {
             id: productSpecs.value[0].skuId
           };
         }
-        common_vendor.index.__f__("log", "at pages/detail/detail.vue:302", "处理后的规格数据:", productSpecs.value);
+        common_vendor.index.__f__("log", "at pages/detail/detail.vue:299", "处理后的规格数据:", productSpecs.value);
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/detail/detail.vue:304", "处理SKU数据出错:", error);
+        common_vendor.index.__f__("error", "at pages/detail/detail.vue:301", "处理SKU数据出错:", error);
         productSpecs.value = [{ name: "默认规格", price: productInfo.value.price, stock: 100 }];
         selectedSpec.value = "默认规格";
       }
@@ -129,16 +129,16 @@ const _sfc_main = {
         return;
       }
       isLoading.value = true;
-      common_vendor.index.__f__("log", "at pages/detail/detail.vue:323", `尝试获取商品数据，ID=${id}`);
+      common_vendor.index.__f__("log", "at pages/detail/detail.vue:320", `尝试获取商品数据，ID=${id}`);
       try {
-        common_vendor.index.__f__("log", "at pages/detail/detail.vue:326", "正在获取商品详情, ID:", id);
+        common_vendor.index.__f__("log", "at pages/detail/detail.vue:323", "正在获取商品详情, ID:", id);
         const result = await utils_request.request({
           url: `https://bgnc.online/api/product/${id}`,
           method: "GET"
         });
-        common_vendor.index.__f__("log", "at pages/detail/detail.vue:333", "API返回结果:", result);
+        common_vendor.index.__f__("log", "at pages/detail/detail.vue:330", "API返回结果:", result);
         if (result.code === 200 && result.data) {
-          common_vendor.index.__f__("log", "at pages/detail/detail.vue:336", "获取到商品详情:", result.data);
+          common_vendor.index.__f__("log", "at pages/detail/detail.vue:333", "获取到商品详情:", result.data);
           productInfo.value = result.data;
           productImages.value = [];
           if (result.data.indexPic) {
@@ -156,7 +156,7 @@ const _sfc_main = {
           }
           skuList.value = result.data.skuList || [];
           processSkuData(result.data.skuList || []);
-          common_vendor.index.__f__("log", "at pages/detail/detail.vue:366", "处理后的商品数据:", {
+          common_vendor.index.__f__("log", "at pages/detail/detail.vue:363", "处理后的商品数据:", {
             images: productImages.value,
             info: productInfo.value,
             specs: productSpecs.value,
@@ -169,7 +169,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/detail/detail.vue:379", "获取商品详情出错:", error);
+        common_vendor.index.__f__("error", "at pages/detail/detail.vue:376", "获取商品详情出错:", error);
         common_vendor.index.showToast({
           title: "网络错误",
           icon: "none"
@@ -179,12 +179,12 @@ const _sfc_main = {
       }
     };
     common_vendor.onLoad((options) => {
-      common_vendor.index.__f__("log", "at pages/detail/detail.vue:391", "详情页收到参数:", options);
+      common_vendor.index.__f__("log", "at pages/detail/detail.vue:388", "详情页收到参数:", options);
       if (options.id) {
         productId.value = options.id;
         getProductDetail(options.id);
       } else {
-        common_vendor.index.__f__("error", "at pages/detail/detail.vue:396", "没有收到有效的商品ID");
+        common_vendor.index.__f__("error", "at pages/detail/detail.vue:393", "没有收到有效的商品ID");
         common_vendor.index.showToast({
           title: "商品ID无效",
           icon: "none"
@@ -207,12 +207,6 @@ const _sfc_main = {
     const goToCart = () => {
       common_vendor.index.switchTab({
         url: "/pages/cart/cart"
-      });
-    };
-    const contactService = () => {
-      common_vendor.index.showToast({
-        title: "客服功能暂未开放",
-        icon: "none"
       });
     };
     const showSpecsPopup = () => {
@@ -296,7 +290,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/detail/detail.vue:542", "添加购物车失败:", error);
+        common_vendor.index.__f__("error", "at pages/detail/detail.vue:539", "添加购物车失败:", error);
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
           icon: "none"
@@ -322,7 +316,7 @@ const _sfc_main = {
           memberLevel = result.data.memberLevel || "";
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/detail/detail.vue:574", "获取会员信息失败:", error);
+        common_vendor.index.__f__("error", "at pages/detail/detail.vue:571", "获取会员信息失败:", error);
       }
       let price = parseFloat(((_a = currentSku.value) == null ? void 0 : _a.price) || productInfo.value.price);
       const checkoutItem = {
@@ -377,7 +371,7 @@ const _sfc_main = {
             });
           },
           fail: function(err) {
-            common_vendor.index.__f__("error", "at pages/detail/detail.vue:646", "生成分享图片失败", err);
+            common_vendor.index.__f__("error", "at pages/detail/detail.vue:643", "生成分享图片失败", err);
             common_vendor.index.hideLoading();
             common_vendor.index.showToast({
               title: "请点击右上角进行分享",
@@ -386,7 +380,7 @@ const _sfc_main = {
           }
         });
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/detail/detail.vue:656", "分享功能出错:", error);
+        common_vendor.index.__f__("error", "at pages/detail/detail.vue:653", "分享功能出错:", error);
         common_vendor.index.hideLoading();
         common_vendor.index.showToast({
           title: "请点击右上角进行分享",
@@ -412,7 +406,7 @@ const _sfc_main = {
         };
       });
     } catch (error) {
-      common_vendor.index.__f__("log", "at pages/detail/detail.vue:696", "分享到朋友圈功能不可用");
+      common_vendor.index.__f__("log", "at pages/detail/detail.vue:693", "分享到朋友圈功能不可用");
     }
     const handleAddToCart = () => {
       if (checkGuestMode()) {
@@ -471,33 +465,27 @@ const _sfc_main = {
         }),
         r: common_vendor.o(goHome),
         s: common_vendor.p({
-          type: "headphones",
-          size: "24",
-          color: "#666"
-        }),
-        t: common_vendor.o(contactService),
-        v: common_vendor.p({
           type: "cart",
           size: "24",
           color: "#666"
         }),
-        w: common_vendor.o(goToCart),
-        x: common_vendor.o(handleAddToCart),
-        y: common_vendor.o(handleBuyNow),
-        z: showSpecs.value
+        t: common_vendor.o(goToCart),
+        v: common_vendor.o(handleAddToCart),
+        w: common_vendor.o(handleBuyNow),
+        x: showSpecs.value
       }, showSpecs.value ? {
-        A: common_vendor.o(hideSpecsPopup),
-        B: productImages.value[0],
-        C: common_vendor.t(currentSku.value.price || productInfo.value.price),
-        D: common_vendor.t(currentSku.value.stock || 0),
-        E: common_vendor.t(selectedSpec.value),
-        F: common_vendor.p({
+        y: common_vendor.o(hideSpecsPopup),
+        z: productImages.value[0],
+        A: common_vendor.t(currentSku.value.price || productInfo.value.price),
+        B: common_vendor.t(currentSku.value.stock || 0),
+        C: common_vendor.t(selectedSpec.value),
+        D: common_vendor.p({
           type: "closeempty",
           size: "20",
           color: "#999"
         }),
-        G: common_vendor.o(hideSpecsPopup),
-        H: common_vendor.f(productSpecs.value, (spec, index, i0) => {
+        E: common_vendor.o(hideSpecsPopup),
+        F: common_vendor.f(productSpecs.value, (spec, index, i0) => {
           return common_vendor.e({
             a: common_vendor.t(spec.name),
             b: spec.price
@@ -513,17 +501,17 @@ const _sfc_main = {
             h: common_vendor.o(($event) => selectSpec(index), index)
           });
         }),
-        I: common_vendor.n(quantity.value <= 1 ? "disabled" : ""),
-        J: common_vendor.o(decreaseQuantity),
-        K: common_vendor.o(validateQuantity),
-        L: quantity.value,
-        M: common_vendor.o(common_vendor.m(($event) => quantity.value = $event.detail.value, {
+        G: common_vendor.n(quantity.value <= 1 ? "disabled" : ""),
+        H: common_vendor.o(decreaseQuantity),
+        I: common_vendor.o(validateQuantity),
+        J: quantity.value,
+        K: common_vendor.o(common_vendor.m(($event) => quantity.value = $event.detail.value, {
           number: true
         })),
-        N: common_vendor.n(quantity.value >= currentSku.value.stock ? "disabled" : ""),
-        O: common_vendor.o(increaseQuantity),
-        P: common_vendor.o(addToCart),
-        Q: common_vendor.o(buyNow)
+        L: common_vendor.n(quantity.value >= currentSku.value.stock ? "disabled" : ""),
+        M: common_vendor.o(increaseQuantity),
+        N: common_vendor.o(addToCart),
+        O: common_vendor.o(buyNow)
       } : {}));
     };
   }

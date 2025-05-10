@@ -1,6 +1,7 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
 const utils_request = require("../../utils/request.js");
+const utils_loginCheck = require("../../utils/loginCheck.js");
 if (!Array) {
   const _easycom_uni_popup_dialog2 = common_vendor.resolveComponent("uni-popup-dialog");
   const _easycom_uni_popup2 = common_vendor.resolveComponent("uni-popup");
@@ -60,11 +61,11 @@ const _sfc_main = {
           method: "GET"
         });
         if (res.code === 200) {
-          common_vendor.index.__f__("log", "at pages/settings/index.vue:203", "res.data是", res);
+          common_vendor.index.__f__("log", "at pages/settings/index.vue:204", "res.data是", res);
           userInfo.value = res.data;
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/settings/index.vue:207", "获取用户信息失败：", error);
+        common_vendor.index.__f__("error", "at pages/settings/index.vue:208", "获取用户信息失败：", error);
       }
     };
     const changeAvatar = () => {
@@ -92,7 +93,7 @@ const _sfc_main = {
                     "Authorization": `Bearer ${common_vendor.index.getStorageSync("token")}`
                   },
                   success: (uploadRes) => {
-                    common_vendor.index.__f__("log", "at pages/settings/index.vue:239", "上传成功, 原始响应:", uploadRes);
+                    common_vendor.index.__f__("log", "at pages/settings/index.vue:240", "上传成功, 原始响应:", uploadRes);
                     try {
                       const response = typeof uploadRes.data === "string" ? JSON.parse(uploadRes.data) : uploadRes.data;
                       if (response.code === 200) {
@@ -105,14 +106,14 @@ const _sfc_main = {
                     }
                   },
                   fail: (err) => {
-                    common_vendor.index.__f__("error", "at pages/settings/index.vue:256", "上传失败:", err);
+                    common_vendor.index.__f__("error", "at pages/settings/index.vue:257", "上传失败:", err);
                     reject(new Error("网络错误"));
                   }
                 });
               });
             };
             const imageUrl = await uploadTask();
-            common_vendor.index.__f__("log", "at pages/settings/index.vue:265", "头像上传成功, URL:", imageUrl);
+            common_vendor.index.__f__("log", "at pages/settings/index.vue:266", "头像上传成功, URL:", imageUrl);
             const updateRes = await utils_request.request({
               url: "https://bgnc.online/api/user/profile",
               method: "PUT",
@@ -131,7 +132,7 @@ const _sfc_main = {
               throw new Error(updateRes.msg || "头像更新失败");
             }
           } catch (error) {
-            common_vendor.index.__f__("error", "at pages/settings/index.vue:291", "头像更新错误:", error);
+            common_vendor.index.__f__("error", "at pages/settings/index.vue:292", "头像更新错误:", error);
             common_vendor.index.showToast({
               title: error.message || "头像更新失败",
               icon: "none"
@@ -167,7 +168,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/settings/index.vue:332", "更新姓名错误:", error);
+        common_vendor.index.__f__("error", "at pages/settings/index.vue:333", "更新姓名错误:", error);
         common_vendor.index.showToast({
           title: "姓名修改失败",
           icon: "error"
@@ -261,7 +262,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/settings/index.vue:449", "更新生日出错:", error);
+        common_vendor.index.__f__("error", "at pages/settings/index.vue:450", "更新生日出错:", error);
         common_vendor.index.showToast({
           title: "生日修改失败",
           icon: "error"
@@ -276,10 +277,7 @@ const _sfc_main = {
         content: "确认退出登录？",
         success: (res) => {
           if (res.confirm) {
-            common_vendor.index.clearStorageSync();
-            common_vendor.index.reLaunch({
-              url: "/pages/login/login"
-            });
+            utils_loginCheck.loginCheck.logout();
           }
         }
       });

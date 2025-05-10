@@ -522,7 +522,6 @@ const confirmExport = async () => {
         // 使用新方法让用户选择保存方式
         exportToUserSelectedLocation({
           data: result.data,
-          headers: Object.keys(result.data[0] || {}),
           fileName: `订单数据_${getOrderStatusText()}_${Date.now()}.xlsx`,
           success: () => {
             console.log('文件导出成功')

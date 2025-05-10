@@ -7259,9 +7259,9 @@ function initOnError() {
   };
 }
 function initRuntimeSocketService() {
-  const hosts = "10.90.241.136,127.0.0.1";
+  const hosts = "10.90.243.33,127.0.0.1";
   const port = "8090";
-  const id = "mp-weixin_Y-judW";
+  const id = "mp-weixin_O3A_Oq";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -63077,6 +63077,14 @@ const messages = {
 };
 const pages = [
   {
+    path: "pages/index/index",
+    style: {
+      navigationBarTitleText: "北果南茶",
+      enableShareAppMessage: true,
+      enableShareTimeline: true
+    }
+  },
+  {
     path: "pages/login/login",
     style: {
       navigationBarTitleText: "登录注册"
@@ -63096,12 +63104,6 @@ const pages = [
       navigationBarTitleText: "隐私政策",
       navigationBarBackgroundColor: "#ffffff",
       navigationBarTextStyle: "black"
-    }
-  },
-  {
-    path: "pages/index/index",
-    style: {
-      navigationBarTitleText: "北果南茶"
     }
   },
   {
@@ -63205,7 +63207,10 @@ const globalStyle = {
   navigationBarTextStyle: "black",
   navigationBarTitleText: "南茶北果",
   navigationBarBackgroundColor: "#F8F8F8",
-  backgroundColor: "#F8F8F8"
+  backgroundColor: "#F8F8F8",
+  navigationStyle: "default",
+  enableShareAppMessage: true,
+  enableShareTimeline: true
 };
 const tabBar = {
   color: "#999999",

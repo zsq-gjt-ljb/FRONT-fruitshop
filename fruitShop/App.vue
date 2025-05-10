@@ -9,22 +9,16 @@
 			
 			console.log('App启动，检查登录状态: token=', token, 'isGuestMode=', isGuestMode)
 			
-			// 如果没有token且不是游客模式，跳转到登录页
-			if (!token && !isGuestMode) {
-				console.log('未登录状态，导航到登录页面')
-				setTimeout(() => {
-					uni.reLaunch({
-						url: '/pages/login/login',
-						success: () => {
-							console.log('成功导航到登录页面')
-						},
-						fail: (err) => {
-							console.error('导航到登录页面失败:', err)
-						}
-					})
-				}, 100) // 延迟执行，确保应用完全初始化
-			} else {
-				console.log('已有登录状态或游客模式，不跳转')
+			// 如果有token，说明用户已登录，不需要处理
+			if (token) {
+				console.log('用户已登录，token存在')
+				return
+			}
+			
+			// 如果没有token也没有设置游客模式，自动设置为游客模式
+			if (!isGuestMode) {
+				console.log('首次启动，自动设置为游客模式')
+				uni.setStorageSync('isGuestMode', true)
 			}
 		},
 		onShow: function() {
@@ -32,6 +26,22 @@
 		},
 		onHide: function() {
 			console.log('App Hide')
+		},
+		// 全局分享配置
+		onShareAppMessage(res) {
+			return {
+				title: '北果南茶 - 新鲜水果，健康生活',
+				path: '/pages/index/index',
+				imageUrl: '/static/images/share.png' // 确保此图片存在
+			}
+		},
+		// 分享到朋友圈
+		onShareTimeline() {
+			return {
+				title: '北果南茶 - 新鲜水果，健康生活',
+				query: '',
+				imageUrl: '/static/images/share.png' // 确保此图片存在
+			}
 		}
 	}
 </script>

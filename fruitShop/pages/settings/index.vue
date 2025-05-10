@@ -111,6 +111,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import request from '@/utils/request'
+import loginCheck from '@/utils/loginCheck'
 
 const userInfo = ref({
   userAvatar: '',
@@ -463,12 +464,8 @@ const handleLogout = () => {
     content: '确认退出登录？',
     success: (res) => {
       if (res.confirm) {
-        // 清除登录状态
-        uni.clearStorageSync()
-        // 跳转到登录页
-        uni.reLaunch({
-          url: '/pages/login/login'
-        })
+        // 使用工具函数退出登录
+        loginCheck.logout();
       }
     }
   })

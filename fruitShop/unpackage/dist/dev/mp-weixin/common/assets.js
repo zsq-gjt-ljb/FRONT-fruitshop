@@ -1,8 +1,8 @@
 "use strict";
-const _imports_0$7 = "/static/images/mylogo.jpg";
-const _imports_0$6 = "/static/icons/medal.png";
+const _imports_0$7 = "/static/icons/medal.png";
 const _imports_1$1 = "/static/icons/exchange.png";
 const _imports_2$1 = "/static/icons/quality.png";
+const _imports_0$6 = "/static/images/mylogo.jpg";
 const _imports_0$5 = "/static/images/empty.png";
 const _imports_0$4 = "/static/icons/vip.png";
 const _imports_1 = "/static/icons/payment.png";
