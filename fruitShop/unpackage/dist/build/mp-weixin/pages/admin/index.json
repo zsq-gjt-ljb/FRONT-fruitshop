@@ -1,0 +1,12 @@
+{
+  "navigationBarTitleText": "管理后台",
+  "usingComponents": {
+    "uni-icons": "../../node-modules/@dcloudio/uni-ui/lib/uni-icons/uni-icons",
+    "product-manage": "./components/ProductManage",
+    "category-manage": "./components/CategoryManage",
+    "home-manage": "./components/HomeManage",
+    "order-manage": "./components/OrderManage",
+    "user-manage": "./components/UserManage",
+    "discount-manage": "./components/DiscountManage"
+  }
+}

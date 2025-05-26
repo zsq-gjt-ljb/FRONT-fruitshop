@@ -1,0 +1,1 @@
+"use strict";const e=require("../../common/vendor.js"),o={data:()=>({}),methods:{handleContact(e){console.log("联系客服事件触发：",e.detail)}}};if(!Array){e.resolveComponent("uni-icons")()}Math;const t=e._export_sfc(o,[["render",function(o,t,n,r,s,a){return{a:e.p({type:"staff",size:"24",color:"#3b78db"})}}]]);wx.createPage(t);

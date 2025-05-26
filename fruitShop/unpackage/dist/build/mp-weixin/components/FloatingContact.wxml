@@ -1,0 +1,1 @@
+<view class="floating-contact" style="{{'bottom:' + e + ';' + ('right:' + f)}}"><button open-type="contact" hover-class="btn-hover" bindcontact="{{d}}" class="contact-btn"><view class="contact-icon"><image src="{{a}}" mode="aspectFit" class="icon-image"/></view><text wx:if="{{b}}" class="contact-text">{{c}}</text></button></view>

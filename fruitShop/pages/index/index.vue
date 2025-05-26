@@ -302,14 +302,14 @@ const loadCategories = async () => {
       
       // 为分类添加默认图片 - 使用自定义图标
       const categoryIcons = [
-       '/static/images/category-fruit.png',
- '/static/images/category-tea.png',
- '/static/images/category-leaf.png',
- '/static/images/category-dried.png',  
- '/static/images/category-snack.png',
-'/static/images/category-digi.png',
-'/static/images/category-gift.png',
- '/static/images/category-feature.png'
+        '/static/images/category-fruit.jpg',
+        '/static/images/category-feature.jpg',
+        '/static/images/category-tea.jpg',
+        '/static/images/category-seafood.jpg',  
+        '/static/images/category-sell.jpg',
+        '/static/images/category-digi.jpg',
+        '/static/images/category-gift.jpg',
+        '/static/images/category-travel.jpg'
         
         
       ]
@@ -1115,8 +1115,8 @@ defineExpose({
         transition: all 0.3s ease;
         
         .category-image {
-          width: 70%;
-          height: 70%;
+          width: 100%;
+          height: 100%;
           transition: transform 0.3s ease;
         }
 

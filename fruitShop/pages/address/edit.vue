@@ -662,299 +662,251 @@
   
 <style lang="scss">
   .address-edit-container {
-    min-height: 100vh;
-    background-color: #f8f9fc;
-    padding-bottom: 180rpx; // 为底部按钮留出空间
-    display: flex;
-    flex-direction: column;
-    
-    .saved-address {
-      background: #ffffff;
-      margin: 20rpx;
-      border-radius: 16rpx;
-      padding: 30rpx;
-      box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
-      display: flex;
-      align-items: flex-start;
-      position: relative;
-      
-      .address-select {
-        margin-right: 20rpx;
-        padding-top: 6rpx;
-        
-        .select-circle {
-          width: 36rpx;
-          height: 36rpx;
-          border-radius: 50%;
-          border: 2rpx solid #ccc;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          
-          &.selected {
-            background-color: #3b78db;
-            border-color: #3b78db;
-          }
-        }
-      }
-      
-      .address-info {
-        flex: 1;
-        
-        .user-info {
-          margin-bottom: 10rpx;
-          
-          .name {
-            font-size: 32rpx;
-            font-weight: 500;
-            margin-right: 20rpx;
-          }
-          
-          .phone {
-            font-size: 28rpx;
-            color: #666;
-          }
-        }
-        
-        .address-detail {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          width: 100%;
-        }
-      }
-      
-      .address-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        margin-top: 20rpx;
-        padding-top: 20rpx;
-        border-top: 1px solid #f0f0f0;
-        
-        .default-tag {
-          display: flex;
-          align-items: center;
-          font-size: 24rpx;
-          color: #ff9500;
-          
-          .tag-icon {
-            font-size: 24rpx;
-            margin-right: 4rpx;
-          }
-        }
-        
-        .action-buttons {
-          display: flex;
-          align-items: center;
-          margin-left: auto;
-          
-          .edit-btn, .delete-btn {
-            font-size: 26rpx;
-            padding: 6rpx 16rpx;
-            border-radius: 30rpx;
-            margin-left: 16rpx;
-          }
-          
-          .edit-btn {
-            color: #3b78db;
-            background-color: rgba(59, 120, 219, 0.1);
-            margin-right: -10rpx;
-          }
-          
-          .delete-btn {
-            color: #ff5a5f;
-            background-color: rgba(255, 90, 95, 0.1);
-          }
-        }
-      }
-    }
-    
-    .add-address {
-      margin: 40rpx 20rpx;
-      height: 88rpx;
-      background: #3b78db;
-      border-radius: 44rpx;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 30rpx;
-      box-shadow: 0 6rpx 16rpx rgba(59, 120, 219, 0.2);
-    }
-    
-    .form-popup {
-      background-color: #fff;
-      border-radius: 24rpx 24rpx 0 0;
-      overflow: hidden;
-      padding-bottom: env(safe-area-inset-bottom);
-      max-height: 85vh;
-      display: flex;
-      flex-direction: column;
-      
-      .popup-header {
-        padding: 30rpx;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-        border-bottom: 1px solid #f0f0f0;
-        
-        .title {
-          font-size: 32rpx;
-          font-weight: 500;
-        }
-        
-        .close-btn {
-          position: absolute;
-          right: 30rpx;
-          top: 30rpx;
-          font-size: 40rpx;
-          color: #999;
-        }
-      }
-      
-      .form-content {
-        padding: 30rpx;
-        flex: 1;
-        overflow-y: auto;
-        max-height: 65vh;
-        
-        .form-group {
-          .form-item {
-            margin-bottom: 36rpx;
-            
-            .label {
-              display: block;
-              font-size: 28rpx;
-              color: #333;
-              margin-bottom: 16rpx;
-              font-weight: 500;
-            }
-            
-            input, textarea, .region-picker {
-              width: 91vw;
-              height: 80rpx;
-              background-color: #f8f9fc;
-              border-radius: 8rpx;
-              padding: 0 20rpx;
-              font-size: 28rpx;
-              color: #333;
-              box-sizing: border-box;
-            }
-            
-            textarea {
-              height: auto;
-              min-height: 160rpx;
-              padding: 20rpx;
-              line-height: 1.5;
-            }
-            
-            .region-picker {
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              position: relative;
-              
-              .value {
-                color: #333;
-              }
-              
-              .placeholder {
-                color: #999;
-              }
-              
-              .icon-right {
-                font-size: 24rpx;
-                color: #999;
-              }
-            }
-            
-            .error-tip {
-              display: block;
-              font-size: 24rpx;
-              color: #ff5a5f;
-              margin-top: 8rpx;
-            }
-            
-            &.default-address {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              width: 91vw;
-              padding-right: 20rpx;
-              box-sizing: border-box;
-              
-              .label {
-                margin-bottom: 0;
-              }
-            }
-          }
-        }
-      }
-      
-      .popup-footer {
-        padding: 20rpx 30rpx;
-        border-top: 1px solid #f0f0f0;
-        
-        .save-button {
-          height: 88rpx;
-          background: #3b78db;
-          border-radius: 44rpx;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #fff;
-          font-size: 30rpx;
-          font-weight: 500;
-        }
-      }
-    }
-    
-    .region-popup {
-      background-color: #fff;
-      border-radius: 24rpx 24rpx 0 0;
-      padding-bottom: env(safe-area-inset-bottom);
-      
-      .popup-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 30rpx;
-        border-bottom: 1px solid #f0f0f0;
-        
-        .title {
-          font-size: 32rpx;
-          font-weight: 500;
-        }
-        
-        .cancel, .confirm {
-          font-size: 28rpx;
-          color: #999;
-        }
-        
-        .confirm {
-          color: #3b78db;
-          font-weight: 500;
-        }
-      }
-      
-      .picker-view {
-        width: 100%;
-        height: 480rpx;
-        
-        .picker-item {
-          line-height: 80rpx;
-          font-size: 28rpx;
-          text-align: center;
-          color: #333;
-        }
-      }
-    }
-    
-    .placeholder {
-      color: #999;
-    }
-  }
+  background-color: #f8f9fc;
+  padding-bottom: 180rpx;
+  display: flex;
+  flex-direction: column;
+}
+.address-edit-container .saved-address {
+  background: #ffffff;
+  margin: 20rpx;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+}
+.address-edit-container .saved-address .address-select {
+  width: 70rpx;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.address-edit-container .saved-address .address-select .select-circle {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  border: 2rpx solid #ccc;
+}
+.address-edit-container .saved-address .address-select .select-circle.selected {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #3b78db;
+  border-color: #3b78db;
+}
+.address-edit-container .saved-address .address-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.address-edit-container .saved-address .address-info .user-info {
+  margin-bottom: 10rpx;
+}
+.address-edit-container .saved-address .address-info .user-info .name {
+  font-size: 32rpx;
+  font-weight: 500;
+  margin-right: 20rpx;
+}
+.address-edit-container .saved-address .address-info .user-info .phone {
+  font-size: 28rpx;
+  color: #666;
+}
+.address-edit-container .saved-address .address-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 120rpx;
+}
+.address-edit-container .saved-address .address-actions .default-tag {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: #ff9500;
+}
+.address-edit-container .saved-address .address-actions .default-tag .tag-icon {
+  font-size: 24rpx;
+  margin-right: 4rpx;
+}
+.address-edit-container .saved-address .address-actions .action-buttons {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+}
+.address-edit-container .saved-address .address-actions .action-buttons .edit-btn, .address-edit-container .saved-address .address-actions .action-buttons .delete-btn {
+  font-size: 26rpx;
+  padding: 10rpx 25rpx;
+  border-radius: 20rpx;
+}
+.address-edit-container .saved-address .address-actions .action-buttons .edit-btn {
+  color: #3b78db;
+  background-color: rgba(59, 120, 219, 0.1);
+  margin-bottom: 15rpx;
+}
+.address-edit-container .saved-address .address-actions .action-buttons .delete-btn {
+  color: #ff5a5f;
+  background-color: rgba(255, 90, 95, 0.1);
+}
+.address-edit-container .add-address {
+  margin: 40rpx 20rpx;
+  height: 88rpx;
+  background: #3b78db;
+  border-radius: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 30rpx;
+  box-shadow: 0 6rpx 16rpx rgba(59, 120, 219, 0.2);
+}
+.address-edit-container .form-popup {
+  background-color: #fff;
+  border-radius: 24rpx 24rpx 0 0;
+  overflow: hidden;
+  padding-bottom: env(safe-area-inset-bottom);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+.address-edit-container .form-popup .popup-header {
+  padding: 30rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border-bottom: 1px solid #f0f0f0;
+}
+.address-edit-container .form-popup .popup-header .title {
+  font-size: 32rpx;
+  font-weight: 500;
+}
+.address-edit-container .form-popup .popup-header .close-btn {
+  position: absolute;
+  right: 30rpx;
+  top: 30rpx;
+  font-size: 40rpx;
+  color: #999;
+}
+.address-edit-container .form-popup .form-content {
+  padding: 30rpx;
+  flex: 1;
+  overflow-y: auto;
+  max-height: 65vh;
+}
+.address-edit-container .form-popup .form-content .form-group .form-item {
+  margin-bottom: 36rpx;
+}
+.address-edit-container .form-popup .form-content .form-group .form-item .label {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 16rpx;
+  font-weight: 500;
+}
+.address-edit-container .form-popup .form-content .form-group .form-item input, .address-edit-container .form-popup .form-content .form-group .form-item textarea, .address-edit-container .form-popup .form-content .form-group .form-item .region-picker {
+  width: 91vw;
+  height: 80rpx;
+  background-color: #f8f9fc;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  color: #333;
+  box-sizing: border-box;
+}
+.address-edit-container .form-popup .form-content .form-group .form-item textarea {
+  height: auto;
+  min-height: 160rpx;
+  padding: 20rpx;
+  line-height: 1.5;
+}
+.address-edit-container .form-popup .form-content .form-group .form-item .region-picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+.address-edit-container .form-popup .form-content .form-group .form-item .region-picker .value {
+  color: #333;
+}
+.address-edit-container .form-popup .form-content .form-group .form-item .region-picker .placeholder {
+  color: #999;
+}
+.address-edit-container .form-popup .form-content .form-group .form-item .region-picker .icon-right {
+  font-size: 24rpx;
+  color: #999;
+}
+.address-edit-container .form-popup .form-content .form-group .form-item .error-tip {
+  display: block;
+  font-size: 24rpx;
+  color: #ff5a5f;
+  margin-top: 8rpx;
+}
+.address-edit-container .form-popup .form-content .form-group .form-item.default-address {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 91vw;
+  padding-right: 20rpx;
+  box-sizing: border-box;
+}
+.address-edit-container .form-popup .form-content .form-group .form-item.default-address .label {
+  margin-bottom: 0;
+}
+.address-edit-container .form-popup .popup-footer {
+  padding: 20rpx 30rpx;
+  border-top: 1px solid #f0f0f0;
+}
+.address-edit-container .form-popup .popup-footer .save-button {
+  height: 88rpx;
+  background: #3b78db;
+  border-radius: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 500;
+}
+.address-edit-container .region-popup {
+  background-color: #fff;
+  border-radius: 24rpx 24rpx 0 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.address-edit-container .region-popup .popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1px solid #f0f0f0;
+}
+.address-edit-container .region-popup .popup-header .title {
+  font-size: 32rpx;
+  font-weight: 500;
+}
+.address-edit-container .region-popup .popup-header .cancel, .address-edit-container .region-popup .popup-header .confirm {
+  font-size: 28rpx;
+  color: #999;
+}
+.address-edit-container .region-popup .popup-header .confirm {
+  color: #3b78db;
+  font-weight: 500;
+}
+.address-edit-container .region-popup .picker-view {
+  width: 100%;
+  height: 480rpx;
+}
+.address-edit-container .region-popup .picker-view .picker-item {
+  line-height: 80rpx;
+  font-size: 28rpx;
+  text-align: center;
+  color: #333;
+}
+.address-edit-container .placeholder {
+  color: #999;
+}
 </style>

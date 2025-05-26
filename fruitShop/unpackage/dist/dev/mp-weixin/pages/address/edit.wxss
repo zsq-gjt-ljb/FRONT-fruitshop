@@ -24,7 +24,6 @@
 /* 透明度 */
 /* 文章场景相关 */
 .address-edit-container {
-  min-height: 100vh;
   background-color: #f8f9fc;
   padding-bottom: 180rpx;
   display: flex;
@@ -37,28 +36,33 @@
   padding: 30rpx;
   box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
   display: flex;
-  align-items: flex-start;
-  position: relative;
+  justify-content: space-around;
+  align-items: stretch;
 }
 .address-edit-container .saved-address .address-select {
-  margin-right: 20rpx;
-  padding-top: 6rpx;
+  width: 70rpx;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 .address-edit-container .saved-address .address-select .select-circle {
   width: 36rpx;
   height: 36rpx;
   border-radius: 50%;
   border: 2rpx solid #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 .address-edit-container .saved-address .address-select .select-circle.selected {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: #3b78db;
   border-color: #3b78db;
 }
 .address-edit-container .saved-address .address-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .address-edit-container .saved-address .address-info .user-info {
   margin-bottom: 10rpx;
@@ -72,20 +76,11 @@
   font-size: 28rpx;
   color: #666;
 }
-.address-edit-container .saved-address .address-info .address-detail {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 100%;
-}
 .address-edit-container .saved-address .address-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  margin-top: 20rpx;
-  padding-top: 20rpx;
-  border-top: 1px solid #f0f0f0;
+  width: 120rpx;
 }
 .address-edit-container .saved-address .address-actions .default-tag {
   display: flex;
@@ -98,20 +93,22 @@
   margin-right: 4rpx;
 }
 .address-edit-container .saved-address .address-actions .action-buttons {
+  height: 100%;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
   margin-left: auto;
 }
 .address-edit-container .saved-address .address-actions .action-buttons .edit-btn, .address-edit-container .saved-address .address-actions .action-buttons .delete-btn {
   font-size: 26rpx;
-  padding: 6rpx 16rpx;
-  border-radius: 30rpx;
-  margin-left: 16rpx;
+  padding: 10rpx 25rpx;
+  border-radius: 20rpx;
 }
 .address-edit-container .saved-address .address-actions .action-buttons .edit-btn {
   color: #3b78db;
   background-color: rgba(59, 120, 219, 0.1);
-  margin-right: -10rpx;
+  margin-bottom: 15rpx;
 }
 .address-edit-container .saved-address .address-actions .action-buttons .delete-btn {
   color: #ff5a5f;

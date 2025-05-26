@@ -56,14 +56,14 @@ const _sfc_main = {
           common_vendor.index.__f__("log", "at pages/index/index.vue:300", "分类数据:", result.data);
           categories.value = result.data || [];
           const categoryIcons = [
-            "/static/images/category-fruit.png",
-            "/static/images/category-tea.png",
-            "/static/images/category-leaf.png",
-            "/static/images/category-dried.png",
-            "/static/images/category-snack.png",
-            "/static/images/category-digi.png",
-            "/static/images/category-gift.png",
-            "/static/images/category-feature.png"
+            "/static/images/category-fruit.jpg",
+            "/static/images/category-feature.jpg",
+            "/static/images/category-tea.jpg",
+            "/static/images/category-seafood.jpg",
+            "/static/images/category-sell.jpg",
+            "/static/images/category-digi.jpg",
+            "/static/images/category-gift.jpg",
+            "/static/images/category-travel.jpg"
           ];
           categories.value = categories.value.map((cat, index) => ({
             ...cat,

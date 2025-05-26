@@ -5,7 +5,6 @@
     "versionName" : "1.0.0",
     "versionCode" : "100",
     "transformPx" : false,
- 
     "app-plus" : {
         "usingComponents" : true,
         "nvueStyleCompiler" : "uni-app",
@@ -16,11 +15,8 @@
             "autoclose" : true,
             "delay" : 0
         },
-     
         "modules" : {},
-      
         "distribute" : {
-           
             "android" : {
                 "permissions" : [
                     "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
@@ -40,33 +36,29 @@
                     "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
                 ]
             },
-    
             "ios" : {},
-          
             "sdkConfigs" : {}
         }
     },
-  
     "quickapp" : {},
-   
     "mp-weixin" : {
         "appid" : "wx4bf50c6e088e0b88",
         "setting" : {
             "urlCheck" : false,
-            "es6": true,
-            "postcss": true,
-            "minified": true
+            "es6" : true,
+            "postcss" : true,
+            "minified" : true
         },
         "usingComponents" : true,
-        "permission": {
-            "scope.userLocation": {
-                "desc": "你的位置信息将用于小程序位置接口的效果展示"
+        "permission" : {
+            "scope.userLocation" : {
+                "desc" : "你的位置信息将用于小程序位置接口的效果展示"
             },
-            "scope.writePhotosAlbum": {
-                "desc": "保存订单数据和导出文件"
+            "scope.writePhotosAlbum" : {
+                "desc" : "保存订单数据和导出文件"
             }
         },
-        "requiredPrivateInfos": [
+        "requiredPrivateInfos" : [
             "chooseAddress",
             "chooseLocation",
             "choosePoi",
@@ -75,14 +67,14 @@
             "startLocationUpdate",
             "startLocationUpdateBackground"
         ],
-        "lazyCodeLoading": "requiredComponents",
-        "optimization": {
-            "subPackages": true
+        "lazyCodeLoading" : "requiredComponents",
+        "optimization" : {
+            "subPackages" : true
         },
-        "plugins": {},
-        "functionalPages": false,
-        "resizable": false,
-        "darkmode": false
+        "plugins" : {},
+        "functionalPages" : false,
+        "resizable" : false,
+        "darkmode" : false
     },
     "mp-alipay" : {
         "usingComponents" : true

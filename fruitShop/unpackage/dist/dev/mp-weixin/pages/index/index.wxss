@@ -322,8 +322,8 @@
   transition: all 0.3s ease;
 }
 .home-container .category-grid .category-item .category-icon-wrapper .category-image {
-  width: 70%;
-  height: 70%;
+  width: 100%;
+  height: 100%;
   transition: transform 0.3s ease;
 }
 .home-container .category-grid .category-item .category-icon-wrapper:active {
