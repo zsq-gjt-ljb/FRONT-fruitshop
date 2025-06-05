@@ -232,7 +232,7 @@ const _sfc_main = {
         });
         try {
           await utils_request.request({
-            url: `https://bgnc.online/api/order`,
+            url: `https://bgnc.online/api/order/`,
             method: "PUT",
             data: {
               id: orderId.value,

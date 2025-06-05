@@ -112,7 +112,7 @@
           <text class="price-value">{{ finalPrice.toFixed(2) }}</text>
         </text>
       </view>
-      <view class="submit-btn" @tap="submitOrder">
+      <view class="submit-btn" @tap="submitOrderDebounced">
         提交订单
       </view>
     </view>
@@ -365,6 +365,17 @@ const goToAddressList = () => {
   })
 }
 
+// 防抖函数实现
+function debounce(fn, delay = 800) {
+  let timer = null;
+  return function (...args) {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, delay);
+  };
+}
+
 // 提交订单
 const submitOrder = async () => {
   // 检查是否是游客模式
@@ -478,6 +489,9 @@ const submitOrder = async () => {
     })
   }
 }
+
+// 用防抖包裹提交订单方法
+const submitOrderDebounced = debounce(submitOrder, 800);
 
 // 处理订单成功
 const handleOrderSuccess = async (result) => {

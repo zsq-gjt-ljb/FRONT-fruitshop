@@ -456,7 +456,7 @@ const handlePay = async () => {
     // 支付成功后更新订单状态为待发货(状态码1)
     try {
       await request({
-        url: `https://bgnc.online/api/order`,
+        url: `https://bgnc.online/api/order/`,
         method: 'PUT',
         data: {
           id: orderId.value,
