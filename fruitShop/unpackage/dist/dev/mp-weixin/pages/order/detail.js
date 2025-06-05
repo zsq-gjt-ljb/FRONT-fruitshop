@@ -282,7 +282,7 @@ const _sfc_main = {
       if (!orderCreateTime.value)
         return;
       const createTime = new Date(orderCreateTime.value.replace(/-/g, "/"));
-      const expireTime = new Date(createTime.getTime() + 10 * 60 * 1e3);
+      const expireTime = new Date(createTime.getTime() + 15 * 60 * 1e3);
       const now = /* @__PURE__ */ new Date();
       if (now >= expireTime) {
         orderTimeLeft.value = "00:00";

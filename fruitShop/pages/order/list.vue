@@ -335,8 +335,12 @@ const confirmReceived = async (orderId) => {
       if (res.confirm) {
         try {
           const result = await request({
-            url: `https://bgnc.online/api/order/receive/${orderId}`,
-            method: 'PUT'
+            url: 'https://bgnc.online/api/order/',
+            method: 'PUT',
+            data: {
+              id: orderId,
+              status: 3
+            }
           })
           
           if (result.code === 200) {

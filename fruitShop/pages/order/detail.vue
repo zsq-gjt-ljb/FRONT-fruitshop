@@ -518,7 +518,7 @@ const calculateOrderTimeLeft = () => {
   // 解析订单创建时间
   const createTime = new Date(orderCreateTime.value.replace(/-/g, '/'))
   // 设置超时时间为10分钟
-  const expireTime = new Date(createTime.getTime() + 10 * 60 * 1000)
+  const expireTime = new Date(createTime.getTime() + 15 * 60 * 1000)
   const now = new Date()
   
   // 如果当前时间已经超过了过期时间

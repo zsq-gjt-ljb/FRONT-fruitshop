@@ -184,8 +184,12 @@ const _sfc_main = {
           if (res.confirm) {
             try {
               const result = await utils_request.request({
-                url: `https://bgnc.online/api/order/receive/${orderId}`,
-                method: "PUT"
+                url: "https://bgnc.online/api/order/",
+                method: "PUT",
+                data: {
+                  id: orderId,
+                  status: 3
+                }
               });
               if (result.code === 200) {
                 common_vendor.index.showToast({
@@ -202,7 +206,7 @@ const _sfc_main = {
                 });
               }
             } catch (error) {
-              common_vendor.index.__f__("error", "at pages/order/list.vue:359", "确认收货失败:", error);
+              common_vendor.index.__f__("error", "at pages/order/list.vue:363", "确认收货失败:", error);
               common_vendor.index.showToast({
                 title: "网络错误，请稍后再试",
                 icon: "none"
@@ -218,7 +222,7 @@ const _sfc_main = {
       });
     };
     common_vendor.onLoad((options) => {
-      common_vendor.index.__f__("log", "at pages/order/list.vue:379", "订单列表页面参数:", options);
+      common_vendor.index.__f__("log", "at pages/order/list.vue:383", "订单列表页面参数:", options);
       if (options.status !== void 0) {
         const status = options.status === "" ? "" : parseInt(options.status);
         activeTab.value = status;
@@ -229,7 +233,7 @@ const _sfc_main = {
       }
     });
     common_vendor.onShow(() => {
-      common_vendor.index.__f__("log", "at pages/order/list.vue:396", "订单列表页面显示,刷新数据");
+      common_vendor.index.__f__("log", "at pages/order/list.vue:400", "订单列表页面显示,刷新数据");
       page.value = 1;
       orderList.value = [];
       hasMore.value = true;
@@ -245,7 +249,7 @@ const _sfc_main = {
       loadMore();
     });
     common_vendor.onMounted(() => {
-      common_vendor.index.__f__("log", "at pages/order/list.vue:419", "订单列表页面已加载");
+      common_vendor.index.__f__("log", "at pages/order/list.vue:423", "订单列表页面已加载");
     });
     const calculateTimeLeft = (createTime) => {
       if (!createTime)
@@ -285,14 +289,14 @@ const _sfc_main = {
                 }
               });
               if (result.code === 200) {
-                common_vendor.index.__f__("log", "at pages/order/list.vue:489", `列表中订单 ${order.id} 已超时，状态更新为已失效`);
+                common_vendor.index.__f__("log", "at pages/order/list.vue:493", `列表中订单 ${order.id} 已超时，状态更新为已失效`);
                 orderList.value[i].status = -1;
                 orderList.value[i].timeToLive = "";
               } else {
-                common_vendor.index.__f__("error", "at pages/order/list.vue:495", `列表中订单 ${order.id} 状态更新失败:`, result.msg);
+                common_vendor.index.__f__("error", "at pages/order/list.vue:499", `列表中订单 ${order.id} 状态更新失败:`, result.msg);
               }
             } catch (error) {
-              common_vendor.index.__f__("error", "at pages/order/list.vue:498", `列表中更新订单 ${order.id} 状态失败:`, error);
+              common_vendor.index.__f__("error", "at pages/order/list.vue:502", `列表中更新订单 ${order.id} 状态失败:`, error);
             }
           }
         } else {
