@@ -29,6 +29,7 @@ const _sfc_main = {
     const deliverySn = common_vendor.ref("");
     const deliveryCompany = common_vendor.ref("");
     const receiverPhone = common_vendor.ref("");
+    const receiverDetailAddress = common_vendor.ref("");
     const logisticsData = common_vendor.ref([]);
     const logisticsLoading = common_vendor.ref(false);
     const formatCreateTime = common_vendor.computed(() => {
@@ -47,7 +48,7 @@ const _sfc_main = {
           url: `https://bgnc.online/api/order/${orderId.value}`,
           method: "GET"
         });
-        common_vendor.index.__f__("log", "at pages/order/detail.vue:202", "获取订单详情结果:", JSON.stringify(result));
+        common_vendor.index.__f__("log", "at pages/order/detail.vue:220", "获取订单详情结果:", JSON.stringify(result));
         if (result.code === 200) {
           if (result.data) {
             freightAmount.value = result.data.freightAmount || "0.00";
@@ -73,7 +74,7 @@ const _sfc_main = {
             if (isTimeout && result.data.status === 0) {
               const updateResult = await updateOrderStatus(-1);
               if (!updateResult) {
-                common_vendor.index.__f__("error", "at pages/order/detail.vue:243", "订单状态更新失败,重试一次");
+                common_vendor.index.__f__("error", "at pages/order/detail.vue:261", "订单状态更新失败,重试一次");
                 await updateOrderStatus(-1);
               }
               orderStatus.value = -1;
@@ -116,6 +117,8 @@ const _sfc_main = {
                 }
               }
             }
+            receiverPhone.value = result.data.receiverPhone || "";
+            receiverDetailAddress.value = result.data.receiverDetailAddress || "";
           }
         } else {
           common_vendor.index.showToast({
@@ -124,7 +127,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/order/detail.vue:313", "获取订单详情失败:", error);
+        common_vendor.index.__f__("error", "at pages/order/detail.vue:335", "获取订单详情失败:", error);
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
           icon: "none"
@@ -162,7 +165,7 @@ const _sfc_main = {
       common_vendor.index.navigateBack();
     };
     const handleContact = (e) => {
-      common_vendor.index.__f__("log", "at pages/order/detail.vue:370", "联系客服事件触发:", e.detail);
+      common_vendor.index.__f__("log", "at pages/order/detail.vue:392", "联系客服事件触发:", e.detail);
     };
     const getStatusText = (status) => {
       switch (parseInt(status)) {
@@ -194,7 +197,7 @@ const _sfc_main = {
         if (!loginResult.code) {
           throw new Error("获取微信登录code失败");
         }
-        common_vendor.index.__f__("log", "at pages/order/detail.vue:410", "获取到微信登录code:", loginResult.code);
+        common_vendor.index.__f__("log", "at pages/order/detail.vue:432", "获取到微信登录code:", loginResult.code);
         const paymentResult = await utils_request.request({
           url: "https://bgnc.online/api/notify/payment",
           method: "POST",
@@ -203,7 +206,7 @@ const _sfc_main = {
             code: loginResult.code
           }
         });
-        common_vendor.index.__f__("log", "at pages/order/detail.vue:422", "获取到支付参数:", paymentResult);
+        common_vendor.index.__f__("log", "at pages/order/detail.vue:444", "获取到支付参数:", paymentResult);
         if (paymentResult.code !== 200 || !paymentResult.data) {
           throw new Error(paymentResult.message || "获取支付参数失败");
         }
@@ -217,11 +220,11 @@ const _sfc_main = {
             signType: paymentResult.data.signType,
             paySign: paymentResult.data.paySign,
             success: (res) => {
-              common_vendor.index.__f__("log", "at pages/order/detail.vue:440", "支付成功", res);
+              common_vendor.index.__f__("log", "at pages/order/detail.vue:462", "支付成功", res);
               resolve(res);
             },
             fail: (err) => {
-              common_vendor.index.__f__("log", "at pages/order/detail.vue:444", "支付失败", err);
+              common_vendor.index.__f__("log", "at pages/order/detail.vue:466", "支付失败", err);
               reject(err);
             }
           });
@@ -240,15 +243,15 @@ const _sfc_main = {
               // 待发货状态
             }
           });
-          common_vendor.index.__f__("log", "at pages/order/detail.vue:466", "订单状态已更新为待发货");
+          common_vendor.index.__f__("log", "at pages/order/detail.vue:488", "订单状态已更新为待发货");
         } catch (updateError) {
-          common_vendor.index.__f__("error", "at pages/order/detail.vue:468", "更新订单状态失败:", updateError);
+          common_vendor.index.__f__("error", "at pages/order/detail.vue:490", "更新订单状态失败:", updateError);
         }
         setTimeout(() => {
           getOrderDetail();
         }, 1e3);
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/order/detail.vue:477", "支付过程发生错误:", error);
+        common_vendor.index.__f__("error", "at pages/order/detail.vue:499", "支付过程发生错误:", error);
         common_vendor.index.hideLoading();
         if (error.errMsg && error.errMsg.includes("cancel")) {
           common_vendor.index.showToast({
@@ -275,7 +278,7 @@ const _sfc_main = {
       return `${year}-${month}-${day} ${hour}:${minute}`;
     };
     const showPayButton = common_vendor.computed(() => {
-      common_vendor.index.__f__("log", "at pages/order/detail.vue:509", "计算是否显示支付按钮, 当前状态:", orderStatus.value);
+      common_vendor.index.__f__("log", "at pages/order/detail.vue:531", "计算是否显示支付按钮, 当前状态:", orderStatus.value);
       return orderStatus.value === 0 && !isOrderExpired.value && !isTimeoutOrder.value;
     });
     const calculateOrderTimeLeft = () => {
@@ -297,10 +300,10 @@ const _sfc_main = {
       orderTimeLeft.value = `${String(diffMin).padStart(2, "0")}:${String(diffSec).padStart(2, "0")}`;
     };
     const handleOrderExpired = async () => {
-      common_vendor.index.__f__("log", "at pages/order/detail.vue:543", "订单已超时，准备更新订单状态");
+      common_vendor.index.__f__("log", "at pages/order/detail.vue:565", "订单已超时，准备更新订单状态");
       try {
         if (orderStatus.value !== 0) {
-          common_vendor.index.__f__("log", "at pages/order/detail.vue:548", "订单状态不是待支付,无需更新");
+          common_vendor.index.__f__("log", "at pages/order/detail.vue:570", "订单状态不是待支付,无需更新");
           return;
         }
         const result = await utils_request.request({
@@ -312,7 +315,7 @@ const _sfc_main = {
           }
         });
         if (result.code === 200) {
-          common_vendor.index.__f__("log", "at pages/order/detail.vue:563", "订单状态更新为已失效");
+          common_vendor.index.__f__("log", "at pages/order/detail.vue:585", "订单状态更新为已失效");
           orderStatus.value = -1;
           isOrderExpired.value = true;
           common_vendor.index.showToast({
@@ -324,13 +327,13 @@ const _sfc_main = {
             navigateBack();
           }, 2e3);
         } else {
-          common_vendor.index.__f__("error", "at pages/order/detail.vue:577", "更新订单状态失败:", result.msg);
+          common_vendor.index.__f__("error", "at pages/order/detail.vue:599", "更新订单状态失败:", result.msg);
           setTimeout(async () => {
             await updateOrderStatus(-1);
           }, 1e3);
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/order/detail.vue:584", "更新订单状态失败:", error);
+        common_vendor.index.__f__("error", "at pages/order/detail.vue:606", "更新订单状态失败:", error);
         setTimeout(async () => {
           await updateOrderStatus(-1);
         }, 1e3);
@@ -347,7 +350,7 @@ const _sfc_main = {
     };
     const updateOrderStatus = async (status) => {
       try {
-        common_vendor.index.__f__("log", "at pages/order/detail.vue:611", `更新订单状态为: ${status}`);
+        common_vendor.index.__f__("log", "at pages/order/detail.vue:633", `更新订单状态为: ${status}`);
         const res = await utils_request.request({
           url: `https://bgnc.online/api/order/`,
           method: "PUT",
@@ -357,15 +360,15 @@ const _sfc_main = {
           }
         });
         if (res.code === 200) {
-          common_vendor.index.__f__("log", "at pages/order/detail.vue:623", "订单状态更新成功");
+          common_vendor.index.__f__("log", "at pages/order/detail.vue:645", "订单状态更新成功");
           orderStatus.value = status;
           return true;
         } else {
-          common_vendor.index.__f__("error", "at pages/order/detail.vue:627", "订单状态更新失败:", res.msg);
+          common_vendor.index.__f__("error", "at pages/order/detail.vue:649", "订单状态更新失败:", res.msg);
           return false;
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/order/detail.vue:631", "更新订单状态失败:", error);
+        common_vendor.index.__f__("error", "at pages/order/detail.vue:653", "更新订单状态失败:", error);
         return false;
       }
     };
@@ -384,24 +387,24 @@ const _sfc_main = {
           url: `https://bgnc.online/api/order/route?phoneNumber=${receiverPhone.value}&orderNumber=${deliverySn.value}`,
           method: "GET"
         });
-        common_vendor.index.__f__("log", "at pages/order/detail.vue:656", "路由查询结果:", routeRes);
+        common_vendor.index.__f__("log", "at pages/order/detail.vue:678", "路由查询结果:", routeRes);
         if (routeRes.code === 200) {
           if (routeRes.data && Array.isArray(routeRes.data)) {
             logisticsData.value = routeRes.data;
           } else {
-            common_vendor.index.__f__("error", "at pages/order/detail.vue:662", "路由查询失败:", routeRes.msg);
+            common_vendor.index.__f__("error", "at pages/order/detail.vue:684", "路由查询失败:", routeRes.msg);
           }
         } else {
-          common_vendor.index.__f__("error", "at pages/order/detail.vue:665", "路由查询失败:", routeRes.msg);
+          common_vendor.index.__f__("error", "at pages/order/detail.vue:687", "路由查询失败:", routeRes.msg);
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/order/detail.vue:668", "路由查询失败:", error);
+        common_vendor.index.__f__("error", "at pages/order/detail.vue:690", "路由查询失败:", error);
       } finally {
         logisticsLoading.value = false;
       }
     };
     common_vendor.onLoad((options) => {
-      common_vendor.index.__f__("log", "at pages/order/detail.vue:676", "订单详情页面参数:", options);
+      common_vendor.index.__f__("log", "at pages/order/detail.vue:698", "订单详情页面参数:", options);
       if (options.id) {
         orderId.value = options.id;
         getOrderDetail();
@@ -467,35 +470,42 @@ const _sfc_main = {
         l: common_vendor.t(getTotalPrice()),
         m: common_vendor.t(formatAmount(freightAmount.value)),
         n: common_vendor.t(formatAmount(payAmount.value)),
-        o: common_vendor.t(orderCreateTime.value || "暂无"),
-        p: orderPayTime.value
+        o: common_vendor.p({
+          type: "location",
+          size: "18",
+          color: "#3b78db"
+        }),
+        p: common_vendor.t(receiverPhone.value || "暂无"),
+        q: common_vendor.t(receiverDetailAddress.value || "暂无"),
+        r: common_vendor.t(orderCreateTime.value || "暂无"),
+        s: orderPayTime.value
       }, orderPayTime.value ? {
-        q: common_vendor.t(orderPayTime.value)
+        t: common_vendor.t(orderPayTime.value)
       } : {}, {
-        r: orderStatus.value === 0 && orderTimeLeft.value && !isOrderExpired.value
+        v: orderStatus.value === 0 && orderTimeLeft.value && !isOrderExpired.value
       }, orderStatus.value === 0 && orderTimeLeft.value && !isOrderExpired.value ? {
-        s: common_vendor.t(orderTimeLeft.value)
+        w: common_vendor.t(orderTimeLeft.value)
       } : {}, {
-        t: orderStatus.value === 0 && isOrderExpired.value
+        x: orderStatus.value === 0 && isOrderExpired.value
       }, orderStatus.value === 0 && isOrderExpired.value ? {} : {}, {
-        v: orderStatus.value === 2 && deliverySn.value
+        y: orderStatus.value === 2 && deliverySn.value
       }, orderStatus.value === 2 && deliverySn.value ? common_vendor.e({
-        w: common_vendor.p({
+        z: common_vendor.p({
           type: "truck",
           size: "18",
           color: "#3b78db"
         }),
-        x: common_vendor.t(deliveryCompany.value || "顺丰速运"),
-        y: common_vendor.t(deliverySn.value),
-        z: common_vendor.p({
+        A: common_vendor.t(deliveryCompany.value || "顺丰速运"),
+        B: common_vendor.t(deliverySn.value),
+        C: common_vendor.p({
           type: "refresh",
           size: "14",
           color: "#3b78db"
         }),
-        A: common_vendor.o(queryLogistics),
-        B: logisticsData.value.length > 0
+        D: common_vendor.o(queryLogistics),
+        E: logisticsData.value.length > 0
       }, logisticsData.value.length > 0 ? {
-        C: common_vendor.f(logisticsData.value, (item, index, i0) => {
+        F: common_vendor.f(logisticsData.value, (item, index, i0) => {
           return common_vendor.e({
             a: common_vendor.t(item.firstStatusName || "运输中"),
             b: common_vendor.t(item.acceptTime),
@@ -509,22 +519,22 @@ const _sfc_main = {
           });
         })
       } : logisticsLoading.value ? {
-        E: common_vendor.p({
+        H: common_vendor.p({
           type: "spinner-cycle",
           size: "24",
           color: "#ccc"
         })
       } : {}, {
-        D: logisticsLoading.value
+        G: logisticsLoading.value
       }) : {}, {
-        F: common_vendor.o(goBack),
-        G: showPayButton.value
+        I: common_vendor.o(goBack),
+        J: showPayButton.value
       }, showPayButton.value ? {
-        H: common_vendor.t(formatAmount(payAmount.value)),
-        I: common_vendor.o(handlePay),
-        J: payLoading.value ? 1 : ""
+        K: common_vendor.t(formatAmount(payAmount.value)),
+        L: common_vendor.o(handlePay),
+        M: payLoading.value ? 1 : ""
       } : {}, {
-        K: common_vendor.o(handleContact)
+        N: common_vendor.o(handleContact)
       });
     };
   }

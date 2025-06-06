@@ -56,7 +56,24 @@
         </view>
       </view>
     </view>
- 
+    
+    <!-- 收货信息卡片 -->
+    <view class="info-card">
+      <view class="card-title">
+        <uni-icons type="location" size="18" color="#3b78db"></uni-icons>
+        <text>收货信息</text>
+      </view>
+      <view class="info-content">
+        <view class="info-row">
+          <text class="info-label">收货电话</text>
+          <text class="info-value">{{ receiverPhone || '暂无' }}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">收货地址</text>
+          <text class="info-value">{{ receiverDetailAddress || '暂无' }}</text>
+        </view>
+      </view>
+    </view>
     
     <!-- 订单时间信息 -->
     <view class="info-card time-card">
@@ -176,6 +193,7 @@ const payAmount = ref('')
 const deliverySn = ref('') // 快递单号
 const deliveryCompany = ref('') // 快递公司
 const receiverPhone = ref('') // 收货人手机号
+const receiverDetailAddress = ref('') // 收货人地址
 const logisticsData = ref([]) // 物流数据
 const logisticsLoading = ref(false) // 物流查询加载状态
 
@@ -302,6 +320,10 @@ const getOrderDetail = async () => {
             }
           }
         }
+        
+        // 设置收货人电话和地址
+        receiverPhone.value = result.data.receiverPhone || ''
+        receiverDetailAddress.value = result.data.receiverDetailAddress || ''
       }
     } else {
       uni.showToast({
