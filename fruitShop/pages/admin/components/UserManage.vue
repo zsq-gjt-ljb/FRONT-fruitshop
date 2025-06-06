@@ -27,72 +27,49 @@
       </view>
     </view>
 
-    <!-- 用户列表 -->
-    <view class="user-list-container">
-      <!-- 用户列表内容 -->
-      <view class="user-list">
-        <!-- 表头 -->
-        <view class="list-header">
-          <view class="header-cell user-info">用户信息</view>
-          <view class="header-cell vip">会员等级</view>
-          <view class="header-cell gender">性别</view>
-          <view class="header-cell consume">消费</view>
-          <view class="header-cell operate">操作</view>
-        </view>
-
-        <!-- 加载中状态 -->
-        <view v-if="loading" class="loading-tip">
-          <uni-icons type="spinner-cycle" size="30" color="#4a90e2"></uni-icons>
-          <text>加载中...</text>
-        </view>
-
-        <!-- 空数据状态 -->
-        <view v-else-if="userList.length === 0" class="empty-tip">
-          暂无用户数据
-        </view>
-
-        <!-- 用户数据列表 -->
-        <block v-else>
-          <view class="user-row" v-for="user in userList" :key="user.id">
-            <!-- 用户信息 -->
-            <view class="cell user-info">
-              <image :src="user.userAvatar || '/static/images/default-avatar.png'" class="avatar"></image>
-              <view class="user-details">
-                <text class="username">{{ user.userName || '未设置昵称' }}</text>
-                <text class="phone">{{ user.phone || '未绑定手机' }}</text>
-              </view>
+    <!-- 用户卡片列表 -->
+    <view class="user-card-list">
+      <view v-if="loading" class="loading-tip">
+        <uni-icons type="spinner-cycle" size="30" color="#4a90e2"></uni-icons>
+        <text>加载中...</text>
+      </view>
+      <view v-else-if="userList.length === 0" class="empty-tip">
+        暂无用户数据
+      </view>
+      <block v-else>
+        <view class="user-card" v-for="user in userList" :key="user.id">
+          <view class="user-card-header">
+            <image :src="user.userAvatar || '/static/images/default-avatar.png'" class="avatar"></image>
+            <view class="user-main-info">
+              <text class="username">{{ user.userName || '未设置昵称' }}</text>
+              <text class="phone">{{ user.phone || '未绑定手机' }}</text>
             </view>
-            
-            <!-- 会员等级 -->
-            <view class="cell vip">
+            <view class="user-vip">
               <text class="vip-badge">VIP {{ user.memberLevel || 1 }}</text>
             </view>
-            
-            <!-- 性别 -->
-            <view class="cell gender">
+          </view>
+          <view class="user-card-body">
+            <view class="user-row-info">
+              <text>性别：</text>
               <text>{{ user.userSex === '1' ? '男' : user.userSex === '2' ? '女' : '未知' }}</text>
             </view>
-            
-            <!-- 消费金额 -->
-            <view class="cell consume">
+            <view class="user-row-info">
+              <text>消费金额：</text>
               <text class="amount">¥{{ user.consumeQuota || '0.00' }}</text>
             </view>
-            
-            <!-- 操作按钮 -->
-            <view class="cell operate">
-              <picker 
-                mode="selector" 
-                :range="vipLevels.slice(1)" 
-                :value="(user.memberLevel || 1) - 1"
-                @change="(e) => handleEditLevelChange(e, user)"
-              >
-                <button class="edit-btn">修改</button>
-              </picker>
-            </view>
           </view>
-        </block>
-      </view>
-
+          <view class="user-card-footer">
+            <picker 
+              mode="selector" 
+              :range="vipLevels.slice(1)" 
+              :value="(user.memberLevel || 1) - 1"
+              @change="(e) => handleEditLevelChange(e, user)"
+            >
+              <button class="edit-btn">修改</button>
+            </picker>
+          </view>
+        </view>
+      </block>
       <!-- 分页控制 -->
       <view class="pagination">
         <text 
@@ -144,7 +121,7 @@ const editingLevel = ref(1)
 
 // 分页数据
 const currentPage = ref(1)
-const pageSize = ref(5)
+const pageSize = ref(8)
 const totalPages = ref(1)
 const total = ref(0)
 
@@ -327,7 +304,7 @@ onMounted(() => {
 
 <style lang="scss">
 .user-manage {
-  padding: 20rpx;
+  padding: 0;
   
   /* 搜索和筛选区域 */
   .search-bar {
@@ -370,190 +347,119 @@ onMounted(() => {
     }
   }
   
-  /* 用户列表容器 */
-  .user-list-container {
-    background: #fff;
-    border-radius: 8rpx;
-    padding: 0;
-    box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
-    overflow: hidden;
-    
-    /* 用户列表 */
-    .user-list {
-      padding: 0;
-      
-      /* 表头 */
-      .list-header {
+  /* 用户卡片列表 */
+  .user-card-list {
+    padding: 0 10rpx 20rpx 10rpx;
+    .user-card {
+      background: #fff;
+      border-radius: 12rpx;
+      box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
+      margin-bottom: 24rpx;
+      padding: 24rpx 20rpx 16rpx 20rpx;
+      display: flex;
+      flex-direction: column;
+      gap: 10rpx;
+      .user-card-header {
         display: flex;
         align-items: center;
-        background: #f8f9fa;
-        padding: 16rpx 0;
-        font-size: 24rpx;
-        color: #666;
-        border-bottom: 1rpx solid #eee;
-        
-        .header-cell {
-          text-align: center;
-          padding: 0 6rpx;
-          box-sizing: border-box;
-          
-          &.user-info {
-            flex: 3;
-            text-align: left;
-            padding-left: 20rpx;
-          }
-          
-          &.vip {
-            flex: 1.2;
-          }
-          
-          &.gender {
-            flex: 0.8;
-          }
-          
-          &.consume {
-            flex: 1;
-          }
-          
-          &.operate {
-            flex: 1.5;
-          }
+        gap: 16rpx;
+        .avatar {
+          width: 60rpx;
+          height: 60rpx;
+          border-radius: 50%;
+          background: #f0f2f5;
+          flex-shrink: 0;
         }
-      }
-      
-      /* 用户行 */
-      .user-row {
-        display: flex;
-        align-items: center;
-        padding: 16rpx 0;
-        border-bottom: 1rpx solid #eee;
-        
-        &:last-child {
-          border-bottom: none;
-        }
-        
-        /* 单元格通用样式 */
-        .cell {
-          text-align: center;
-          padding: 0 6rpx;
-          font-size: 24rpx;
-          box-sizing: border-box;
-          
-          &.user-info {
-            flex: 3;
-            display: flex;
-            align-items: center;
-            text-align: left;
-            padding-left: 20rpx;
-            
-            .avatar {
-              width: 60rpx;
-              height: 60rpx;
-              border-radius: 50%;
-              background: #f0f2f5;
-              margin-right: 12rpx;
-              flex-shrink: 0;
-            }
-            
-            .user-details {
-              flex: 1;
-              overflow: hidden;
-              
-              .username {
-                display: block;
-                font-size: 22rpx;
-                color: #333;
-                margin-bottom: 4rpx;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-              }
-              
-              .phone {
-                display: block;
-                font-size: 20rpx;
-                color: #999;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-              }
-            }
+        .user-main-info {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 4rpx;
+          .username {
+            font-size: 26rpx;
+            color: #333;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
-          
-          &.vip {
-            flex: 1.2;
-            
-            .vip-badge {
-              display: inline-block;
-              padding: 2rpx 8rpx;
-              background: rgba(74, 144, 226, 0.1);
-              color: #4a90e2;
-              border-radius: 4rpx;
-              font-size: 20rpx;
-            }
-          }
-          
-          &.gender {
-            flex: 0.8;
+          .phone {
             font-size: 22rpx;
+            color: #999;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
-          
-          &.consume {
-            flex: 1;
-            
-            .amount {
-              color: #ff6b00;
-              font-weight: 500;
-              font-size: 22rpx;
-            }
-          }
-          
-          &.operate {
-            flex: 1.5;
-            
-            .edit-btn {
-              display: inline-block;
-              background: #4a90e2;
-              color: #fff;
-              font-size: 15rpx;
-              height: 50rpx;
-              line-height: 50rpx;
-              border-radius: 6rpx;
-              padding: 0 16rpx;
-              margin: 0;
-              border: none;
-            }
+        }
+        .user-vip {
+          .vip-badge {
+            display: inline-block;
+            padding: 2rpx 12rpx;
+            background: rgba(74, 144, 226, 0.1);
+            color: #4a90e2;
+            border-radius: 8rpx;
+            font-size: 22rpx;
+            font-weight: 500;
           }
         }
       }
-      
-      /* 加载和空状态 */
-      .loading-tip, .empty-tip {
-        padding: 40rpx 0;
-        text-align: center;
-        color: #999;
-        font-size: 24rpx;
+      .user-card-body {
+        display: flex;
+        flex-direction: column;
+        gap: 6rpx;
+        .user-row-info {
+          font-size: 22rpx;
+          color: #666;
+          display: flex;
+          gap: 8rpx;
+          .amount {
+            color: #ff6b00;
+            font-weight: 500;
+          }
+        }
+      }
+      .user-card-footer {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-top: 10rpx;
+        .edit-btn {
+          background: #4a90e2;
+          color: #fff;
+          font-size: 22rpx;
+          height: 48rpx;
+          line-height: 48rpx;
+          border-radius: 8rpx;
+          padding: 0 32rpx;
+          border: none;
+          white-space: nowrap;
+          box-sizing: border-box;
+          &:after {
+            display: none;
+          }
+        }
       }
     }
-    
-    /* 分页区域 */
+    .loading-tip, .empty-tip {
+      padding: 40rpx 0;
+      text-align: center;
+      color: #999;
+      font-size: 24rpx;
+    }
     .pagination {
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 30rpx 0;
+      padding: 30rpx 0 0 0;
       border-top: 1rpx solid #eee;
-      
       .page-btn {
         padding: 10rpx 24rpx;
         font-size: 24rpx;
         color: #4a90e2;
-        
         &.disabled {
           color: #ccc;
         }
       }
-      
       .page-number {
         margin: 0 24rpx;
         font-size: 24rpx;

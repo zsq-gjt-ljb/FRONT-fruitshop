@@ -105,7 +105,7 @@ const _sfc_main = {
           userInfo.value = {
             userAvatar: res.data.userAvatar,
             userName: res.data.userName,
-            memberLevel: res.data.memberLevel || 1,
+            memberLevel: res.data.memberLevel,
             userRole: res.data.userRole,
             id: res.data.id,
             userSex: res.data.userSex,

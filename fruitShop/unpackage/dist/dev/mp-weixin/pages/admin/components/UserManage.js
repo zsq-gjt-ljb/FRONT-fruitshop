@@ -20,7 +20,7 @@ const _sfc_main = {
     const selectedLevel = common_vendor.ref(0);
     const editingLevel = common_vendor.ref(1);
     const currentPage = common_vendor.ref(1);
-    const pageSize = common_vendor.ref(5);
+    const pageSize = common_vendor.ref(8);
     const totalPages = common_vendor.ref(1);
     const total = common_vendor.ref(0);
     const currentUser = common_vendor.ref(null);
@@ -55,7 +55,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/UserManage.vue:195", "查询用户消费失败：", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/UserManage.vue:172", "查询用户消费失败：", error);
         common_vendor.index.showToast({
           title: "网络错误，请稍后再试",
           icon: "none"
@@ -75,7 +75,7 @@ const _sfc_main = {
           }
         });
         if (res.code === 200 && res.data) {
-          common_vendor.index.__f__("log", "at pages/admin/components/UserManage.vue:218", "用户列表数据:", res.data);
+          common_vendor.index.__f__("log", "at pages/admin/components/UserManage.vue:195", "用户列表数据:", res.data);
           userList.value = res.data.rows || [];
           total.value = res.data.total || 0;
           totalPages.value = Math.ceil(total.value / pageSize.value) || 1;
@@ -86,7 +86,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/UserManage.vue:229", "获取用户列表失败：", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/UserManage.vue:206", "获取用户列表失败：", error);
         common_vendor.index.showToast({
           title: "获取用户列表失败",
           icon: "none"
@@ -138,7 +138,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("error", "at pages/admin/components/UserManage.vue:299", "修改用户等级失败：", error);
+        common_vendor.index.__f__("error", "at pages/admin/components/UserManage.vue:276", "修改用户等级失败：", error);
         common_vendor.index.showToast({
           title: "修改用户等级失败",
           icon: "none"
